@@ -1,10 +1,11 @@
 import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
-import styles from './home.module.css'
+import styles from './inbox.module.css'
 import ChatList from './ChatList' 
 import Link from 'next/link'
+import { Menu, PenSquare } from 'lucide-react'
+import { redirect } from 'next/navigation'
 
-export default async function Home() {
+export default async function InboxPane() {
   const supabase = await createClient()
 
   const {
@@ -15,10 +16,8 @@ export default async function Home() {
     redirect('/login')
   }
 
-  // The user's phone number acts as their email ID identity
   const userEmailId = `${user.phone}@phonemail.com`
 
-  // Fetch all emails where the user is either the sender or recipient
   const { data: emails, error } = await supabase
     .from('emails')
     .select('*')
@@ -29,11 +28,9 @@ export default async function Home() {
     console.error('Error fetching emails:', error)
   }
 
-  // Group emails into "Chats" based on the other party
   const chatsMap = new Map<string, any[]>()
 
   ;(emails || []).forEach((email) => {
-    // Determine who the other person is in this conversation
     const otherParty =
       email.sender_address === userEmailId ? email.recipient_address : email.sender_address
 
@@ -43,7 +40,6 @@ export default async function Home() {
     chatsMap.get(otherParty)!.push(email)
   })
 
-  // Convert map to array of chats, sorting by the latest message
   const chatList = Array.from(chatsMap.entries()).map(([contact, messages]) => {
     return {
       contact,
@@ -58,7 +54,9 @@ export default async function Home() {
     <div className={styles.appContainer}>
       <header className={styles.header}>
         <div className={styles.topBar}>
-          <button className={styles.iconButton}>☰</button>
+          <button className={styles.iconButton}>
+            <Menu size={20} />
+          </button>
           <div className={styles.searchContainer}>
             <input type="text" placeholder="Search..." className={styles.searchInput} />
           </div>
@@ -90,10 +88,7 @@ export default async function Home() {
 
       <Link href="/compose">
         <button className={styles.fab}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
+          <PenSquare size={24} />
         </button>
       </Link>
     </div>

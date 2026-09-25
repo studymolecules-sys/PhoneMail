@@ -4,6 +4,7 @@ import Link from 'next/link'
 import styles from './chat.module.css'
 import { sendMessage } from './actions'
 import ChatThread from './ChatThread'
+import { ArrowLeft, MoreVertical, Send } from 'lucide-react'
 
 export default async function ChatPage({ params }: { params: Promise<{ contact: string }> }) {
   const resolvedParams = await params
@@ -41,13 +42,15 @@ export default async function ChatPage({ params }: { params: Promise<{ contact: 
     <div className={styles.chatContainer}>
       <header className={styles.header}>
         <Link href="/" className={styles.backButton}>
-          ←
+          <ArrowLeft size={24} />
         </Link>
         <div className={styles.headerTitle}>
           <h2>{contact.replace('@phonemail.com', '')}</h2>
         </div>
         <div className={styles.headerActions}>
-          <button className={styles.iconButton}>⋮</button>
+          <button className={styles.iconButton}>
+            <MoreVertical size={20} />
+          </button>
         </div>
       </header>
 
@@ -76,7 +79,7 @@ export default async function ChatPage({ params }: { params: Promise<{ contact: 
             autoComplete="off"
           />
           <button type="submit" className={styles.sendButton}>
-            ➤
+            <Send size={18} />
           </button>
         </div>
       </form>
