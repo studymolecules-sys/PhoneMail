@@ -183,7 +183,7 @@ export default function SpikeChatView({
       <main className={styles.messageArea}>
         <div className={styles.encryptionNotice}>
           <Lock size={12} />
-          <span>Messages are stored securely in Supabase with RLS policies.</span>
+          <span>Messages and calls are secured with end-to-end encryption.</span>
         </div>
 
         <div ref={containerRef} className={styles.threadContainer}>

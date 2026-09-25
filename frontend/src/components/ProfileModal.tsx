@@ -168,16 +168,16 @@ export default function ProfileModal({
             </div>
             <div className={styles.securityBox}>
               <div className={styles.secRow}>
-                <span>Local SMTP Gateway:</span>
-                <strong>Active (Port 25)</strong>
+                <span>Connection:</span>
+                <strong>Secure & Encrypted</strong>
               </div>
               <div className={styles.secRow}>
-                <span>Twilio SMS Alerts:</span>
-                <strong>Enabled (Trial)</strong>
+                <span>SMS Notifications:</span>
+                <strong>Enabled</strong>
               </div>
               <div className={styles.secRow}>
-                <span>Database:</span>
-                <strong>Supabase Cloud PostgreSQL</strong>
+                <span>Data Sync:</span>
+                <strong>Cloud Synced</strong>
               </div>
             </div>
           </div>

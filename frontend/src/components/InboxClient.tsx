@@ -150,7 +150,7 @@ export default function InboxClient({
               <h1 className={styles.brandHeading}>PhoneMail</h1>
               <span className={styles.onlineBadge}>
                 <span className={styles.onlineDot} />
-                SMTP Port 25
+                Online
               </span>
             </div>
           </div>

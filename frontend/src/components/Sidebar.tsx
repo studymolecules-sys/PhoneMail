@@ -153,7 +153,7 @@ export default function Sidebar({
       <div className={styles.footer}>
         <div className={styles.gatewayStatus}>
           <ShieldCheck size={14} className={styles.statusShield} />
-          <span>SMTP Port 25 & Twilio IVR Active</span>
+          <span>Connection Secure</span>
         </div>
 
         <button

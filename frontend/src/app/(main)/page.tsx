@@ -101,10 +101,10 @@ export default function HomePlaceholder() {
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#0b57d0', marginBottom: '6px' }}>
             <Terminal size={16} />
-            <strong style={{ fontSize: '13px' }}>SMTP Gateway</strong>
+            <strong style={{ fontSize: '13px' }}>Instant Delivery</strong>
           </div>
           <span style={{ fontSize: '12px', color: '#5e5e5e', lineHeight: '1.4' }}>
-            Port 25 daemon intercepts all incoming @phonemail.com MIME messages.
+            Messages are delivered instantly via our optimized routing.
           </span>
         </div>
 

@@ -108,7 +108,7 @@ export default function Drawer({
         <div className={styles.footer}>
           <div className={styles.systemStatus}>
             <Shield size={14} className={styles.statusIcon} />
-            <span>Port 25 SMTP Gateway Active</span>
+            <span>Connection Secure</span>
           </div>
         </div>
       </aside>
