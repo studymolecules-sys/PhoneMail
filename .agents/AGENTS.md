@@ -108,27 +108,30 @@ c:\Users\direc\Softwares\PhoneMail\
 **Phase 1: Setup & Infrastructure (Completed)**
 - Next.js initialized without Tailwind.
 - Node.js SMTP service initialized.
-- `docker-compose.yml` set up for local Postgres, Web, and SMTP.
+- `docker-compose.yml` orchestrates the Frontend and SMTP containers natively (Local Postgres was removed in favor of Supabase Cloud).
 
-**Phase 2: Authentication & Twilio Integration**
-- Agents should implement Supabase Auth (OTP/Password) within Next.js.
-- Set up API routes to act as webhooks for Twilio IVR registration.
+**Phase 2: Authentication & Twilio Integration (Completed)**
+- Implemented Supabase Auth (OTP) within Next.js.
+- Set up `/api/twilio/notify` API route to act as webhook for Twilio SMS notifications.
+- Fixed Next.js IPv6 Undici fetch bug by injecting `NODE_OPTIONS` via `cross-env`.
 
-**Phase 3: The SMTP Layer**
-- Ensure `smtp-server` successfully writes incoming emails to the local Postgres DB.
-- Handle multi-part parsing correctly using `mailparser`.
+**Phase 3: The SMTP Layer (Completed)**
+- `smtp-server` successfully writes incoming emails to the Supabase Cloud DB.
+- Sends a JSON POST payload to the Next.js Twilio webhook on incoming mail.
 
-**Phase 4: Frontend - Mobile UI (The Core focus)**
-- Agents MUST prioritize the mobile client first.
-- Strictly use CSS Modules for styling.
-- Implement Spike Mail chat interface logic (grouping emails by sender).
-- Integrate GSAP for smooth animations.
+**Phase 4: Frontend - Mobile UI (Completed)**
+- Prioritized mobile client.
+- Styled using CSS Modules exclusively, with premium aesthetic overrides.
+- Implemented Spike Mail style chat interface logic (grouped by sender).
 
-**Phase 5: Frontend - Desktop UI**
-- Build the classic 3-pane Gmail layout for wider screens using CSS Grid/Flexbox.
+**Phase 5: Frontend - Desktop UI (Completed)**
+- Built a responsive 3-pane Layout (Sidebar -> Inbox List -> Chat Thread).
+- Implemented Next.js Route Groups for conditional layout rendering.
 
-**Phase 6: Polish & PWA**
-- Add PWA manifest, ensure zero-stutter performance, and test accessibility.
+**Phase 6: Polish, Security & PWA (Completed)**
+- Added PWA `manifest.json` and meta viewport tags.
+- Auth.users `auth.jwt()` extraction used in Supabase RLS policies for strict row-level security.
+- All temporary artifacts removed.
 
 ---
 **Agent Rule 1**: Always check this file before generating significant architecture changes or altering the tech stack. Adhere to the zero-cost and Vanilla CSS rules rigidly.
