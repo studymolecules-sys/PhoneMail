@@ -3,25 +3,25 @@
   --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* WhatsApp Theme Tokens (Default Mobile) */
-  --wa-header-bg: #202c33;
-  --wa-header-text: #e9edef;
-  --wa-app-bg: #0c1317;
-  --wa-panel-bg: #111b21;
-  --wa-chat-bg: #0b141a;
-  --wa-item-hover: #202c33;
-  --wa-item-active: #2a3942;
-  --wa-accent: #00a884;
-  --wa-accent-light: #25d366;
-  --wa-bubble-sent: #005c4b;
-  --wa-bubble-sent-text: #e9edef;
-  --wa-bubble-received: #202c33;
-  --wa-bubble-received-text: #e9edef;
-  --wa-text-primary: #e9edef;
-  --wa-text-secondary: #8696a0;
-  --wa-text-muted: #667781;
-  --wa-border: #222d34;
-  --wa-tick-blue: #53bdeb;
+  /* Premium Indigo Dark Theme Tokens */
+  --wa-header-bg: #121214;
+  --wa-header-text: #f4f4f5;
+  --wa-app-bg: #09090b;
+  --wa-panel-bg: #09090b;
+  --wa-chat-bg: #000000;
+  --wa-item-hover: #27272a;
+  --wa-item-active: #27272a;
+  --wa-accent: #6366f1;
+  --wa-accent-light: #818cf8;
+  --wa-bubble-sent: #4f46e5;
+  --wa-bubble-sent-text: #ffffff;
+  --wa-bubble-received: #27272a;
+  --wa-bubble-received-text: #e4e4e7;
+  --wa-text-primary: #f4f4f5;
+  --wa-text-secondary: #a1a1aa;
+  --wa-text-muted: #71717a;
+  --wa-border: #27272a;
+  --wa-tick-blue: #60a5fa;
 
   /* Gmail Theme Tokens (Default Desktop) */
   --gm-app-bg: #f6f8fc;
@@ -40,25 +40,25 @@
   --gm-star-empty: #c4c7c5;
 
   /* Default Active Bindings */
-  --bg-primary: #0c1317;
-  --bg-secondary: #111b21;
-  --bg-tertiary: #202c33;
+  --bg-primary: #09090b;
+  --bg-secondary: #09090b;
+  --bg-tertiary: #121214;
   
-  --text-primary: #e9edef;
-  --text-secondary: #8696a0;
-  --text-tertiary: #667781;
+  --text-primary: #f4f4f5;
+  --text-secondary: #a1a1aa;
+  --text-tertiary: #71717a;
   
-  --accent-primary: #00a884;
-  --accent-hover: #02906f;
-  --accent-light: rgba(0, 168, 132, 0.15);
+  --accent-primary: #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-light: rgba(99, 102, 241, 0.15);
   
-  --border-light: #222d34;
+  --border-light: #27272a;
   
   /* Chat Bubbles */
-  --bubble-sent: #005c4b;
-  --bubble-sent-text: #e9edef;
-  --bubble-received: #202c33;
-  --bubble-received-text: #e9edef;
+  --bubble-sent: #4f46e5;
+  --bubble-sent-text: #ffffff;
+  --bubble-received: #27272a;
+  --bubble-received-text: #e4e4e7;
   
   /* Shadows & Layout */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.2);
@@ -104,12 +104,7 @@ a {
 button, input, textarea {
   font-family: var(--font-sans);
   outline: none;
-}
 
-button:focus-visible, input:focus-visible, textarea:focus-visible, a:focus-visible {
-  outline: 2px solid var(--wa-accent-light);
-  outline-offset: 2px;
-}
 
 /* Beautiful Custom Webkit Scrollbars globally */
 ::-webkit-scrollbar {

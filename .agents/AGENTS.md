@@ -8,7 +8,7 @@ This document serves as the master blueprint and instruction set for AI agents w
 **PhoneMail** is a modern, zero-cost, high-performance web application mimicking an email application but utilizing phone numbers as email IDs (e.g., `9876543210@phonemail.com`). 
 The application serves two distinct user experiences depending on the device:
 - **Mobile Client (PWA)**: Implements a "WhatsApp-style" chat interface where emails are grouped by sender, providing an instant messenger feel (similar to Spike Mail).
-- **Desktop Web Client**: Provides a robust, traditional "Gmail-like" experience.
+- **Desktop Web Client**: Provides a robust, multi-pane experience completely unified under the same WhatsApp-style Dark theme.
 
 **Key Requirements & Constraints:**
 - **Zero Cost**: Maximize free tiers (Supabase, Twilio free trial, Node.js local SMTP).
@@ -47,9 +47,9 @@ The application serves two distinct user experiences depending on the device:
   - A compact Subject field rests above the message input box. Hidden on replies, visible on new threads.
   - **Gestures**: Swipe right on a message to reply (links to original email). Tap long emails to expand into traditional view.
 
-### B. Desktop Web Client (Gmail-like UX)
-- **Goal**: High information density and productivity.
-- **Layout**: Three-pane standard layout (Sidebar -> Inbox List -> Email Content).
+### B. Desktop Web Client (Unified WhatsApp Web UX)
+- **Goal**: High information density and productivity with a cohesive, seamless extension of the mobile app. No mixed light/dark modes.
+- **Layout**: Multi-pane layout styled strictly in Dark Slate and Emerald Green to match the mobile WhatsApp design language.
 
 ---
 
@@ -138,7 +138,8 @@ c:\Users\direc\Softwares\PhoneMail\
 - **Onboarding Flow**: Implemented 4-screen WhatsApp onboarding wizard (Language -> Terms -> SIM Auto-Detect Phone -> SMS Auto-Detect OTP) with graceful Supabase bridge fallback.
 - **Spike Mail Features**: Implemented swipe-to-tag reply, compact subject toggling, tap-to-expand traditional view modal, and traditional email compose toggle.
 - **Drawer & Profile**: Added slide-out navigation drawer (Unified Inbox, Starred, Drafts, Spam, Trash) and Profile modal with active **Alias Management** (`work@phonemail.com`).
-- **Desktop Web Client**: Redesigned as authentic Google Workspace / Gmail 3-pane experience (Gmail Sidebar with floating Compose pill, dense inbox list, keyboard shortcuts, and rich reading view).
+- **Desktop Web Client**: Unified with the WhatsApp design language (Dark Slate & Emerald Green) to eliminate the mixed light/dark mode clash. Implemented sleek webkit scrollbars, tactile button scaling, and removed all default browser focus outlines.
+- **UX Writing**: Strictly "Show, don't tell." Removed all technical jargon (Supabase, SMTP, RLS) from user-facing components, replacing empty states with minimalist UI and consumer-friendly terms (End-to-end encrypted).
 - **PWA & APK Deliverables**: Generated high-res 192x192 & 512x512 maskable app icons, registered service worker (`sw.js`), and documented 1-command APK packaging via PWABuilder / Bubblewrap.
 - **Judging & Demo Pipeline**: Created `demo_test.py` for automated end-to-end testing of SMTP port 25 email ingestion, Supabase DB synchronization, and Twilio SMS notification.
 

@@ -34,12 +34,16 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: background-color 0.15s, color 0.15s;
+  transition: background-color 0.15s, color 0.15s, transform 0.1s;
 }
 
 .backButton:hover {
   background-color: var(--wa-item-hover);
   color: var(--wa-text-primary);
+}
+
+.backButton:active {
+  transform: scale(0.92);
 }
 
 .headerTitle {
@@ -73,8 +77,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 18px;
-  background: rgba(0, 168, 132, 0.08);
+  padding: 12px 18px;
+  background: rgba(99, 102, 241, 0.08);
   border-bottom: 1px solid var(--wa-border);
   font-size: 12px;
   color: var(--wa-text-secondary);
@@ -89,10 +93,15 @@
 .inputGroup {
   display: flex;
   align-items: center;
-  padding: 14px 20px;
+  padding: 16px 20px;
   border-bottom: 1px solid var(--wa-border);
   background-color: var(--wa-panel-bg);
   gap: 12px;
+  transition: background-color 0.15s;
+}
+
+.inputGroup:focus-within {
+  background-color: var(--wa-app-bg);
 }
 
 .inputGroup label {
@@ -105,10 +114,11 @@
 .input {
   flex: 1;
   border: none;
-  font-size: 14.5px;
+  font-size: 16px;
   outline: none;
   background: transparent;
   color: var(--wa-text-primary);
+  font-family: var(--font-sans);
 }
 
 .input::placeholder {
@@ -117,7 +127,7 @@
 
 .editorArea {
   flex: 1;
-  padding: 20px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   background-color: var(--wa-app-bg);
@@ -127,12 +137,13 @@
   flex: 1;
   border: none;
   resize: none;
-  font-size: 15px;
+  font-size: 16px;
   outline: none;
   line-height: 1.6;
   background: transparent;
   color: var(--wa-text-primary);
   box-sizing: border-box;
+  font-family: var(--font-sans);
 }
 
 .textarea::placeholder {
@@ -141,28 +152,30 @@
 
 .sendFab {
   position: absolute;
-  bottom: 28px;
-  right: 28px;
+  bottom: 32px;
+  right: 32px;
   width: 56px;
   height: 56px;
   border-radius: 50%;
   background: var(--wa-accent);
-  color: #111b21;
+  color: #ffffff;
   border: none;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 100;
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s, box-shadow 0.2s;
 }
 
 .sendFab:hover {
-  background: #02906f;
+  background: var(--wa-accent-hover);
   transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 12px 28px rgba(99, 102, 241, 0.6);
 }
 
 .sendFab:active {
   transform: scale(0.95);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }

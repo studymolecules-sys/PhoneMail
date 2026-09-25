@@ -77,7 +77,7 @@ export default async function ComposePage() {
           />
         </div>
 
-        <button type="submit" className={styles.sendFab} title="Send Email">
+        <button type="submit" className={styles.sendFab} aria-label="Send Email">
           <Send size={22} />
         </button>
       </form>

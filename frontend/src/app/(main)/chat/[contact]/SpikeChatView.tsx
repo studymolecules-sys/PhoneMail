@@ -146,7 +146,7 @@ export default function SpikeChatView({
       {/* WhatsApp Chat Top Header */}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <Link href="/" className={styles.backButton} title="Back to Inbox">
+          <Link href="/" className={styles.backButton} aria-label="Back to Inbox">
             <ArrowLeft size={22} />
           </Link>
           <div className={styles.headerAvatar}>
@@ -154,43 +154,29 @@ export default function SpikeChatView({
           </div>
           <div className={styles.headerTitle}>
             <h2>{displayName}</h2>
-            <span className={styles.headerSubtitle}>Universal Email Contact</span>
+            <span className={styles.headerSubtitle}>{contact}</span>
           </div>
         </div>
 
         <div className={styles.headerActions}>
-          <button type="button" className={styles.headerActionBtn} title="Call (Toll-Free IVR)">
-            <Phone size={19} />
-          </button>
-          <button type="button" className={styles.headerActionBtn} title="Video Meeting">
-            <Video size={20} />
-          </button>
           <button
             type="button"
             className={styles.headerActionBtn}
             onClick={() => setIsTraditionalComposeOpen(true)}
-            title="Compose in Traditional Email View"
+            aria-label="Compose in Traditional Email View"
           >
             <Maximize2 size={19} />
-          </button>
-          <button type="button" className={styles.headerActionBtn} title="More Options">
-            <MoreVertical size={20} />
           </button>
         </div>
       </header>
 
       {/* WhatsApp Doodle Chat Canvas */}
       <main className={styles.messageArea}>
-        <div className={styles.encryptionNotice}>
-          <Lock size={12} />
-          <span>Messages and calls are secured with end-to-end encryption.</span>
-        </div>
 
         <div ref={containerRef} className={styles.threadContainer}>
           {messages.length === 0 ? (
             <div className={styles.emptyChat}>
               <p>No messages yet with {displayName}.</p>
-              <span>Type below to send an email as an instant message!</span>
             </div>
           ) : (
             messages.map((msg) => {
@@ -205,7 +191,7 @@ export default function SpikeChatView({
                   <div
                     className={styles.bubble}
                     onClick={() => setSelectedEmail(msg)}
-                    title="Tap to open in Traditional View"
+                    aria-label="Tap to open in Traditional View"
                   >
                     {/* Spike Compact Subject */}
                     {msg.subject && msg.subject.trim() !== '' && (
@@ -243,7 +229,7 @@ export default function SpikeChatView({
                         e.stopPropagation()
                         handleTagReply(msg)
                       }}
-                      title="Swipe / Tag to reply"
+                      aria-label="Swipe / Tag to reply"
                     >
                       <Reply size={14} />
                     </button>
@@ -274,7 +260,7 @@ export default function SpikeChatView({
             type="button"
             className={styles.replyCloseBtn}
             onClick={handleClearReply}
-            title="Cancel reply tag"
+            aria-label="Cancel reply tag"
           >
             <X size={16} />
           </button>
@@ -292,7 +278,7 @@ export default function SpikeChatView({
               value={subjectText}
               onChange={(e) => setSubjectText(e.target.value)}
               className={styles.compactSubjectInput}
-              placeholder="Subject (Optional - Spike Mail format)"
+              placeholder="Subject (Optional)"
               autoComplete="off"
             />
           </div>
@@ -302,7 +288,7 @@ export default function SpikeChatView({
           <button
             type="button"
             className={styles.mediaButton}
-            title="Attach file"
+            aria-label="Attach file"
           >
             <Paperclip size={20} />
           </button>
@@ -324,7 +310,7 @@ export default function SpikeChatView({
             value={messageBody}
             onChange={(e) => setMessageBody(e.target.value)}
             className={styles.messageInput}
-            placeholder={replyingTo ? 'Type a reply...' : 'Type an email message...'}
+            placeholder={replyingTo ? 'Reply...' : 'Message'}
             required
             autoComplete="off"
           />
@@ -333,7 +319,7 @@ export default function SpikeChatView({
             type="submit"
             className={styles.sendButton}
             disabled={!messageBody.trim() || isSending}
-            title="Send Email"
+            aria-label="Send Email"
           >
             <Send size={18} />
           </button>

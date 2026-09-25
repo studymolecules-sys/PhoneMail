@@ -1,7 +1,7 @@
 'use client'
 
 import styles from './Drawer.module.css'
-import { Inbox, FileText, AlertOctagon, Trash2, Star, Settings, X, Shield, AtSign } from 'lucide-react'
+import { Inbox, Settings, X, Shield } from 'lucide-react'
 
 interface DrawerProps {
   isOpen: boolean
@@ -25,11 +25,7 @@ export default function Drawer({
   if (!isOpen) return null
 
   const navItems = [
-    { id: 'all', label: 'Home (Unified)', icon: Inbox },
-    { id: 'favorites', label: 'Starred', icon: Star },
-    { id: 'drafts', label: 'Drafts', icon: FileText },
-    { id: 'spam', label: 'Spam', icon: AlertOctagon },
-    { id: 'trash', label: 'Trash', icon: Trash2 },
+    { id: 'all', label: 'All Chats', icon: Inbox },
   ]
 
   const handleItemClick = (id: string) => {
@@ -49,7 +45,7 @@ export default function Drawer({
             <h3 className={styles.userName}>{userPhone || 'PhoneMail'}</h3>
             <p className={styles.userEmail}>{userEmailId}</p>
           </div>
-          <button className={styles.closeBtn} onClick={onClose}>
+          <button className={styles.closeBtn} onClick={onClose} aria-label="Close Drawer">
             <X size={20} />
           </button>
         </div>
@@ -77,20 +73,9 @@ export default function Drawer({
 
         <div className={styles.divider} />
 
-        {/* Alias & Account Quick Action */}
+        {/* Settings Quick Action */}
         <div className={styles.navSection}>
-          <div className={styles.sectionLabel}>IDENTITY & TOOLS</div>
-          <button
-            type="button"
-            className={styles.navItem}
-            onClick={() => {
-              onClose()
-              onOpenSettings()
-            }}
-          >
-            <AtSign size={18} className={styles.itemIcon} />
-            <span className={styles.itemLabel}>Manage Alias IDs</span>
-          </button>
+          <div className={styles.sectionLabel}>PREFERENCES</div>
           <button
             type="button"
             className={styles.navItem}
@@ -100,7 +85,7 @@ export default function Drawer({
             }}
           >
             <Settings size={18} className={styles.itemIcon} />
-            <span className={styles.itemLabel}>Settings & Preferences</span>
+            <span className={styles.itemLabel}>Settings & Account</span>
           </button>
         </div>
 

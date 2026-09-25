@@ -142,7 +142,7 @@ export default function InboxClient({
               type="button"
               className={styles.iconButton}
               onClick={() => setIsDrawerOpen(true)}
-              title="Open Navigation"
+              aria-label="Open Navigation"
             >
               <Menu size={22} />
             </button>
@@ -160,7 +160,7 @@ export default function InboxClient({
               type="button"
               className={styles.profileBtn}
               onClick={() => setIsProfileOpen(true)}
-              title="Account & Aliases"
+              aria-label="Account & Settings"
             >
               <div className={styles.profileAvatar}>
                 {userPhone ? userPhone.slice(-2) : 'PM'}
@@ -293,7 +293,7 @@ export default function InboxClient({
                           type="button"
                           className={`${styles.starBtn} ${isStarred ? styles.starBtnActive : ''}`}
                           onClick={(e) => toggleStar(chat.contact, e)}
-                          title={isStarred ? 'Unstar' : 'Star conversation'}
+                          aria-label={isStarred ? 'Unstar' : 'Star conversation'}
                         >
                           <Star size={16} fill={isStarred ? '#f9ab00' : 'none'} />
                         </button>
@@ -312,7 +312,7 @@ export default function InboxClient({
       </main>
 
       {/* Floating Action Button (FAB) for composing new email */}
-      <Link href="/compose" className={styles.fab} title="Compose New Email">
+      <Link href="/compose" className={styles.fab} aria-label="Compose New Email">
         <PenSquare size={22} />
       </Link>
 

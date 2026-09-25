@@ -60,7 +60,7 @@
   align-items: center;
   gap: 12px;
   background: var(--wa-accent);
-  color: #111b21;
+  color: #ffffff;
   text-decoration: none;
   padding: 14px 24px;
   border-radius: 16px;
@@ -81,7 +81,7 @@
 }
 
 .composeIcon {
-  color: #111b21;
+  color: #ffffff;
 }
 
 .composeLabel {
@@ -138,7 +138,7 @@
 .counterBadge {
   font-size: 11px;
   font-weight: 700;
-  color: #111b21;
+  color: #ffffff;
   background: var(--wa-accent-light);
   padding: 2px 7px;
   border-radius: 9999px;
