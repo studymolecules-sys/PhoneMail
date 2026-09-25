@@ -76,7 +76,7 @@ The application serves two distinct user experiences depending on the device:
 ## 5. Core Workflows
 
 ### 5.1 Account Creation & Auth
-1. **Web Portal**: A simple screen with Phone Number and OTP/Password fields. This is strictly for registration.
+1. **Web Portal/Mobile Web**: Enter Phone Number -> Trigger OTP via Supabase Auth (or fallback to Password only if explicitly needed). Verify and issue JWT.
 2. **IVR (Twilio)**: User calls a Toll-Free number -> Presses "1" -> Twilio webhook registers the number via Next.js API -> Sends temporary password via SMS.
 
 ### 5.2 Email Routing System
@@ -131,4 +131,5 @@ c:\Users\direc\Softwares\PhoneMail\
 - Add PWA manifest, ensure zero-stutter performance, and test accessibility.
 
 ---
-**Agent Rule**: Always check this file before generating significant architecture changes or altering the tech stack. Adhere to the zero-cost and Vanilla CSS rules rigidly.
+**Agent Rule 1**: Always check this file before generating significant architecture changes or altering the tech stack. Adhere to the zero-cost and Vanilla CSS rules rigidly.
+**Agent Rule 2**: Whenever you make a significant architecture change, update the authentication flow (e.g., from password to OTP), or alter the roadmap, you MUST actively update this `AGENTS.md` file to reflect the changes. This guarantees future agents have the exact, up-to-date context and avoids contradictions.

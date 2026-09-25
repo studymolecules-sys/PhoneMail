@@ -4,47 +4,35 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
-export async function login(formData: FormData) {
-  const supabase = createClient()
-
-  // For this prototype, we're using email/password mapped to phone_number
-  // In a real scenario with free OTP, we'd use signInWithOtp.
+export async function sendOtp(formData: FormData) {
+  const supabase = await createClient()
   const phone = formData.get('phone') as string
-  const password = formData.get('password') as string
-  const email = `${phone}@phonemail.com` // mapping phone to a dummy email for Supabase Auth if needed, or if phone auth is enabled, just use phone.
-  
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
+
+  const { error } = await supabase.auth.signInWithOtp({
+    phone,
   })
 
   if (error) {
-    redirect('/login?message=Could not authenticate user')
+    redirect(`/login?message=Could not send OTP: ${error.message}`)
   }
 
-  revalidatePath('/', 'layout')
-  redirect('/')
+  // Redirect to the same page but with a query parameter indicating OTP was sent
+  redirect(`/login?phone=${encodeURIComponent(phone)}&step=verify`)
 }
 
-export async function signup(formData: FormData) {
-  const supabase = createClient()
-
+export async function verifyOtp(formData: FormData) {
+  const supabase = await createClient()
   const phone = formData.get('phone') as string
-  const password = formData.get('password') as string
-  const email = `${phone}@phonemail.com` 
+  const otp = formData.get('otp') as string
 
-  const { error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-        data: {
-            phone_number: phone
-        }
-    }
+  const { error } = await supabase.auth.verifyOtp({
+    phone,
+    token: otp,
+    type: 'sms',
   })
 
   if (error) {
-    redirect('/login?message=Could not sign up')
+    redirect(`/login?phone=${encodeURIComponent(phone)}&step=verify&message=Invalid OTP. Please try again.`)
   }
 
   revalidatePath('/', 'layout')

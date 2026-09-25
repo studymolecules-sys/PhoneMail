@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     const digits = formData.get('Digits') as string; // What they pressed
 
     if (digits === '1') {
-      const supabase = createClient();
+      const supabase = await createClient();
       const tempPassword = Math.random().toString(36).slice(-8); // Generate 8 char password
       const email = `${from.replace('+', '')}@phonemail.com`;
 
@@ -40,8 +40,6 @@ export async function POST(request: Request) {
         }
       } else {
         // 2. Send SMS via Twilio
-        // Note: Free tier might not allow custom texts to unverified numbers.
-        // We will construct the message, but it might fail on Twilio's end if the number isn't verified in the console.
         try {
           await twilioClient.messages.create({
             body: `Welcome to PhoneMail! Your temporary password is: ${tempPassword}. Please log in and change it.`,
@@ -63,7 +61,6 @@ export async function POST(request: Request) {
         headers: { 'Content-Type': 'text/xml' },
       });
     } else {
-      // User pressed something else or nothing
       const twiml = new twilio.twiml.VoiceResponse();
       twiml.say('Invalid option selected. Goodbye.');
       return new NextResponse(twiml.toString(), {
