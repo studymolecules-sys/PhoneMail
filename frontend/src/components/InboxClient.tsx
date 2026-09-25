@@ -241,7 +241,7 @@ export default function InboxClient({
             </h3>
             <p>
               Your phone number is your universal email address. Share it with anyone to receive
-              emails directly in WhatsApp-style chat!
+              messages directly here.
             </p>
             <div className={styles.identityBadge}>
               <span>Your Email:</span>
@@ -272,7 +272,7 @@ export default function InboxClient({
                   <div className={styles.chatContent}>
                     <div className={styles.chatHeader}>
                       <h4 className={styles.contactName}>{displayName}</h4>
-                      <span className={styles.time}>
+                      <span className={styles.time} suppressHydrationWarning>
                         {formatWhatsAppTime(chat.latestMessage?.created_at)}
                       </span>
                     </div>
