@@ -1,7 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import styles from './home.module.css'
-import ChatList from './ChatList' // Client component for animations and interactivity
+import ChatList from './ChatList' 
+import Link from 'next/link'
 
 export default async function Home() {
   const supabase = await createClient()
@@ -87,12 +88,14 @@ export default async function Home() {
         )}
       </main>
 
-      <button className={styles.fab}>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-      </button>
+      <Link href="/compose">
+        <button className={styles.fab}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </button>
+      </Link>
     </div>
   )
 }
