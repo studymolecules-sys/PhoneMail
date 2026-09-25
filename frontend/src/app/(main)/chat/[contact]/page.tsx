@@ -1,10 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
-import styles from './chat.module.css'
 import { sendMessage } from './actions'
-import ChatThread from './ChatThread'
-import { ArrowLeft, MoreVertical, Send } from 'lucide-react'
+import SpikeChatView, { EmailMessage } from './SpikeChatView'
 
 export default async function ChatPage({ params }: { params: Promise<{ contact: string }> }) {
   const resolvedParams = await params
@@ -19,7 +16,9 @@ export default async function ChatPage({ params }: { params: Promise<{ contact: 
     redirect('/login')
   }
 
-  const userEmailId = `${user.phone}@phonemail.com`
+  const rawPhone = user.phone || user.user_metadata?.phone || user.email?.split('@')[0] || ''
+  const cleanDigits = rawPhone.replace(/[^\d]/g, '')
+  const userEmailId = `${cleanDigits}@phonemail.com`
 
   // Fetch emails between this user and the contact
   const { data: emails } = await supabase
@@ -38,51 +37,23 @@ export default async function ChatPage({ params }: { params: Promise<{ contact: 
     .eq('recipient_address', userEmailId)
     .eq('read_status', false)
 
+  const typedEmails: EmailMessage[] = (emails || []).map((e) => ({
+    id: e.id,
+    sender_address: e.sender_address,
+    recipient_address: e.recipient_address,
+    subject: e.subject || '',
+    body_text: e.body_text || '',
+    body_html: e.body_html || '',
+    created_at: e.created_at,
+    read_status: e.read_status,
+  }))
+
   return (
-    <div className={styles.chatContainer}>
-      <header className={styles.header}>
-        <Link href="/" className={styles.backButton}>
-          <ArrowLeft size={24} />
-        </Link>
-        <div className={styles.headerTitle}>
-          <h2>{contact.replace('@phonemail.com', '')}</h2>
-        </div>
-        <div className={styles.headerActions}>
-          <button className={styles.iconButton}>
-            <MoreVertical size={20} />
-          </button>
-        </div>
-      </header>
-
-      <main className={styles.messageArea}>
-        <ChatThread messages={emails || []} currentUser={userEmailId} />
-      </main>
-
-      <form className={styles.inputArea} action={sendMessage}>
-        <input type="hidden" name="to" value={contact} />
-        <input type="hidden" name="from" value={userEmailId} />
-        
-        <input
-          type="text"
-          name="subject"
-          className={styles.subjectInput}
-          placeholder="Subject (Optional)"
-        />
-        
-        <div className={styles.messageRow}>
-          <input
-            type="text"
-            name="body"
-            className={styles.messageInput}
-            placeholder="Type a message..."
-            required
-            autoComplete="off"
-          />
-          <button type="submit" className={styles.sendButton}>
-            <Send size={18} />
-          </button>
-        </div>
-      </form>
-    </div>
+    <SpikeChatView
+      contact={contact}
+      currentUser={userEmailId}
+      initialMessages={typedEmails}
+      onSendMessage={sendMessage}
+    />
   )
 }

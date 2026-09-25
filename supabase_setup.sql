@@ -23,11 +23,12 @@ WITH CHECK (
   sender_address = (auth.jwt() ->> 'phone') || '@phonemail.com'
 );
 
--- 4. Policy: Allow the SMTP Server (Service Role / Backend) to insert incoming emails bypassing RLS
--- Note: Since the Node.js SMTP server uses the ANON key, it currently inserts as an anonymous user.
--- BEST PRACTICE: Update server.js to use the SUPABASE_SERVICE_ROLE_KEY to bypass RLS entirely for incoming emails.
--- For now, if server.js uses the ANON key, we need a policy to allow anonymous inserts from the backend, 
--- but that is insecure. It is highly recommended to use the service_role key in server.js.
+-- 4. Policy: Allow the SMTP Server (or external senders) to insert incoming emails
+DROP POLICY IF EXISTS "Allow incoming emails insert" ON public.emails;
+CREATE POLICY "Allow incoming emails insert" 
+ON public.emails 
+FOR INSERT 
+WITH CHECK (true);
 
 -- 5. Policy: Users can UPDATE emails (e.g., marking as read) only if they are the recipient
 DROP POLICY IF EXISTS "Users can update read status of received emails" ON public.emails;

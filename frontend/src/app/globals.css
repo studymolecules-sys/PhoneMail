@@ -1,62 +1,73 @@
 :root {
-  /* Colors - Light Mode */
-  --bg-primary: #f8fafc;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #f1f5f9;
-  
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-tertiary: #94a3b8;
-  
-  --accent-primary: #3b82f6; /* Modern crisp blue */
-  --accent-hover: #2563eb;
-  --accent-light: #eff6ff;
-  
-  --border-light: #e2e8f0;
-  
-  /* Chat Bubbles */
-  --bubble-sent: #3b82f6;
-  --bubble-sent-text: #ffffff;
-  --bubble-received: #ffffff;
-  --bubble-received-text: #0f172a;
-  
-  /* Shadows & Layout */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-full: 9999px;
-
-  /* Typography */
+  /* Common Fonts */
   --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Colors - Dark Mode */
-    --bg-primary: #09090b;
-    --bg-secondary: #18181b;
-    --bg-tertiary: #27272a;
-    
-    --text-primary: #f8fafc;
-    --text-secondary: #cbd5e1;
-    --text-tertiary: #64748b;
-    
-    --accent-primary: #3b82f6;
-    --accent-hover: #60a5fa;
-    --accent-light: #1e3a8a;
-    
-    --border-light: #27272a;
-    
-    /* Chat Bubbles */
-    --bubble-sent: #3b82f6;
-    --bubble-sent-text: #ffffff;
-    --bubble-received: #27272a;
-    --bubble-received-text: #f8fafc;
-  }
+  /* WhatsApp Theme Tokens (Default Mobile) */
+  --wa-header-bg: #202c33;
+  --wa-header-text: #e9edef;
+  --wa-app-bg: #0c1317;
+  --wa-panel-bg: #111b21;
+  --wa-chat-bg: #0b141a;
+  --wa-item-hover: #202c33;
+  --wa-item-active: #2a3942;
+  --wa-accent: #00a884;
+  --wa-accent-light: #25d366;
+  --wa-bubble-sent: #005c4b;
+  --wa-bubble-sent-text: #e9edef;
+  --wa-bubble-received: #202c33;
+  --wa-bubble-received-text: #e9edef;
+  --wa-text-primary: #e9edef;
+  --wa-text-secondary: #8696a0;
+  --wa-text-muted: #667781;
+  --wa-border: #222d34;
+  --wa-tick-blue: #53bdeb;
+
+  /* Gmail Theme Tokens (Default Desktop) */
+  --gm-app-bg: #f6f8fc;
+  --gm-surface-bg: #ffffff;
+  --gm-sidebar-bg: #f6f8fc;
+  --gm-active-pill: #c2e7ff;
+  --gm-active-text: #001d35;
+  --gm-primary-btn: #0b57d0;
+  --gm-primary-btn-hover: #0842a0;
+  --gm-text-primary: #1f1f1f;
+  --gm-text-secondary: #444746;
+  --gm-text-muted: #727775;
+  --gm-border: #e0e3e7;
+  --gm-hover-row: #f2f6fc;
+  --gm-star: #e8710a;
+  --gm-star-empty: #c4c7c5;
+
+  /* Default Active Bindings */
+  --bg-primary: #0c1317;
+  --bg-secondary: #111b21;
+  --bg-tertiary: #202c33;
+  
+  --text-primary: #e9edef;
+  --text-secondary: #8696a0;
+  --text-tertiary: #667781;
+  
+  --accent-primary: #00a884;
+  --accent-hover: #02906f;
+  --accent-light: rgba(0, 168, 132, 0.15);
+  
+  --border-light: #222d34;
+  
+  /* Chat Bubbles */
+  --bubble-sent: #005c4b;
+  --bubble-sent-text: #e9edef;
+  --bubble-received: #202c33;
+  --bubble-received-text: #e9edef;
+  
+  /* Shadows & Layout */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.2);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.2);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-full: 9999px;
 }
 
 html {

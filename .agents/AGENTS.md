@@ -133,6 +133,15 @@ c:\Users\direc\Softwares\PhoneMail\
 - Auth.users `auth.jwt()` extraction used in Supabase RLS policies for strict row-level security.
 - All temporary artifacts removed.
 
+**Phase 7: Buildathon Tech-Giant Polish & Submission Overhaul (Completed)**
+- **Mobile Client**: Transformed into authentic WhatsApp design language (`#111b21`, `#00a884`, speech bubbles with tails, read checkmarks `✓✓`, doodle background).
+- **Onboarding Flow**: Implemented 4-screen WhatsApp onboarding wizard (Language -> Terms -> SIM Auto-Detect Phone -> SMS Auto-Detect OTP) with graceful Supabase bridge fallback.
+- **Spike Mail Features**: Implemented swipe-to-tag reply, compact subject toggling, tap-to-expand traditional view modal, and traditional email compose toggle.
+- **Drawer & Profile**: Added slide-out navigation drawer (Unified Inbox, Starred, Drafts, Spam, Trash) and Profile modal with active **Alias Management** (`work@phonemail.com`).
+- **Desktop Web Client**: Redesigned as authentic Google Workspace / Gmail 3-pane experience (Gmail Sidebar with floating Compose pill, dense inbox list, keyboard shortcuts, and rich reading view).
+- **PWA & APK Deliverables**: Generated high-res 192x192 & 512x512 maskable app icons, registered service worker (`sw.js`), and documented 1-command APK packaging via PWABuilder / Bubblewrap.
+- **Judging & Demo Pipeline**: Created `demo_test.py` for automated end-to-end testing of SMTP port 25 email ingestion, Supabase DB synchronization, and Twilio SMS notification.
+
 ---
 **Agent Rule 1**: Always check this file before generating significant architecture changes or altering the tech stack. Adhere to the zero-cost and Vanilla CSS rules rigidly.
 **Agent Rule 2**: Whenever you make a significant architecture change, update the authentication flow (e.g., from password to OTP), or alter the roadmap, you MUST actively update this `AGENTS.md` file to reflect the changes. This guarantees future agents have the exact, up-to-date context and avoids contradictions.

@@ -1,9 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
-import styles from './inbox.module.css'
-import ChatList from './ChatList' 
-import Link from 'next/link'
-import { Menu, PenSquare } from 'lucide-react'
 import { redirect } from 'next/navigation'
+import InboxClient, { ChatItemData } from './InboxClient'
 
 export default async function InboxPane() {
   const supabase = await createClient()
@@ -16,7 +13,9 @@ export default async function InboxPane() {
     redirect('/login')
   }
 
-  const userEmailId = `${user.phone}@phonemail.com`
+  const rawPhone = user.phone || user.user_metadata?.phone || user.email?.split('@')[0] || '1234567890'
+  const cleanDigits = rawPhone.replace(/[^\d]/g, '')
+  const userEmailId = `${cleanDigits}@phonemail.com`
 
   const { data: emails, error } = await supabase
     .from('emails')
@@ -25,7 +24,7 @@ export default async function InboxPane() {
     .order('created_at', { ascending: false })
 
   if (error) {
-    console.error('Error fetching emails:', error)
+    console.error('Error fetching emails from Supabase:', error)
   }
 
   const chatsMap = new Map<string, any[]>()
@@ -40,7 +39,7 @@ export default async function InboxPane() {
     chatsMap.get(otherParty)!.push(email)
   })
 
-  const chatList = Array.from(chatsMap.entries()).map(([contact, messages]) => {
+  let chatList: ChatItemData[] = Array.from(chatsMap.entries()).map(([contact, messages]) => {
     return {
       contact,
       latestMessage: messages[0],
@@ -50,47 +49,32 @@ export default async function InboxPane() {
     }
   })
 
+  // If inbox is brand new, provide a welcome email thread so the demo looks active and polished
+  if (chatList.length === 0) {
+    const welcomeContact = '18005550199@phonemail.com'
+    chatList = [
+      {
+        contact: welcomeContact,
+        latestMessage: {
+          id: 'welcome-01',
+          sender_address: welcomeContact,
+          recipient_address: userEmailId,
+          subject: 'Welcome to PhoneMail!',
+          body_text: 'Your phone number is now your universal email ID. Anyone in the world can email you at this address.',
+          body_html: '<p>Your phone number is now your universal email ID. Anyone in the world can email you at this address.</p>',
+          created_at: new Date().toISOString(),
+          read_status: false,
+        },
+        unreadCount: 1,
+      }
+    ]
+  }
+
   return (
-    <div className={styles.appContainer}>
-      <header className={styles.header}>
-        <div className={styles.topBar}>
-          <button className={styles.iconButton}>
-            <Menu size={20} />
-          </button>
-          <div className={styles.searchContainer}>
-            <input type="text" placeholder="Search..." className={styles.searchInput} />
-          </div>
-          <button className={styles.iconButton}>
-            <div className={styles.profileAvatar}>
-              {user.phone?.slice(-2)}
-            </div>
-          </button>
-        </div>
-        
-        <div className={styles.filterChips}>
-          <button className={`${styles.chip} ${styles.chipActive}`}>All</button>
-          <button className={styles.chip}>Unread</button>
-          <button className={styles.chip}>Attachments</button>
-          <button className={styles.chip}>Favorites</button>
-        </div>
-      </header>
-
-      <main className={styles.mainContent}>
-        {chatList.length === 0 ? (
-          <div className={styles.emptyState}>
-            <p>No messages yet. Give out your number!</p>
-            <p className={styles.identityText}>Your ID: {userEmailId}</p>
-          </div>
-        ) : (
-          <ChatList chats={chatList} />
-        )}
-      </main>
-
-      <Link href="/compose">
-        <button className={styles.fab}>
-          <PenSquare size={24} />
-        </button>
-      </Link>
-    </div>
+    <InboxClient
+      initialChats={chatList}
+      userEmailId={userEmailId}
+      userPhone={rawPhone}
+    />
   )
 }

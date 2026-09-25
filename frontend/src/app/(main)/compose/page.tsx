@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import styles from './compose.module.css'
 import { sendMessage } from '../chat/[contact]/actions'
-import { Send } from 'lucide-react'
+import { Send, ArrowLeft, Users, Info } from 'lucide-react'
 
 export default async function ComposePage() {
   const supabase = await createClient()
@@ -16,57 +16,69 @@ export default async function ComposePage() {
     redirect('/login')
   }
 
-  const userEmailId = `${user.phone}@phonemail.com`
+  const rawPhone = user.phone || user.user_metadata?.phone || user.email?.split('@')[0] || '1234567890'
+  const cleanDigits = rawPhone.replace(/[^\d]/g, '')
+  const userEmailId = `${cleanDigits}@phonemail.com`
 
   return (
     <div className={styles.composeContainer}>
       <header className={styles.header}>
-        <Link href="/" className={styles.cancelButton}>
-          Cancel
-        </Link>
-        <div className={styles.headerTitle}>
-          <h2>New Message</h2>
+        <div className={styles.headerLeft}>
+          <Link href="/" className={styles.backButton}>
+            <ArrowLeft size={22} />
+          </Link>
+          <div className={styles.headerTitle}>
+            <h2>Compose Email</h2>
+            <span className={styles.headerSubtitle}>From: {userEmailId}</span>
+          </div>
         </div>
-        <div className={styles.headerSpacer}></div>
       </header>
 
       <form className={styles.form} action={sendMessage}>
         <input type="hidden" name="from" value={userEmailId} />
-        
+
+        <div className={styles.noticeBanner}>
+          <Info size={16} className={styles.noticeIcon} />
+          <span>
+            Enter any phone number or email ID. To create a <strong>Group Chat</strong>, enter 2 or more phone numbers separated by commas.
+          </span>
+        </div>
+
         <div className={styles.inputGroup}>
           <label htmlFor="to">To:</label>
-          <input 
-            type="text" 
-            id="to" 
-            name="to" 
-            placeholder="e.g. 9876543210@phonemail.com" 
-            required 
+          <input
+            type="text"
+            id="to"
+            name="to"
+            placeholder="e.g. 9876543210, 5550192834 or user@domain.com"
+            required
             className={styles.input}
+            autoFocus
           />
         </div>
 
         <div className={styles.inputGroup}>
           <label htmlFor="subject">Subject:</label>
-          <input 
-            type="text" 
-            id="subject" 
-            name="subject" 
-            placeholder="Optional" 
+          <input
+            type="text"
+            id="subject"
+            name="subject"
+            placeholder="Email subject..."
             className={styles.input}
           />
         </div>
 
         <div className={styles.editorArea}>
-          <textarea 
-            name="body" 
-            placeholder="Write your email here..." 
+          <textarea
+            name="body"
+            placeholder="Write your email here..."
             className={styles.textarea}
             required
-          ></textarea>
+          />
         </div>
 
-        <button type="submit" className={styles.sendFab}>
-          <Send size={24} />
+        <button type="submit" className={styles.sendFab} title="Send Email">
+          <Send size={22} />
         </button>
       </form>
     </div>

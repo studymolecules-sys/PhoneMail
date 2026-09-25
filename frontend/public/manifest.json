@@ -4,8 +4,8 @@
   "description": "The instant messaging email client.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#3b82f6",
+  "background_color": "#111b21",
+  "theme_color": "#00a884",
   "icons": [
     {
       "src": "/icon-192x192.png",

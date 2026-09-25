@@ -2,46 +2,62 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: var(--bg-primary);
+  background-color: var(--wa-app-bg);
+  color: var(--wa-text-primary);
   font-family: var(--font-sans);
+  overflow: hidden;
+  position: relative;
 }
 
 .header {
   display: flex;
   align-items: center;
-  background-color: var(--bg-secondary);
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border-light);
+  justify-content: space-between;
+  background-color: var(--wa-header-bg);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--wa-border);
   z-index: 10;
 }
 
-.cancelButton {
-  color: var(--text-secondary);
-  text-decoration: none;
-  font-size: 15px;
-  font-weight: 500;
-  flex: 1;
-  transition: color 0.2s;
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.cancelButton:hover {
-  color: var(--text-primary);
+.backButton {
+  color: var(--wa-text-secondary);
+  text-decoration: none;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.backButton:hover {
+  background-color: var(--wa-item-hover);
+  color: var(--wa-text-primary);
 }
 
 .headerTitle {
-  flex: 2;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
 }
 
 .headerTitle h2 {
   margin: 0;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--wa-text-primary);
 }
 
-.headerSpacer {
-  flex: 1;
+.headerSubtitle {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--wa-accent-light);
 }
 
 .form {
@@ -53,32 +69,50 @@
   width: 100%;
 }
 
+.noticeBanner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: rgba(0, 168, 132, 0.08);
+  border-bottom: 1px solid var(--wa-border);
+  font-size: 12px;
+  color: var(--wa-text-secondary);
+  line-height: 1.4;
+}
+
+.noticeIcon {
+  color: var(--wa-accent-light);
+  flex-shrink: 0;
+}
+
 .inputGroup {
   display: flex;
   align-items: center;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border-light);
-  background-color: var(--bg-secondary);
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--wa-border);
+  background-color: var(--wa-panel-bg);
+  gap: 12px;
 }
 
 .inputGroup label {
-  color: var(--text-secondary);
-  font-size: 14px;
-  font-weight: 500;
-  width: 68px;
+  color: var(--wa-text-muted);
+  font-size: 13.5px;
+  font-weight: 600;
+  width: 60px;
 }
 
 .input {
   flex: 1;
   border: none;
-  font-size: 15px;
+  font-size: 14.5px;
   outline: none;
   background: transparent;
-  color: var(--text-primary);
+  color: var(--wa-text-primary);
 }
 
 .input::placeholder {
-  color: var(--text-tertiary);
+  color: var(--wa-text-muted);
 }
 
 .editorArea {
@@ -86,46 +120,47 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
-  background-color: var(--bg-secondary);
+  background-color: var(--wa-app-bg);
 }
 
 .textarea {
   flex: 1;
   border: none;
   resize: none;
-  font-size: 16px;
+  font-size: 15px;
   outline: none;
   line-height: 1.6;
   background: transparent;
-  color: var(--text-primary);
+  color: var(--wa-text-primary);
+  box-sizing: border-box;
 }
 
 .textarea::placeholder {
-  color: var(--text-tertiary);
+  color: var(--wa-text-muted);
 }
 
 .sendFab {
-  position: fixed;
+  position: absolute;
   bottom: 28px;
   right: 28px;
   width: 56px;
   height: 56px;
-  border-radius: var(--radius-full);
-  background: linear-gradient(135deg, var(--accent-primary), #4f46e5);
-  color: white;
+  border-radius: 50%;
+  background: var(--wa-accent);
+  color: #111b21;
   border: none;
-  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.35);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 100;
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s;
 }
 
 .sendFab:hover {
+  background: #02906f;
   transform: scale(1.08) translateY(-2px);
-  box-shadow: 0 12px 24px rgba(59, 130, 246, 0.45);
 }
 
 .sendFab:active {
