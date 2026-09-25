@@ -23,14 +23,14 @@ export default async function LoginPage({
           {!isVerifyStep ? (
             <>
               <label className={styles.label} htmlFor="phone">
-                Phone Number (Include Country Code)
+                Phone Number
               </label>
               <input
                 className={styles.input}
                 id="phone"
                 name="phone"
                 type="tel"
-                placeholder="e.g. 919876543210"
+                placeholder="e.g. 9876543210"
                 defaultValue={params?.phone || ''}
                 required
               />

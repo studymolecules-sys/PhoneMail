@@ -7,9 +7,10 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.117.2",
+    "dotenv": "^16.6.1",
     "mailparser": "^3.7.1",
     "pg": "^8.11.3",
-    "smtp-server": "^3.13.3",
-    "dotenv": "^16.4.5"
+    "smtp-server": "^3.13.3"
   }
 }

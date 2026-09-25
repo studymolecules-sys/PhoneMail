@@ -1,52 +1,18 @@
-require('dotenv').config();
+require('dotenv').config({ path: '../frontend/.env.local' });
 const { SMTPServer } = require('smtp-server');
 const { simpleParser } = require('mailparser');
-const { Pool } = require('pg');
+const { createClient } = require('@supabase/supabase-js');
 
-const pool = new Pool({
-  user: process.env.DB_USER || 'phonemail',
-  host: process.env.DB_HOST || 'localhost',
-  database: process.env.DB_NAME || 'phonemail_db',
-  password: process.env.DB_PASSWORD || 'phonemail_password',
-  port: process.env.DB_PORT || 5432,
-});
+// We are using the exact same Supabase keys you provided in the frontend!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-pool.on('error', (err) => {
-  console.error('Unexpected error on idle client', err);
-  process.exit(-1);
-});
-
-async function initDB() {
-  const client = await pool.connect();
-  try {
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS emails (
-        id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-        sender_address VARCHAR(255),
-        recipient_address VARCHAR(255),
-        subject TEXT,
-        body_html TEXT,
-        body_text TEXT,
-        read_status BOOLEAN DEFAULT FALSE,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
-    
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS users (
-        id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-        phone_number VARCHAR(20) UNIQUE,
-        password VARCHAR(255),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
-    console.log('Database initialized');
-  } finally {
-    client.release();
-  }
+if (!supabaseUrl || !supabaseKey) {
+  console.error("Missing Supabase credentials in environment variables.");
+  process.exit(1);
 }
 
-initDB().catch(console.error);
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const server = new SMTPServer({
   secure: false,
@@ -58,19 +24,33 @@ const server = new SMTPServer({
         return callback(err);
       }
       
-      const sender = parsed.from.value[0].address;
-      const to = parsed.to.value.map(val => val.address).join(', ');
+      const sender = parsed.from?.value[0]?.address || 'unknown_sender';
+      const to = parsed.to?.value.map(val => val.address).join(', ') || 'unknown_recipient';
       
-      console.log(`Received email from ${sender} to ${to}`);
+      console.log(`\n📧 Received new email from ${sender} to ${to}`);
+      console.log(`Subject: ${parsed.subject}`);
       
       try {
-        await pool.query(
-          'INSERT INTO emails (sender_address, recipient_address, subject, body_html, body_text) VALUES ($1, $2, $3, $4, $5)',
-          [sender, to, parsed.subject, parsed.html, parsed.text]
-        );
-        console.log('Email saved to database.');
+        const { data, error } = await supabase
+          .from('emails')
+          .insert([
+            {
+              sender_address: sender,
+              recipient_address: to,
+              subject: parsed.subject || '(No Subject)',
+              body_html: parsed.html || '',
+              body_text: parsed.text || '',
+              read_status: false,
+            }
+          ]);
+
+        if (error) {
+          console.error('❌ Supabase insertion error:', error);
+        } else {
+          console.log('✅ Email successfully saved to Supabase database.');
+        }
       } catch (dbErr) {
-        console.error('Database error:', dbErr);
+        console.error('❌ Unexpected database error:', dbErr);
       }
       
       callback();
@@ -79,5 +59,5 @@ const server = new SMTPServer({
 });
 
 server.listen(25, '0.0.0.0', () => {
-  console.log('SMTP Server running on port 25');
+  console.log('🚀 SMTP Server running on port 25 and connected to Supabase.');
 });
