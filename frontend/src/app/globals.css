@@ -103,6 +103,31 @@ a {
 
 button, input, textarea {
   font-family: var(--font-sans);
+  outline: none;
+}
+
+button:focus-visible, input:focus-visible, textarea:focus-visible, a:focus-visible {
+  outline: 2px solid var(--wa-accent-light);
+  outline-offset: 2px;
+}
+
+/* Beautiful Custom Webkit Scrollbars globally */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(134, 150, 160, 0.2);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(134, 150, 160, 0.4);
 }
 
 @media (prefers-color-scheme: dark) {
