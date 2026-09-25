@@ -1,13 +1,10 @@
 import { NextResponse } from 'next/server'
 import twilio from 'twilio'
 
-// Initialize Twilio client
-// Requires TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER in .env.local
-const accountSid = process.env.TWILIO_ACCOUNT_SID
-const authToken = process.env.TWILIO_AUTH_TOKEN
-const twilioNumber = process.env.TWILIO_PHONE_NUMBER
-
-const client = twilio(accountSid, authToken)
+const twilioClient = twilio(
+  process.env.TWILIO_ACCOUNT_SID,
+  process.env.TWILIO_AUTH_TOKEN
+)
 
 export async function POST(request: Request) {
   try {
@@ -15,40 +12,31 @@ export async function POST(request: Request) {
     const { to, sender, subject } = body
 
     if (!to || !sender) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    // Extract the raw phone number from the email address
-    // e.g., '9876543210@phonemail.com' -> '+19876543210' or similar
-    const phoneNumberStr = to.split('@')[0]
+    // Extract the actual phone number from the recipient address (e.g. 9279581387@phonemail.com -> 9279581387)
+    const phoneNumber = to.split('@')[0]
     
-    // Simple validation/formatting (Assuming US numbers or E.164 format)
-    const formattedPhone = phoneNumberStr.startsWith('+') 
-      ? phoneNumberStr 
-      : `+1${phoneNumberStr}`
+    // We append the + to ensure it is in E.164 format for Twilio (assuming the user registered without the +)
+    // In a real app we'd validate the country code strictly.
+    const twilioFormattedNumber = phoneNumber.startsWith('+') ? phoneNumber : `+${phoneNumber}`
 
-    const message = `📧 PhoneMail: You have a new message from ${sender.replace('@phonemail.com', '')}. Subject: ${subject || 'No Subject'}`
+    // Format a clean subject
+    const safeSubject = subject ? `Subject: ${subject}` : '(No Subject)'
+    const senderDisplay = sender.replace('@phonemail.com', '')
 
-    // Send SMS via Twilio
-    if (accountSid && authToken && twilioNumber) {
-      await client.messages.create({
-        body: message,
-        from: twilioNumber,
-        to: formattedPhone,
-      })
-      return NextResponse.json({ success: true, message: 'SMS sent successfully' })
-    } else {
-      console.warn('Twilio credentials missing. SMS simulated:', message)
-      return NextResponse.json({ success: true, message: 'Simulated SMS (Missing Twilio Config)' })
-    }
+    const messageBody = `New email from ${senderDisplay}. ${safeSubject}. Open PhoneMail to reply.`
+
+    await twilioClient.messages.create({
+      body: messageBody,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to: twilioFormattedNumber,
+    })
+
+    return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Error sending Twilio SMS:', error)
-    return NextResponse.json(
-      { error: 'Failed to send SMS' },
-      { status: 500 }
-    )
+    console.error('Error sending Twilio notification:', error)
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
