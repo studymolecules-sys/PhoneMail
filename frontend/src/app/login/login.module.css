@@ -3,25 +3,26 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background-color: #f0f2f5;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-primary);
+  font-family: var(--font-sans);
 }
 
 .card {
-  background: white;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  background: var(--bg-secondary);
+  padding: 48px 40px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-light);
   width: 100%;
-  max-width: 400px;
+  max-width: 440px;
   text-align: center;
-  animation: slideUp 0.5s ease-out;
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(24px);
   }
   to {
     opacity: 1;
@@ -30,16 +31,18 @@
 }
 
 .title {
-  margin: 0 0 10px;
-  font-size: 28px;
+  margin: 0 0 12px;
+  font-size: 32px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
 }
 
 .subtitle {
-  margin: 0 0 30px;
-  font-size: 14px;
-  color: #666;
+  margin: 0 0 36px;
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.5;
 }
 
 .form {
@@ -50,83 +53,100 @@
 
 .label {
   margin-bottom: 8px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .input {
-  padding: 12px 16px;
-  margin-bottom: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 15px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  padding: 14px 16px;
+  margin-bottom: 24px;
+  border: 1px solid var(--border-light);
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+  font-size: 16px;
+  transition: all 0.2s ease;
   outline: none;
 }
 
+.input::placeholder {
+  color: var(--text-tertiary);
+}
+
 .input:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 4px var(--accent-light);
+  background-color: var(--bg-secondary);
 }
 
 .buttonGroup {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .buttonPrimary {
-  padding: 12px;
-  background-color: #007bff;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--accent-primary), #4f46e5);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
 }
 
 .buttonPrimary:hover {
-  background-color: #0056b3;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
+}
+
+.buttonPrimary:active {
+  transform: translateY(1px);
 }
 
 .buttonSecondary {
-  padding: 12px;
-  background-color: white;
-  color: #007bff;
-  border: 1px solid #007bff;
-  border-radius: 8px;
+  padding: 14px;
+  background-color: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
 }
 
 .buttonSecondary:hover {
-  background-color: #f0f7ff;
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
 }
 
 .error {
-  margin-top: 15px;
-  color: #d32f2f;
-  font-size: 13px;
+  margin-top: 20px;
+  color: #ef4444;
+  font-size: 14px;
+  font-weight: 500;
   text-align: center;
-  background: #fde8e8;
-  padding: 10px;
-  border-radius: 6px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  padding: 12px;
+  border-radius: var(--radius-sm);
 }
 
 .terms {
-  margin-top: 25px;
-  font-size: 12px;
-  color: #888;
+  margin-top: 32px;
+  font-size: 13px;
+  color: var(--text-tertiary);
 }
 
 .terms a {
-  color: #007bff;
+  color: var(--accent-primary);
   text-decoration: none;
+  font-weight: 500;
 }
 
 .terms a:hover {

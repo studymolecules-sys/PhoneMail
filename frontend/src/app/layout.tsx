@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -12,12 +12,28 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "PhoneMail - Instant Mail Experience",
-  description: "PhoneMail bridges the gap between instant messaging and email.",
+export const viewport: Viewport = {
+  themeColor: "#3b82f6",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export const metadata: Metadata = {
+  title: "PhoneMail",
+  description: "PhoneMail bridges the gap between instant messaging and email.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "PhoneMail",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>{children}</body>

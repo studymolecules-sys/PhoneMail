@@ -2,10 +2,12 @@ require('dotenv').config({ path: '../frontend/.env.local' });
 const { SMTPServer } = require('smtp-server');
 const { simpleParser } = require('mailparser');
 const { createClient } = require('@supabase/supabase-js');
+const http = require('http');
 
 // We are using the exact same Supabase keys you provided in the frontend!
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const webUrl = process.env.WEB_URL || 'http://localhost:3000';
 
 if (!supabaseUrl || !supabaseKey) {
   console.error("Missing Supabase credentials in environment variables.");
@@ -48,6 +50,35 @@ const server = new SMTPServer({
           console.error('❌ Supabase insertion error:', error);
         } else {
           console.log('✅ Email successfully saved to Supabase database.');
+          
+          // Trigger SMS Notification via Next.js Webhook
+          const postData = JSON.stringify({
+            to: to,
+            sender: sender,
+            subject: parsed.subject
+          });
+
+          // Use the webUrl (supports Docker 'http://web:3000' or local)
+          const webhookEndpoint = `${webUrl}/api/twilio/notify`;
+          const req = http.request(webhookEndpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Content-Length': Buffer.byteLength(postData)
+            }
+          }, (res) => {
+            res.on('data', () => {}); // consume data
+            if (res.statusCode === 200) {
+              console.log('✅ Twilio SMS notification triggered successfully.');
+            }
+          });
+
+          req.on('error', (e) => {
+            console.error(`❌ Failed to trigger Twilio webhook: ${e.message}`);
+          });
+
+          req.write(postData);
+          req.end();
         }
       } catch (dbErr) {
         console.error('❌ Unexpected database error:', dbErr);
