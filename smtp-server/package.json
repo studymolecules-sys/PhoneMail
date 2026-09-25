@@ -1,0 +1,15 @@
+{
+  "name": "phonemail-smtp",
+  "version": "1.0.0",
+  "description": "SMTP microservice for PhoneMail",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "mailparser": "^3.7.1",
+    "pg": "^8.11.3",
+    "smtp-server": "^3.13.3",
+    "dotenv": "^16.4.5"
+  }
+}

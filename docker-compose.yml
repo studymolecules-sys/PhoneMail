@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: phonemail-db
+    environment:
+      POSTGRES_USER: phonemail
+      POSTGRES_PASSWORD: phonemail_password
+      POSTGRES_DB: phonemail_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  smtp:
+    build:
+      context: ./smtp-server
+    container_name: phonemail-smtp
+    ports:
+      - "25:25"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_USER=phonemail
+      - DB_PASSWORD=phonemail_password
+      - DB_NAME=phonemail_db
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: phonemail-web
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://phonemail:phonemail_password@db:5432/phonemail_db
+    restart: unless-stopped
+
+volumes:
+  pgdata:
