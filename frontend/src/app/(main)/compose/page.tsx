@@ -3,7 +3,8 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import styles from './compose.module.css'
 import { sendMessage } from '../chat/[contact]/actions'
-import { Send, ArrowLeft, Users, Info } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
+import ComposeClientForm from './ComposeClientForm'
 
 export default async function ComposePage({
   searchParams,
@@ -38,56 +39,13 @@ export default async function ComposePage({
         </div>
       </header>
 
-      <form className={styles.form} action={sendMessage}>
-        <input type="hidden" name="from" value={userEmailId} />
-
-        <div className={styles.noticeBanner}>
-          <Info size={16} className={styles.noticeIcon} />
-          <span>
-            Enter any phone number or email ID. To create a <strong>Group Chat</strong>, enter 2 or more phone numbers separated by commas.
-          </span>
-        </div>
-
-        <div className={styles.inputGroup}>
-          <label htmlFor="to">To:</label>
-          <input
-            type="text"
-            id="to"
-            name="to"
-            placeholder="e.g. 9876543210, 5550192834 or user@domain.com"
-            defaultValue={searchParams?.to || ''}
-            required
-            className={styles.input}
-            autoFocus
-          />
-        </div>
-
-        <div className={styles.inputGroup}>
-          <label htmlFor="subject">Subject:</label>
-          <input
-            type="text"
-            id="subject"
-            name="subject"
-            placeholder="Email subject..."
-            defaultValue={searchParams?.subject || ''}
-            className={styles.input}
-          />
-        </div>
-
-        <div className={styles.editorArea}>
-          <textarea
-            name="body"
-            placeholder="Write your email here..."
-            className={styles.textarea}
-            defaultValue={searchParams?.body || ''}
-            required
-          />
-        </div>
-
-        <button type="submit" className={styles.sendFab} aria-label="Send Email">
-          <Send size={22} />
-        </button>
-      </form>
+      <ComposeClientForm
+        userEmailId={userEmailId}
+        sendMessage={sendMessage}
+        initialTo={searchParams?.to}
+        initialSubject={searchParams?.subject}
+        initialBody={searchParams?.body}
+      />
     </div>
   )
 }

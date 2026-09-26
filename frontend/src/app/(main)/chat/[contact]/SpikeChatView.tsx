@@ -20,6 +20,7 @@ import {
   ExternalLink,
   Lock,
 } from 'lucide-react'
+import RichTextEditor from '@/components/RichTextEditor'
 
 export interface EmailMessage {
   id: string
@@ -51,6 +52,7 @@ export default function SpikeChatView({
   const [isTraditionalComposeOpen, setIsTraditionalComposeOpen] = useState(false)
   const [subjectText, setSubjectText] = useState('')
   const [messageBody, setMessageBody] = useState('')
+  const [messageHtml, setMessageHtml] = useState('')
   const [isSending, setIsSending] = useState(false)
 
   const endRef = useRef<HTMLDivElement>(null)
@@ -113,7 +115,7 @@ export default function SpikeChatView({
       recipient_address: contact,
       subject: finalSubject,
       body_text: fullBody,
-      body_html: `<p>${fullBody.replace(/\n/g, '<br/>')}</p>`,
+      body_html: messageHtml || `<p>${fullBody.replace(/\n/g, '<br/>')}</p>`,
       created_at: new Date().toISOString(),
       read_status: false,
     }
@@ -219,11 +221,25 @@ export default function SpikeChatView({
                       </div>
                     )}
 
-                    {/* Footer: Time + Ticks */}
+                    {/* Footer: Time + Ticks + View Full Email */}
                     <div className={styles.bubbleFooter}>
                       <span className={styles.msgTime}>{formatTime(msg.created_at)}</span>
                       {isMe && (
                         <CheckCheck size={15} className={styles.tickIcon} />
+                      )}
+                      {msg.body_html && msg.body_html !== `<p>${msg.body_text}</p>` && (
+                        <button
+                          type="button"
+                          className={styles.viewFullBtn}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setSelectedEmail(msg)
+                          }}
+                          aria-label="View original HTML email"
+                          title="View Full Email"
+                        >
+                          <ExternalLink size={12} style={{ marginRight: '4px' }} /> View
+                        </button>
                       )}
                     </div>
 
@@ -447,13 +463,17 @@ export default function SpikeChatView({
                 />
               </div>
 
-              <div className={styles.formInputGroup} style={{ flex: 1 }}>
-                <textarea
-                  name="body"
+              <div className={styles.formInputGroup} style={{ flex: 1, overflow: 'hidden' }}>
+                <RichTextEditor
+                  value={messageBody}
+                  onChange={(html, text) => {
+                    setMessageHtml(html)
+                    setMessageBody(text)
+                  }}
                   placeholder="Compose full traditional email..."
-                  required
-                  className={styles.modalTextarea}
                 />
+                <input type="hidden" name="body" value={messageBody} />
+                <input type="hidden" name="body_html" value={messageHtml} />
               </div>
 
               <div className={styles.traditionalFooter}>

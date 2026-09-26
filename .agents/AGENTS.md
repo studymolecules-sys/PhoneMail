@@ -157,6 +157,11 @@ To win the $50k prize and beat AI competitors, we are implementing a 10-step UX 
 - **Alias Management**: Restored missing Alias ID and Language settings to `ProfileModal.tsx`, completely functional via `localStorage`.
 - **Traditional Compose**: Maintained Spike-style camera icon toggle to open a locked "Traditional Compose" modal inside chats.
 
+**Phase 8: Rich Text Formatting & Native Email rendering**
+- Built a zero-dependency `RichTextEditor.tsx` using `contenteditable` to allow bold, italic, underline, list, and link formatting without bloating the app.
+- Implemented the Rich Text Editor inside `/compose` and the Traditional Compose modal.
+- Added explicit "View Original" toggles to chat bubbles, allowing users to pop out complex HTML emails (from Gmail, newsletters, etc.) into a safe `iframe`/modal view without breaking the native WhatsApp-style chat UI.
+
 ---
 **Agent Rule 1**: Always check this file before generating significant architecture changes or altering the tech stack. Adhere to the zero-cost and Vanilla CSS rules rigidly. No Tailwind.
 **Agent Rule 2**: Do NOT revert the desktop client back to a WhatsApp clone. The desktop MUST remain Gmail-style per the AlphaStack rubric.
