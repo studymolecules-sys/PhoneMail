@@ -159,6 +159,142 @@
   padding: 0 12px;
 }
 
+/* Settings Forms */
+.settingGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settingLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--wa-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.settingHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.aliasCount {
+  font-size: 11px;
+  color: var(--wa-text-muted);
+}
+
+.settingInput, .settingSelect {
+  width: 100%;
+  background: var(--wa-app-bg);
+  border: 1px solid var(--wa-border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: var(--wa-text-primary);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.settingInput:focus, .settingSelect:focus {
+  border-color: var(--wa-accent);
+}
+
+.aliasForm {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--wa-app-bg);
+  border: 1px solid var(--wa-border);
+  border-radius: 8px;
+  padding: 4px 4px 4px 14px;
+}
+
+.aliasForm:focus-within {
+  border-color: var(--wa-accent);
+}
+
+.aliasForm .settingInput {
+  background: transparent;
+  border: none;
+  padding: 6px 0;
+  flex: 1;
+}
+
+.aliasForm .settingInput:focus {
+  border: none;
+}
+
+.aliasDomain {
+  font-size: 13px;
+  color: var(--wa-text-muted);
+}
+
+.addAliasBtn {
+  background: var(--wa-accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform 0.1s, opacity 0.2s;
+}
+
+.addAliasBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.addAliasBtn:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.addAliasBtn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.aliasList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.aliasItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--wa-app-bg);
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--wa-border);
+  font-size: 13px;
+}
+
+.deleteAliasBtn {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.deleteAliasBtn:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
 .signoutForm {
   margin-top: 8px;
 }

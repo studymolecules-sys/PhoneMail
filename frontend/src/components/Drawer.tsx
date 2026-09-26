@@ -1,7 +1,7 @@
 'use client'
 
 import styles from './Drawer.module.css'
-import { Inbox, Settings, X, Shield } from 'lucide-react'
+import { Inbox, Settings, X, Shield, FileText, AlertOctagon, Trash2 } from 'lucide-react'
 
 interface DrawerProps {
   isOpen: boolean
@@ -26,6 +26,9 @@ export default function Drawer({
 
   const navItems = [
     { id: 'all', label: 'All Chats', icon: Inbox },
+    { id: 'drafts', label: 'Drafts', icon: FileText },
+    { id: 'spam', label: 'Spam', icon: AlertOctagon },
+    { id: 'trash', label: 'Trash', icon: Trash2 },
   ]
 
   const handleItemClick = (id: string) => {

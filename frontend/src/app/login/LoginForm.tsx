@@ -166,11 +166,10 @@ export default function LoginForm({
 
             {/* Mandated by Task.docx: Hyperlink to Terms of Service directly above Next button */}
             <p className={styles.termsAgreement}>
-              By signing up, you agree to our{' '}
+              By signing up, you agree to the{' '}
               <a href="#terms-modal" className={styles.legalLink}>
                 Terms of Service
-              </a>{' '}
-              and Privacy Policy.
+              </a>
             </p>
 
             <button type="submit" className={styles.desktopNextButton}>
