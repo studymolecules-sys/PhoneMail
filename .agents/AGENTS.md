@@ -134,14 +134,25 @@ c:\Users\direc\Softwares\PhoneMail\
 - Auth.users `auth.jwt()` extraction used in Supabase RLS policies for strict row-level security.
 - All temporary artifacts removed.
 
-**Phase 7: $50k Buildathon Masterplan (Current Phase)**
-- **Strict Separation of Clients**: Desktop users receive a bespoke `GmailDesktopClient.tsx` (Light theme, table layout) while mobile users receive the `ClientShell.tsx` WhatsApp layout, split purely via CSS media queries for instant responsive wow-factor.
-- **Advanced UX (Anti-AI-Slop)**: Implemented premium tactile and visual features to prove human-level polish:
-  - **Glassmorphism**: Mobile headers and search bars utilize `backdrop-filter: blur(20px)` and translucent backgrounds.
-  - **Haptic Feedback**: Wired up `navigator.vibrate` on critical actions (sending, starring).
-  - **Keyboard Shortcuts**: Superhuman-style shortcuts in the desktop client (`c`, `Esc`).
-  - **Alias Management**: Restored missing Alias ID and Language settings to `ProfileModal.tsx`, making them fully functional via `localStorage` state management rather than fake placeholders.
-  - **Traditional Compose**: Maintained the mandatory Spike-style camera icon toggle to open a locked "Traditional Compose" modal.
+**Phase 7: $50k Buildathon Masterplan & UX Overhaul**
+To win the $50k prize and beat AI competitors, we are implementing a 10-step UX Masterplan to make the app feel like a premium native OS application.
+
+**Masterplan Checklist:**
+- [x] **1. Frosted Glass UI (Glassmorphism)**: Mobile headers and FAB upgraded with translucent blurring and premium gradients.
+- [x] **2. Tactile Haptic Feedback (Web)**: `navigator.vibrate` integrated for critical actions (sending, starring).
+- [x] **3. Superhuman-Style Keyboard Shortcuts**: Native shortcuts (`C`, `Esc`) added to Desktop Gmail client.
+- [x] **4. Dynamic Island Notifications**: Built custom `Toast.tsx` system replacing generic browser alerts.
+- [ ] **5. Swipe-to-Action Physics**: Mobile chat list items can be swiped to reveal quick actions.
+- [ ] **6. Morphing Micro-Animations**: FAB smoothly morphs and scales when pressed.
+- [ ] **7. Intelligent "Zero Data" Magic States**: Empty inboxes guide the user with subtle animations.
+- [ ] **8. Staggered Animated Filter Chips**: Mobile chips use native iOS segment control physics.
+- [ ] **9. Fluid Conversation Transitions**: Chat screens slide in over the inbox seamlessly.
+- [ ] **10. PWA Offline Polish**: Optimistic UI and loading skeletons for slow networks.
+
+**Additional Phase 7 Adjustments:**
+- **Strict Separation of Clients**: Desktop users receive a bespoke `GmailDesktopClient.tsx` (Light theme, table layout) while mobile users receive the `ClientShell.tsx` WhatsApp layout, split purely via CSS media queries.
+- **Alias Management**: Restored missing Alias ID and Language settings to `ProfileModal.tsx`, completely functional via `localStorage`.
+- **Traditional Compose**: Maintained Spike-style camera icon toggle to open a locked "Traditional Compose" modal inside chats.
 
 ---
 **Agent Rule 1**: Always check this file before generating significant architecture changes or altering the tech stack. Adhere to the zero-cost and Vanilla CSS rules rigidly. No Tailwind.

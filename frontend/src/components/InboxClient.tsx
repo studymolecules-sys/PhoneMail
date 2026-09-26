@@ -196,35 +196,37 @@ export default function InboxClient({
         </div>
 
         {/* Filter Chips mandated by Task.docx: All, Unread, Attachments, Favorites */}
-        <div className={styles.filterChips}>
-          <button
-            type="button"
-            className={`${styles.chip} ${filterChip === 'all' ? styles.chipActive : ''}`}
-            onClick={() => setFilterChip('all')}
-          >
-            All
-          </button>
-          <button
-            type="button"
-            className={`${styles.chip} ${filterChip === 'unread' ? styles.chipActive : ''}`}
-            onClick={() => setFilterChip('unread')}
-          >
-            Unread
-          </button>
-          <button
-            type="button"
-            className={`${styles.chip} ${filterChip === 'favorites' ? styles.chipActive : ''}`}
-            onClick={() => setFilterChip('favorites')}
-          >
-            Favorites
-          </button>
-          <button
-            type="button"
-            className={`${styles.chip} ${filterChip === 'attachments' ? styles.chipActive : ''}`}
-            onClick={() => setFilterChip('attachments')}
-          >
-            Attachments
-          </button>
+        <div className={styles.filterChipsContainer}>
+          <div className={styles.filterChips}>
+            <button
+              type="button"
+              className={`${styles.chip} ${filterChip === 'all' ? styles.chipActiveText : ''}`}
+              onClick={() => setFilterChip('all')}
+            >
+              All
+            </button>
+            <button
+              type="button"
+              className={`${styles.chip} ${filterChip === 'unread' ? styles.chipActiveText : ''}`}
+              onClick={() => setFilterChip('unread')}
+            >
+              Unread
+            </button>
+            <button
+              type="button"
+              className={`${styles.chip} ${filterChip === 'favorites' ? styles.chipActiveText : ''}`}
+              onClick={() => setFilterChip('favorites')}
+            >
+              Favorites
+            </button>
+            <button
+              type="button"
+              className={`${styles.chip} ${filterChip === 'attachments' ? styles.chipActiveText : ''}`}
+              onClick={() => setFilterChip('attachments')}
+            >
+              Attachments
+            </button>
+          </div>
         </div>
       </header>
 
@@ -251,8 +253,8 @@ export default function InboxClient({
               <strong>{userEmailId}</strong>
             </div>
 
-            <Link href="/compose" className={styles.emptyActionBtn}>
-              <PenSquare size={16} /> Compose New Email
+            <Link href={`/compose?to=${encodeURIComponent(userEmailId)}&subject=Magic%20Test%20Email&body=This%20is%20a%20test%20email%20sent%20from%20my%20own%20inbox!`} className={styles.emptyActionBtn}>
+              <Sparkles size={16} /> Send a Magic Test Email
             </Link>
           </div>
         ) : (

@@ -5,7 +5,11 @@ import styles from './compose.module.css'
 import { sendMessage } from '../chat/[contact]/actions'
 import { Send, ArrowLeft, Users, Info } from 'lucide-react'
 
-export default async function ComposePage() {
+export default async function ComposePage({
+  searchParams,
+}: {
+  searchParams: { to?: string; subject?: string; body?: string }
+}) {
   const supabase = await createClient()
 
   const {
@@ -51,6 +55,7 @@ export default async function ComposePage() {
             id="to"
             name="to"
             placeholder="e.g. 9876543210, 5550192834 or user@domain.com"
+            defaultValue={searchParams?.to || ''}
             required
             className={styles.input}
             autoFocus
@@ -64,6 +69,7 @@ export default async function ComposePage() {
             id="subject"
             name="subject"
             placeholder="Email subject..."
+            defaultValue={searchParams?.subject || ''}
             className={styles.input}
           />
         </div>
@@ -73,6 +79,7 @@ export default async function ComposePage() {
             name="body"
             placeholder="Write your email here..."
             className={styles.textarea}
+            defaultValue={searchParams?.body || ''}
             required
           />
         </div>
