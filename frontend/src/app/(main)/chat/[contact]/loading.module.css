@@ -1,0 +1,100 @@
+.skeletonContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  background-color: var(--wa-app-bg);
+}
+
+.header {
+  height: 60px;
+  background-color: var(--wa-header-bg);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 16px;
+  border-bottom: 1px solid var(--wa-border);
+}
+
+.backBtn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--wa-item-hover);
+  animation: pulse 1.5s infinite;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nameLine {
+  width: 120px;
+  height: 14px;
+  border-radius: 4px;
+  background-color: var(--wa-item-hover);
+  animation: pulse 1.5s infinite;
+}
+
+.statusLine {
+  width: 60px;
+  height: 10px;
+  border-radius: 4px;
+  background-color: var(--wa-item-hover);
+  animation: pulse 1.5s infinite;
+}
+
+.chatArea {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.bubble {
+  height: 40px;
+  border-radius: 12px;
+  animation: pulse 1.5s infinite;
+}
+
+.received {
+  width: 60%;
+  align-self: flex-start;
+  background-color: var(--wa-bubble-received);
+}
+
+.sent {
+  width: 50%;
+  align-self: flex-end;
+  background-color: var(--wa-bubble-sent);
+  opacity: 0.5;
+}
+
+.short {
+  width: 30%;
+}
+
+.inputArea {
+  height: 70px;
+  background-color: var(--wa-header-bg);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+}
+
+.inputBox {
+  width: 100%;
+  height: 40px;
+  border-radius: 20px;
+  background-color: var(--wa-item-hover);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0.4; }
+}

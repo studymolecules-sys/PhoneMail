@@ -1,0 +1,62 @@
+.swipeContainer {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.backgroundActions {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  background-color: var(--bg-tertiary);
+  z-index: 0;
+}
+
+.actionLeft, .actionRight {
+  width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  transition: transform 0.2s, opacity 0.2s;
+  opacity: 0.6;
+}
+
+.actionLeft {
+  background-color: #f9ab00; /* Star yellow */
+  padding-right: 20px;
+  justify-content: flex-start;
+  padding-left: 24px;
+}
+
+.actionRight {
+  background-color: #ef4444; /* Archive/Delete red */
+  padding-left: 20px;
+  justify-content: flex-end;
+  padding-right: 24px;
+}
+
+.actionActive {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.foregroundContent {
+  position: relative;
+  z-index: 1;
+  background-color: var(--wa-app-bg);
+  width: 100%;
+  will-change: transform;
+}
+
+.chatLinkWrapper {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  width: 100%;
+}

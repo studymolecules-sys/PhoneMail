@@ -2,12 +2,14 @@
 
 import { useState, useMemo, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import styles from './inbox.module.css'
 import Drawer from './Drawer'
 import ProfileModal from './ProfileModal'
 import { Menu, Search, PenSquare, Star, CheckCheck, X, Sparkles } from 'lucide-react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
+import SwipeableChatRow from './SwipeableChatRow'
 
 export interface ChatItemData {
   contact: string
@@ -44,6 +46,8 @@ export default function InboxClient({
   const [starredContacts, setStarredContacts] = useState<string[]>([])
 
   const listRef = useRef<HTMLDivElement>(null)
+  const fabRef = useRef<HTMLAnchorElement>(null)
+  const router = useRouter()
 
   // Persist starred contacts in localStorage
   useEffect(() => {
@@ -57,9 +61,11 @@ export default function InboxClient({
     }
   }, [])
 
-  const toggleStar = (contact: string, e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
+  const toggleStar = (contact: string, e?: React.MouseEvent | React.TouchEvent) => {
+    if (e) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
     const updated = starredContacts.includes(contact)
       ? starredContacts.filter((c) => c !== contact)
       : [...starredContacts, contact]
@@ -133,6 +139,22 @@ export default function InboxClient({
       return 'Yesterday'
     }
     return date.toLocaleDateString([], { month: 'short', day: 'numeric' })
+  }
+
+  const handleFabClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    if (!fabRef.current) return
+    
+    // Morphing animation
+    gsap.to(fabRef.current, {
+      scale: 50,
+      opacity: 0,
+      duration: 0.4,
+      ease: 'power3.in',
+      onComplete: () => {
+        router.push('/compose')
+      }
+    })
   }
 
   return (
@@ -265,14 +287,17 @@ export default function InboxClient({
               const initials = displayName.slice(0, 2).toUpperCase()
 
               return (
-                <Link
-                  href={`/chat/${encodeURIComponent(chat.contact)}`}
+                <SwipeableChatRow
                   key={chat.contact}
-                  className={`chat-item-row ${styles.chatItem}`}
+                  href={`/chat/${encodeURIComponent(chat.contact)}`}
+                  contact={chat.contact}
+                  isStarred={isStarred}
+                  onToggleStar={toggleStar}
                 >
-                  <div className={styles.avatar}>
-                    <span>{initials}</span>
-                  </div>
+                  <div className={`chat-item-row ${styles.chatItem}`}>
+                    <div className={styles.avatar}>
+                      <span>{initials}</span>
+                    </div>
 
                   <div className={styles.chatContent}>
                     <div className={styles.chatHeader}>
@@ -309,7 +334,8 @@ export default function InboxClient({
                       </div>
                     </div>
                   </div>
-                </Link>
+                </div>
+                </SwipeableChatRow>
               )
             })}
           </div>
@@ -317,9 +343,15 @@ export default function InboxClient({
       </main>
 
       {/* Floating Action Button (FAB) for composing new email */}
-      <Link href="/compose" className={styles.fab} aria-label="Compose New Email">
+      <a 
+        href="/compose" 
+        ref={fabRef}
+        className={styles.fab} 
+        aria-label="Compose New Email"
+        onClick={handleFabClick}
+      >
         <PenSquare size={22} />
-      </Link>
+      </a>
 
       {/* Slide-out Navigation Drawer */}
       <Drawer

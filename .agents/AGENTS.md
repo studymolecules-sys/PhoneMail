@@ -142,12 +142,12 @@ To win the $50k prize and beat AI competitors, we are implementing a 10-step UX 
 - [x] **2. Tactile Haptic Feedback (Web)**: `navigator.vibrate` integrated for critical actions (sending, starring).
 - [x] **3. Superhuman-Style Keyboard Shortcuts**: Native shortcuts (`C`, `Esc`) added to Desktop Gmail client.
 - [x] **4. Dynamic Island Notifications**: Built custom `Toast.tsx` system replacing generic browser alerts.
-- [ ] **5. Swipe-to-Action Physics**: Mobile chat list items can be swiped to reveal quick actions.
-- [ ] **6. Morphing Micro-Animations**: FAB smoothly morphs and scales when pressed.
-- [ ] **7. Intelligent "Zero Data" Magic States**: Empty inboxes guide the user with subtle animations.
-- [ ] **8. Staggered Animated Filter Chips**: Mobile chips use native iOS segment control physics.
-- [ ] **9. Fluid Conversation Transitions**: Chat screens slide in over the inbox seamlessly.
-- [ ] **10. PWA Offline Polish**: Optimistic UI and loading skeletons for slow networks.
+- [x] **5. Swipe-to-Action Physics**: Mobile chat list items can be swiped to reveal quick actions.
+- [x] **6. Morphing Micro-Animations**: FAB smoothly morphs and scales when pressed.
+- [x] **7. Intelligent "Zero Data" Magic States**: Empty inboxes guide the user with subtle animations.
+- [x] **8. Staggered Animated Filter Chips**: Mobile chips use native iOS segment control physics.
+- [x] **9. Fluid Conversation Transitions**: Chat screens slide in over the inbox seamlessly.
+- [x] **10. PWA Offline Polish**: Optimistic UI and loading skeletons for slow networks.
 
 **Additional Phase 7 Adjustments:**
 - **Strict Separation of Clients**: Desktop users receive a bespoke `GmailDesktopClient.tsx` (Light theme, table layout) while mobile users receive the `ClientShell.tsx` WhatsApp layout, split purely via CSS media queries.
