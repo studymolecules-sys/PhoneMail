@@ -94,27 +94,27 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
         <aside className={`${styles.sidebar} ${isSidebarCollapsed ? styles.collapsed : ''}`}>
           <Link href="/compose" className={styles.composeBtn}>
             <span className={styles.composeIcon}>+</span>
-            Compose
+            <span className={styles.navText}>Compose</span>
           </Link>
 
           <nav className={styles.nav}>
             <button className={`${styles.navItem} ${activeFolder === 'inbox' ? styles.active : ''}`} onClick={() => { setActiveFolder('inbox'); setSelectedEmail(null); }}>
-              <Inbox size={18} /> Inbox
+              <Inbox size={18} /> <span className={styles.navText}>Inbox</span>
             </button>
             <button className={`${styles.navItem} ${activeFolder === 'starred' ? styles.active : ''}`} onClick={() => { setActiveFolder('starred'); setSelectedEmail(null); }}>
-              <Star size={18} /> Starred
+              <Star size={18} /> <span className={styles.navText}>Starred</span>
             </button>
             <button className={`${styles.navItem} ${activeFolder === 'sent' ? styles.active : ''}`} onClick={() => { setActiveFolder('sent'); setSelectedEmail(null); }}>
-              <Send size={18} /> Sent
+              <Send size={18} /> <span className={styles.navText}>Sent</span>
             </button>
             <button className={`${styles.navItem} ${activeFolder === 'drafts' ? styles.active : ''}`} onClick={() => { setActiveFolder('drafts'); setSelectedEmail(null); }}>
-              <FileText size={18} /> Drafts
+              <FileText size={18} /> <span className={styles.navText}>Drafts</span>
             </button>
             <button className={`${styles.navItem} ${activeFolder === 'spam' ? styles.active : ''}`} onClick={() => { setActiveFolder('spam'); setSelectedEmail(null); }}>
-              <AlertOctagon size={18} /> Spam
+              <AlertOctagon size={18} /> <span className={styles.navText}>Spam</span>
             </button>
             <button className={`${styles.navItem} ${activeFolder === 'trash' ? styles.active : ''}`} onClick={() => { setActiveFolder('trash'); setSelectedEmail(null); }}>
-              <Trash2 size={18} /> Trash
+              <Trash2 size={18} /> <span className={styles.navText}>Trash</span>
             </button>
           </nav>
         </aside>

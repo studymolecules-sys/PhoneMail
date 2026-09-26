@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import styles from './ProfileModal.module.css'
-import { X, Copy, Check, LogOut, Plus, Trash2, Moon, Sun } from 'lucide-react'
+import { X, Copy, Check, LogOut, Plus, Trash2, Moon, Sun, Save } from 'lucide-react'
 import { showToast } from './Toast'
+import { updateUserProfile } from '@/app/actions'
 
 interface ProfileModalProps {
   isOpen: boolean
@@ -24,6 +25,18 @@ export default function ProfileModal({
   const [language, setLanguage] = useState('en')
   const [displayName, setDisplayName] = useState('')
   const [theme, setTheme] = useState('light')
+  const [isSaving, setIsSaving] = useState(false)
+
+  // Translations Map
+  const translations: any = {
+    en: { title: 'Account Settings', save: 'Save Changes', name: 'Display Name', lang: 'Language', theme: 'Theme', aliases: 'Manage Alias IDs', signout: 'Sign Out', add: 'Add', saving: 'Saving & Syncing...', themeDark: 'Switch to Dark Mode', themeLight: 'Switch to Light Mode' },
+    es: { title: 'Configuración de la cuenta', save: 'Guardar cambios', name: 'Nombre para mostrar', lang: 'Idioma', theme: 'Tema', aliases: 'Gestionar Alias', signout: 'Cerrar sesión', add: 'Añadir', saving: 'Guardando...', themeDark: 'Cambiar a modo oscuro', themeLight: 'Cambiar a modo claro' },
+    fr: { title: 'Paramètres du compte', save: 'Enregistrer les modifications', name: 'Nom d\'affichage', lang: 'Langue', theme: 'Thème', aliases: 'Gérer les Alias', signout: 'Déconnexion', add: 'Ajouter', saving: 'Enregistrement...', themeDark: 'Passer en mode sombre', themeLight: 'Passer en mode clair' },
+    hi: { title: 'खाता सेटिंग्स', save: 'परिवर्तन सहेजें', name: 'प्रदर्शन नाम', lang: 'भाषा', theme: 'थीम', aliases: 'उपनाम प्रबंधित करें', signout: 'साइन आउट', add: 'जोड़ें', saving: 'सहेज रहा है...', themeDark: 'डार्क मोड पर स्विच करें', themeLight: 'लाइट मोड पर स्विच करें' },
+    ta: { title: 'கணக்கு அமைப்புகள்', save: 'மாற்றங்களை சேமிக்கவும்', name: 'காட்சி பெயர்', lang: 'மொழி', theme: 'தீம்', aliases: 'மாற்றுப் பெயர்களை நிர்வகி', signout: 'வெளியேறு', add: 'சேர்', saving: 'சேமிக்கிறது...', themeDark: 'இருண்ட பயன்முறைக்கு மாறுக', themeLight: 'ஒளி பயன்முறைக்கு மாறுக' }
+  }
+  
+  const t = translations[language] || translations.en
 
   // Apply theme to document
   useEffect(() => {
@@ -96,11 +109,40 @@ export default function ProfileModal({
     localStorage.setItem('pm_theme', newTheme)
   }
 
+  const handleSave = async () => {
+    setIsSaving(true)
+    try {
+      // Save locally
+      localStorage.setItem('pm_name', displayName)
+      localStorage.setItem('pm_lang', language)
+      localStorage.setItem('pm_theme', theme)
+      localStorage.setItem('pm_aliases', JSON.stringify(aliases))
+
+      // Save to cloud
+      const res = await updateUserProfile({
+        display_name: displayName,
+        language,
+        theme,
+        aliases
+      })
+      if (res.success) {
+        showToast('Profile saved and synced successfully', 'success')
+        setTimeout(() => onClose(), 500)
+      } else {
+        showToast('Failed to sync with cloud: ' + res.error, 'error')
+      }
+    } catch (e) {
+      showToast('An error occurred while saving', 'error')
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
-          <h2>Account Settings</h2>
+          <h2>{t.title}</h2>
           <button className={styles.closeBtn} onClick={onClose} aria-label="Close Settings">
             <X size={20} />
           </button>
@@ -124,8 +166,8 @@ export default function ProfileModal({
           </div>
 
           {/* Personal Details */}
-          <div className={styles.settingGroup}>
-            <label className={styles.settingLabel}>Display Name</label>
+          <div className={`${styles.settingGroup} ${styles.settingRow}`}>
+            <label className={styles.settingLabel}>{t.name}</label>
             <input 
               type="text" 
               className={styles.settingInput} 
@@ -135,32 +177,33 @@ export default function ProfileModal({
             />
           </div>
 
-          <div className={styles.settingGroup}>
-            <label className={styles.settingLabel}>Language</label>
+          <div className={`${styles.settingGroup} ${styles.settingRow}`}>
+            <label className={styles.settingLabel}>{t.lang}</label>
             <select className={styles.settingSelect} value={language} onChange={handleLangChange}>
               <option value="en">English (US)</option>
               <option value="es">Español</option>
               <option value="fr">Français</option>
               <option value="hi">हिन्दी</option>
+              <option value="ta">தமிழ் (Tamil)</option>
             </select>
           </div>
 
-          <div className={styles.settingGroup}>
-            <label className={styles.settingLabel}>Theme</label>
+          <div className={`${styles.settingGroup} ${styles.settingRow}`}>
+            <label className={styles.settingLabel}>{t.theme}</label>
             <button 
               className={styles.themeToggleBtn} 
               onClick={toggleTheme}
               type="button"
             >
               {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
-              <span>{theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}</span>
+              <span>{theme === 'light' ? t.themeDark : t.themeLight}</span>
             </button>
           </div>
 
           {/* Alias IDs */}
           <div className={styles.settingGroup}>
             <div className={styles.settingHeaderRow}>
-              <label className={styles.settingLabel}>Manage Alias IDs</label>
+              <label className={styles.settingLabel}>{t.aliases}</label>
               <span className={styles.aliasCount}>{aliases.length}/5</span>
             </div>
             
@@ -175,7 +218,7 @@ export default function ProfileModal({
               />
               <span className={styles.aliasDomain}>@pmail.vixiya.com</span>
               <button type="submit" className={styles.addAliasBtn} disabled={!newAlias.trim() || aliases.length >= 5}>
-                <Plus size={16} /> Add
+                <Plus size={16} /> {t.add}
               </button>
             </form>
 
@@ -193,11 +236,18 @@ export default function ProfileModal({
             )}
           </div>
 
+          {/* Save Button */}
+          <div className={styles.settingGroup}>
+            <button className={styles.saveBtn} onClick={handleSave} disabled={isSaving}>
+              {isSaving ? t.saving : <><Save size={16} /> <span>{t.save}</span></>}
+            </button>
+          </div>
+
           {/* Sign Out Button */}
           <form action="/auth/signout" method="POST" className={styles.signoutForm}>
             <button type="submit" className={styles.signoutBtn}>
               <LogOut size={16} />
-              <span>Sign Out</span>
+              <span>{t.signout}</span>
             </button>
           </form>
         </div>

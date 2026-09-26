@@ -3,22 +3,12 @@
   flex-direction: column;
   height: 100vh;
   background-color: var(--gm-app-bg);
-  color: var(--wa-text-primary);
+  color: var(--gm-text-primary);
   font-family: var(--font-sans);
   overflow: hidden;
 }
 
-/* Override global vars to Gmail Light Theme explicitly for desktop */
-.desktopContainer {
-  --wa-text-primary: #202124;
-  --wa-text-secondary: #5f6368;
-  --wa-border: #e0e0e0;
-  --gm-app-bg: #f6f8fc;
-  --gm-panel-bg: #ffffff;
-  --gm-item-hover: #f1f3f4;
-  --gm-item-active: #d3e3fd;
-  --gm-accent: #0b57d0;
-}
+
 
 .header {
   display: flex;
@@ -45,12 +35,12 @@
   border-radius: 50%;
 }
 .hamburger:hover { background-color: var(--gm-item-hover); }
-.line { width: 18px; height: 2px; background-color: var(--wa-text-secondary); }
+.line { width: 18px; height: 2px; background-color: var(--gm-text-secondary); }
 
 .brandTitle {
   font-size: 22px;
   font-weight: 400;
-  color: var(--wa-text-secondary);
+  color: var(--gm-text-secondary);
   margin: 0;
 }
 
@@ -72,14 +62,14 @@
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
-.searchIcon { color: var(--wa-text-secondary); }
+.searchIcon { color: var(--gm-text-secondary); }
 
 .searchInput {
   flex: 1;
   background: transparent;
   border: none;
   font-size: 16px;
-  color: var(--wa-text-primary);
+  color: var(--gm-text-primary);
   outline: none;
 }
 
@@ -94,7 +84,7 @@
 .iconBtn {
   background: transparent;
   border: none;
-  color: var(--wa-text-secondary);
+  color: var(--gm-text-secondary);
   padding: 10px;
   border-radius: 50%;
   cursor: pointer;
@@ -166,7 +156,7 @@
   padding: 8px 24px;
   border: none;
   background: transparent;
-  color: var(--wa-text-primary);
+  color: var(--gm-text-primary);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -192,12 +182,12 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid var(--wa-border);
+  border: 1px solid var(--gm-border);
 }
 
 .listToolbar {
   padding: 8px 16px;
-  border-bottom: 1px solid var(--wa-border);
+  border-bottom: 1px solid var(--gm-border);
   display: flex;
   align-items: center;
 }
@@ -205,7 +195,7 @@
 .toolbarIcon {
   background: transparent;
   border: none;
-  color: var(--wa-text-secondary);
+  color: var(--gm-text-secondary);
   padding: 8px;
   border-radius: 50%;
   cursor: pointer;
@@ -221,7 +211,7 @@
   display: flex;
   align-items: center;
   padding: 8px 16px;
-  border-bottom: 1px solid var(--wa-border);
+  border-bottom: 1px solid var(--gm-border);
   cursor: pointer;
   background-color: #f2f6fc;
 }
@@ -252,15 +242,15 @@
   text-overflow: ellipsis;
 }
 
-.snippetDash { color: var(--wa-text-secondary); padding: 0 4px; }
-.snippetText { color: var(--wa-text-secondary); }
+.snippetDash { color: var(--gm-text-secondary); padding: 0 4px; }
+.snippetText { color: var(--gm-text-secondary); }
 
 .emailDate {
   width: 60px;
   text-align: right;
   font-size: 12px;
   font-weight: 500;
-  color: var(--wa-text-secondary);
+  color: var(--gm-text-secondary);
 }
 
 /* Read View */
@@ -272,19 +262,19 @@
 
 .readHeader {
   padding: 12px 16px;
-  border-bottom: 1px solid var(--wa-border);
+  border-bottom: 1px solid var(--gm-border);
 }
 
 .backToListBtn {
   background: transparent;
   border: none;
-  color: var(--wa-text-secondary);
+  color: var(--gm-text-secondary);
   font-weight: 500;
   cursor: pointer;
   padding: 8px;
   border-radius: 4px;
 }
-.backToListBtn:hover { background-color: var(--gm-item-hover); color: var(--wa-text-primary); }
+.backToListBtn:hover { background-color: var(--gm-item-hover); color: var(--gm-text-primary); }
 
 .readSubject {
   font-size: 22px;
@@ -314,7 +304,7 @@
 
 .readDate {
   font-size: 12px;
-  color: var(--wa-text-secondary);
+  color: var(--gm-text-secondary);
   margin-top: 2px;
 }
 
@@ -322,7 +312,7 @@
   padding: 0 24px 24px 76px;
   font-size: 14px;
   line-height: 1.6;
-  color: var(--wa-text-primary);
+  color: var(--gm-text-primary);
   flex: 1;
   overflow-y: auto;
 }
@@ -330,7 +320,7 @@
 .emptyState {
   padding: 32px;
   text-align: center;
-  color: var(--wa-text-secondary);
+  color: var(--gm-text-secondary);
   font-size: 14px;
 }
 .spin {
@@ -346,9 +336,13 @@
 }
 .collapsed .composeBtn {
   border-radius: 50%;
-  width: 44px;
+  width: 48px;
+  height: 48px;
   padding: 0;
+  display: flex;
+  align-items: center;
   justify-content: center;
+  margin: 0 auto 16px auto;
 }
 .collapsed .composeBtn span {
   margin: 0;
@@ -361,3 +355,9 @@
   margin: 0;
 }
 
+.navText {
+  display: inline;
+}
+.collapsed .navText {
+  display: none;
+}
