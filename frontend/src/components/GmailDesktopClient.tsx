@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import styles from './GmailDesktopClient.module.css'
 import { Search, Inbox, Star, Send, FileText, AlertOctagon, Trash2, Settings, UserCircle, RefreshCcw } from 'lucide-react'
 import ProfileModal from './ProfileModal'
@@ -18,6 +19,29 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
   const [searchQuery, setSearchQuery] = useState('')
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [selectedEmail, setSelectedEmail] = useState<EmailMessage | null>(null)
+  const router = useRouter()
+
+  // Superhuman-style Keyboard Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger if user is typing in an input or textarea
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
+
+      switch (e.key) {
+        case 'c':
+          e.preventDefault()
+          router.push('/compose')
+          break
+        case 'Escape':
+          e.preventDefault()
+          if (isProfileOpen) setIsProfileOpen(false)
+          else if (selectedEmail) setSelectedEmail(null)
+          break
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [router, isProfileOpen, selectedEmail])
 
   // Simple folder logic based on sender/recipient
   const filteredEmails = rawEmails.filter(email => {

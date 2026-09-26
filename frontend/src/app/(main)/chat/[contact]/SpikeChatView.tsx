@@ -130,9 +130,15 @@ export default function SpikeChatView({
     formData.append('body', fullBody)
 
     try {
+      if (typeof navigator !== 'undefined' && navigator.vibrate) {
+        navigator.vibrate([20, 50, 20]) // Success pattern
+      }
       await onSendMessage(formData)
     } catch (err) {
       console.error('Failed to dispatch message:', err)
+      if (typeof navigator !== 'undefined' && navigator.vibrate) {
+        navigator.vibrate([50, 100, 50]) // Error pattern
+      }
     } finally {
       setIsSending(false)
     }

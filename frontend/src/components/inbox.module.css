@@ -9,11 +9,14 @@
   font-family: var(--font-sans);
 }
 
-/* WhatsApp-style Header */
+/* Premium Glassmorphism Header */
 .header {
-  background-color: var(--wa-header-bg);
+  background-color: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   padding: 12px 16px 8px;
-  border-bottom: 1px solid var(--wa-border);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
   z-index: 20;
   display: flex;
   flex-direction: column;
@@ -121,11 +124,17 @@
   position: relative;
   display: flex;
   align-items: center;
-  background: var(--wa-panel-bg);
-  border: 1px solid var(--wa-border);
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
   padding: 0 12px;
-  height: 40px;
+  height: 44px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.searchContainer:focus-within {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--wa-accent);
 }
 
 .searchIcon {
@@ -191,14 +200,15 @@
 
 .chipActive {
   background-color: var(--wa-accent);
-  color: #111b21;
+  color: #ffffff;
   font-weight: 600;
   border-color: var(--wa-accent);
+  box-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);
 }
 
 .chipActive:hover {
-  background-color: #02906f;
-  color: #111b21;
+  background-color: var(--wa-accent-light);
+  color: #ffffff;
 }
 
 /* Main Content & Chat List */
@@ -427,23 +437,23 @@
   position: absolute;
   bottom: 24px;
   right: 24px;
-  width: 56px;
-  height: 56px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
-  background: var(--wa-accent);
-  color: #111b21;
+  background: linear-gradient(135deg, var(--wa-accent), #4f46e5);
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
   z-index: 50;
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s;
   text-decoration: none;
 }
 
 .fab:hover {
-  background: #02906f;
   transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 12px 28px rgba(99, 102, 241, 0.5);
 }
 
 .fab:active {

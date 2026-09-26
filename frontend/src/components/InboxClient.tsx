@@ -65,6 +65,9 @@ export default function InboxClient({
       : [...starredContacts, contact]
     setStarredContacts(updated)
     localStorage.setItem('pm_starred', JSON.stringify(updated))
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      navigator.vibrate(50)
+    }
   }
 
   // Filter chats by search query, filter chip, and active folder
