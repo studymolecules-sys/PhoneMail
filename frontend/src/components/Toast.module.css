@@ -1,0 +1,49 @@
+.toastContainer {
+  position: fixed;
+  top: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100px);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.toastContainer.slideIn {
+  transform: translateX(-50%) translateY(0);
+}
+
+.toastPill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(24, 24, 27, 0.85); /* Dark Glass */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 12px 20px;
+  border-radius: 9999px;
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+/* Modifier Colors based on ToastType */
+.success {
+  border-bottom: 2px solid #10b981; /* Emerald */
+}
+
+.error {
+  border-bottom: 2px solid #ef4444; /* Red */
+}
+
+.info {
+  border-bottom: 2px solid #6366f1; /* Indigo */
+}
+
+.success svg { color: #10b981; }
+.error svg { color: #ef4444; }
+.info svg { color: #6366f1; }

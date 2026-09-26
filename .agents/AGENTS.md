@@ -8,7 +8,7 @@ This document serves as the master blueprint and instruction set for AI agents w
 **PhoneMail** is a modern, zero-cost, high-performance web application mimicking an email application but utilizing phone numbers as email IDs (e.g., `9876543210@phonemail.com`). 
 The application serves two distinct user experiences depending on the device:
 - **Mobile Client (PWA)**: Implements a "WhatsApp-style" chat interface where emails are grouped by sender, providing an instant messenger feel (similar to Spike Mail).
-- **Desktop Web Client**: Provides a robust, multi-pane experience completely unified under the same WhatsApp-style Dark theme.
+- **Desktop Web Client**: Provides a robust, multi-pane experience mimicking **Gmail** (Light Theme, traditional email table list). This is a strict requirement from the Buildathon rubric to distinguish the web client from the mobile client.
 
 **Key Requirements & Constraints:**
 - **Zero Cost**: Maximize free tiers (Supabase, Twilio free trial, Node.js local SMTP).
@@ -47,9 +47,10 @@ The application serves two distinct user experiences depending on the device:
   - A compact Subject field rests above the message input box. Hidden on replies, visible on new threads.
   - **Gestures**: Swipe right on a message to reply (links to original email). Tap long emails to expand into traditional view.
 
-### B. Desktop Web Client (Unified WhatsApp Web UX)
-- **Goal**: High information density and productivity with a cohesive, seamless extension of the mobile app. No mixed light/dark modes.
-- **Layout**: Multi-pane layout styled strictly in Dark Slate and Emerald Green to match the mobile WhatsApp design language.
+### B. Desktop Web Client (Gmail UX)
+- **Goal**: High information density and productivity matching the Gmail web interface.
+- **Layout**: 3-pane layout (Sidebar -> Inbox List -> Reading Pane) styled in a sleek, premium Light Theme (`--gm-app-bg: #f6f8fc`).
+- **Features**: Native keyboard shortcuts (e.g., 'c' to compose, 'Esc' to clear selection). No chat-style interface on Desktop.
 
 ---
 
@@ -133,16 +134,16 @@ c:\Users\direc\Softwares\PhoneMail\
 - Auth.users `auth.jwt()` extraction used in Supabase RLS policies for strict row-level security.
 - All temporary artifacts removed.
 
-**Phase 7: Buildathon Tech-Giant Polish & Submission Overhaul (Completed)**
-- **Mobile Client**: Transformed into authentic WhatsApp design language (`#111b21`, `#00a884`, speech bubbles with tails, read checkmarks `✓✓`, doodle background).
-- **Onboarding Flow**: Implemented 4-screen WhatsApp onboarding wizard (Language -> Terms -> SIM Auto-Detect Phone -> SMS Auto-Detect OTP) with graceful Supabase bridge fallback.
-- **Spike Mail Features**: Implemented swipe-to-tag reply, compact subject toggling, tap-to-expand traditional view modal, and traditional email compose toggle.
-- **Drawer & Profile**: Added slide-out navigation drawer (Unified Inbox, Starred, Drafts, Spam, Trash) and Profile modal with active **Alias Management** (`work@phonemail.com`).
-- **Desktop Web Client**: Unified with the WhatsApp design language (Dark Slate & Emerald Green) to eliminate the mixed light/dark mode clash. Implemented sleek webkit scrollbars, tactile button scaling, and removed all default browser focus outlines.
-- **UX Writing**: Strictly "Show, don't tell." Removed all technical jargon (Supabase, SMTP, RLS) from user-facing components, replacing empty states with minimalist UI and consumer-friendly terms (End-to-end encrypted).
-- **PWA & APK Deliverables**: Generated high-res 192x192 & 512x512 maskable app icons, registered service worker (`sw.js`), and documented 1-command APK packaging via PWABuilder / Bubblewrap.
-- **Judging & Demo Pipeline**: Created `demo_test.py` for automated end-to-end testing of SMTP port 25 email ingestion, Supabase DB synchronization, and Twilio SMS notification.
+**Phase 7: $50k Buildathon Masterplan (Current Phase)**
+- **Strict Separation of Clients**: Desktop users receive a bespoke `GmailDesktopClient.tsx` (Light theme, table layout) while mobile users receive the `ClientShell.tsx` WhatsApp layout, split purely via CSS media queries for instant responsive wow-factor.
+- **Advanced UX (Anti-AI-Slop)**: Implemented premium tactile and visual features to prove human-level polish:
+  - **Glassmorphism**: Mobile headers and search bars utilize `backdrop-filter: blur(20px)` and translucent backgrounds.
+  - **Haptic Feedback**: Wired up `navigator.vibrate` on critical actions (sending, starring).
+  - **Keyboard Shortcuts**: Superhuman-style shortcuts in the desktop client (`c`, `Esc`).
+  - **Alias Management**: Restored missing Alias ID and Language settings to `ProfileModal.tsx`, making them fully functional via `localStorage` state management rather than fake placeholders.
+  - **Traditional Compose**: Maintained the mandatory Spike-style camera icon toggle to open a locked "Traditional Compose" modal.
 
 ---
-**Agent Rule 1**: Always check this file before generating significant architecture changes or altering the tech stack. Adhere to the zero-cost and Vanilla CSS rules rigidly.
-**Agent Rule 2**: Whenever you make a significant architecture change, update the authentication flow (e.g., from password to OTP), or alter the roadmap, you MUST actively update this `AGENTS.md` file to reflect the changes. This guarantees future agents have the exact, up-to-date context and avoids contradictions.
+**Agent Rule 1**: Always check this file before generating significant architecture changes or altering the tech stack. Adhere to the zero-cost and Vanilla CSS rules rigidly. No Tailwind.
+**Agent Rule 2**: Do NOT revert the desktop client back to a WhatsApp clone. The desktop MUST remain Gmail-style per the AlphaStack rubric.
+**Agent Rule 3**: Do NOT implement "fake" buttons. If a button is added, it must have functional state (even if just `localStorage` or UI transitions) to maintain a $50k-quality user experience.

@@ -2,6 +2,7 @@ import ClientShell from '@/components/ClientShell'
 import Sidebar from '@/components/Sidebar'
 import InboxPane from '@/components/InboxPane'
 import GmailDesktopClient from '@/components/GmailDesktopClient'
+import Toast from '@/components/Toast'
 import { createClient } from '@/lib/supabase/server'
 import splitStyles from '@/components/ResponsiveSplit.module.css'
 
@@ -44,6 +45,8 @@ export default async function MainLayout({
           {children}
         </ClientShell>
       </div>
+
+      <Toast />
     </>
   )
 }

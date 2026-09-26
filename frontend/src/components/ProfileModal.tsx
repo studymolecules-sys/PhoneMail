@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import styles from './ProfileModal.module.css'
 import { X, Copy, Check, LogOut, Plus, Trash2 } from 'lucide-react'
+import { showToast } from './Toast'
 
 interface ProfileModalProps {
   isOpen: boolean
@@ -42,6 +43,8 @@ export default function ProfileModal({
   const handleCopy = () => {
     navigator.clipboard.writeText(userEmailId)
     setCopied(true)
+    showToast('Email address copied to clipboard', 'success')
+    if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(50)
     setTimeout(() => setCopied(false), 2000)
   }
 
@@ -53,6 +56,10 @@ export default function ProfileModal({
       const updated = [...aliases, formattedAlias]
       setAliases(updated)
       localStorage.setItem('pm_aliases', JSON.stringify(updated))
+      showToast(`Alias ${formattedAlias} created`, 'success')
+      if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(50)
+    } else {
+      showToast('Alias already exists', 'error')
     }
     setNewAlias('')
   }
@@ -61,6 +68,7 @@ export default function ProfileModal({
     const updated = aliases.filter(a => a !== alias)
     setAliases(updated)
     localStorage.setItem('pm_aliases', JSON.stringify(updated))
+    showToast(`Alias deleted`, 'info')
   }
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {

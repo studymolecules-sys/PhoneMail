@@ -7,6 +7,7 @@ import styles from './GmailDesktopClient.module.css'
 import { Search, Inbox, Star, Send, FileText, AlertOctagon, Trash2, Settings, UserCircle, RefreshCcw } from 'lucide-react'
 import ProfileModal from './ProfileModal'
 import { EmailMessage } from '@/app/(main)/chat/[contact]/SpikeChatView'
+import { showToast } from './Toast'
 
 interface GmailDesktopClientProps {
   rawEmails: EmailMessage[]
@@ -107,13 +108,13 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
             <button className={`${styles.navItem} ${activeFolder === 'sent' ? styles.active : ''}`} onClick={() => { setActiveFolder('sent'); setSelectedEmail(null); }}>
               <Send size={18} /> Sent
             </button>
-            <button className={styles.navItem} onClick={() => alert('Drafts coming soon')}>
+            <button className={styles.navItem} onClick={() => showToast('Drafts folder is empty', 'info')}>
               <FileText size={18} /> Drafts
             </button>
-            <button className={styles.navItem} onClick={() => alert('Spam coming soon')}>
+            <button className={styles.navItem} onClick={() => showToast('Spam folder is empty', 'info')}>
               <AlertOctagon size={18} /> Spam
             </button>
-            <button className={styles.navItem} onClick={() => alert('Trash coming soon')}>
+            <button className={styles.navItem} onClick={() => showToast('Trash folder is empty', 'info')}>
               <Trash2 size={18} /> Trash
             </button>
           </nav>
