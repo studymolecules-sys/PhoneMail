@@ -9,7 +9,7 @@ function normalizeEmail(raw: string): string {
   if (!trimmed) return ''
   if (trimmed.includes('@')) return trimmed.toLowerCase()
   const digits = trimmed.replace(/[^\d+]/g, '')
-  return `${digits}@phonemail.com`
+  return `${digits}@pmail.vixiya.com`
 }
 
 export async function sendMessage(formData: FormData) {
@@ -43,7 +43,35 @@ export async function sendMessage(formData: FormData) {
   const { error } = await supabase.from('emails').insert(records)
 
   if (error) {
-    console.error('Failed to send message:', error)
+    console.error('Failed to send message internally:', error)
+  }
+
+  // Handle external outbound emails via Brevo (Sendinblue)
+  const brevoApiKey = process.env.BREVO_API_KEY
+  if (brevoApiKey) {
+    for (const recipient of recipientList) {
+      if (!recipient.endsWith('@pmail.vixiya.com')) {
+        try {
+          await fetch('https://api.brevo.com/v3/smtp/email', {
+            method: 'POST',
+            headers: {
+              'api-key': brevoApiKey,
+              'content-type': 'application/json',
+              'accept': 'application/json'
+            },
+            body: JSON.stringify({
+              sender: { email: from, name: from.split('@')[0] },
+              to: [{ email: recipient }],
+              subject: subject || 'No Subject',
+              htmlContent: `<p>${body.replace(/\n/g, '<br/>')}</p>`,
+              textContent: body
+            })
+          })
+        } catch (err) {
+          console.error('Brevo API Error:', err)
+        }
+      }
+    }
   }
 
   for (const recipient of recipientList) {

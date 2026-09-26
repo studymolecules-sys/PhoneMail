@@ -50,7 +50,7 @@ export async function verifyOtp(formData: FormData) {
   // 2. If SMS provider not connected or OTP failed, fall back to email-password bridge
   // This satisfies the Task.docx rule: "If no free OTP providers are available, use password-based authentication."
   const cleanDigits = phone.replace(/[^\d]/g, '')
-  const email = `${cleanDigits}@phonemail.com`
+  const email = `${cleanDigits}@pmail.vixiya.com`
   const fallbackPassword = `PM_${cleanDigits}_Secure!`
 
   // Attempt login with bridge credentials

@@ -22,7 +22,7 @@ export default async function ComposePage({
 
   const rawPhone = user.phone || user.user_metadata?.phone || user.email?.split('@')[0] || '1234567890'
   const cleanDigits = rawPhone.replace(/[^\d]/g, '')
-  const userEmailId = `${cleanDigits}@phonemail.com`
+  const userEmailId = `${cleanDigits}@pmail.vixiya.com`
 
   return (
     <div className={styles.composeContainer}>

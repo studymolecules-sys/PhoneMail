@@ -283,7 +283,7 @@ export default function InboxClient({
           <div ref={listRef} className={styles.chatListContainer}>
             {filteredChats.map((chat) => {
               const isStarred = starredContacts.includes(chat.contact)
-              const displayName = chat.contact.replace('@phonemail.com', '')
+              const displayName = chat.contact.replace('@pmail.vixiya.com', '')
               const initials = displayName.slice(0, 2).toUpperCase()
 
               return (

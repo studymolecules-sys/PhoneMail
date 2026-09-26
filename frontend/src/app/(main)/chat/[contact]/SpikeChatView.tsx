@@ -103,7 +103,7 @@ export default function SpikeChatView({
 
     let fullBody = messageBody.trim()
     if (replyingTo) {
-      const quotedSender = replyingTo.sender_address.replace('@phonemail.com', '')
+      const quotedSender = replyingTo.sender_address.replace('@pmail.vixiya.com', '')
       fullBody = `> On ${new Date(replyingTo.created_at).toLocaleDateString()} ${quotedSender} wrote:\n> "${replyingTo.body_text?.slice(0, 100)}"\n\n${fullBody}`
     }
 
@@ -144,7 +144,7 @@ export default function SpikeChatView({
     }
   }
 
-  const displayName = contact.replace('@phonemail.com', '')
+  const displayName = contact.replace('@pmail.vixiya.com', '')
   const initials = displayName.slice(0, 2).toUpperCase()
 
   return (
@@ -255,7 +255,7 @@ export default function SpikeChatView({
             <Reply size={16} className={styles.replyBannerIcon} />
             <div className={styles.replyBannerText}>
               <span className={styles.replySender}>
-                Replying to {replyingTo.sender_address.replace('@phonemail.com', '')}
+                Replying to {replyingTo.sender_address.replace('@pmail.vixiya.com', '')}
               </span>
               <p className={styles.replySnippet}>
                 {replyingTo.body_text?.slice(0, 70)}...

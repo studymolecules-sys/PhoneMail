@@ -37,7 +37,7 @@ export default function ChatList({ chats }: { chats: any[] }) {
             
             <div className={styles.chatContent}>
               <div className={styles.chatHeader}>
-                <h3 className={styles.contactName}>{chat.contact.replace('@phonemail.com', '')}</h3>
+                <h3 className={styles.contactName}>{chat.contact.replace('@pmail.vixiya.com', '')}</h3>
                 <span className={styles.time}>{formatTime(chat.latestMessage.created_at)}</span>
               </div>
               

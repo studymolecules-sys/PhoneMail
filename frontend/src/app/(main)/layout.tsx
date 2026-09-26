@@ -18,7 +18,7 @@ export default async function MainLayout({
 
   const rawPhone = user?.phone || user?.user_metadata?.phone || user?.email?.split('@')[0] || ''
   const cleanDigits = rawPhone.replace(/[^\d]/g, '')
-  const userEmailId = cleanDigits ? `${cleanDigits}@phonemail.com` : 'user@phonemail.com'
+  const userEmailId = cleanDigits ? `${cleanDigits}@pmail.vixiya.com` : 'user@pmail.vixiya.com'
 
   // Fetch emails for Desktop view
   const { data: emails } = await supabase

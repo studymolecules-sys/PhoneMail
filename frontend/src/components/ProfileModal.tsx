@@ -51,7 +51,7 @@ export default function ProfileModal({
   const handleAddAlias = (e: React.FormEvent) => {
     e.preventDefault()
     if (!newAlias.trim()) return
-    const formattedAlias = `${newAlias.trim().toLowerCase()}@phonemail.com`
+    const formattedAlias = `${newAlias.trim().toLowerCase()}@pmail.vixiya.com`
     if (!aliases.includes(formattedAlias)) {
       const updated = [...aliases, formattedAlias]
       setAliases(updated)
@@ -146,7 +146,7 @@ export default function ProfileModal({
                 onChange={(e) => setNewAlias(e.target.value.replace(/[^a-zA-Z0-9]/g, ''))}
                 maxLength={20}
               />
-              <span className={styles.aliasDomain}>@phonemail.com</span>
+              <span className={styles.aliasDomain}>@pmail.vixiya.com</span>
               <button type="submit" className={styles.addAliasBtn} disabled={!newAlias.trim() || aliases.length >= 5}>
                 <Plus size={16} /> Add
               </button>

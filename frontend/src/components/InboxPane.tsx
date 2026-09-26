@@ -15,7 +15,7 @@ export default async function InboxPane() {
 
   const rawPhone = user.phone || user.user_metadata?.phone || user.email?.split('@')[0] || '1234567890'
   const cleanDigits = rawPhone.replace(/[^\d]/g, '')
-  const userEmailId = `${cleanDigits}@phonemail.com`
+  const userEmailId = `${cleanDigits}@pmail.vixiya.com`
 
   const { data: emails, error } = await supabase
     .from('emails')
@@ -51,7 +51,7 @@ export default async function InboxPane() {
 
   // If inbox is brand new, provide a welcome email thread so the demo looks active and polished
   if (chatList.length === 0) {
-    const welcomeContact = '18005550199@phonemail.com'
+    const welcomeContact = '18005550199@pmail.vixiya.com'
     chatList = [
       {
         contact: welcomeContact,

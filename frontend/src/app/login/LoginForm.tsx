@@ -132,7 +132,7 @@ export default function LoginForm({
                 />
               </div>
               <span className={styles.hintText}>
-                Your PhoneMail ID will be: <strong>{phone ? phone.replace(/[^0-9]/g, '') : 'number'}@phonemail.com</strong>
+                Your PhoneMail ID will be: <strong>{phone ? phone.replace(/[^0-9]/g, '') : 'number'}@pmail.vixiya.com</strong>
               </span>
             </div>
 
@@ -307,7 +307,7 @@ export default function LoginForm({
 
               <p className={styles.waSmallHint}>
                 Your email identity will automatically be: <br />
-                <strong>{phone.replace(/[^0-9]/g, '') || 'yournumber'}@phonemail.com</strong>
+                <strong>{phone.replace(/[^0-9]/g, '') || 'yournumber'}@pmail.vixiya.com</strong>
               </p>
 
               <div className={styles.waButtonColumn}>

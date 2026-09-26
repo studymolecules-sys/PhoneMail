@@ -18,7 +18,7 @@ export default async function ChatPage({ params }: { params: Promise<{ contact: 
 
   const rawPhone = user.phone || user.user_metadata?.phone || user.email?.split('@')[0] || ''
   const cleanDigits = rawPhone.replace(/[^\d]/g, '')
-  const userEmailId = `${cleanDigits}@phonemail.com`
+  const userEmailId = `${cleanDigits}@pmail.vixiya.com`
 
   // Fetch emails between this user and the contact
   const { data: emails } = await supabase

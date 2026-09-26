@@ -22,7 +22,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({
-  userEmailId = 'user@phonemail.com',
+  userEmailId = 'user@pmail.vixiya.com',
   userPhone = '+15550192834',
 }: SidebarProps) {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)

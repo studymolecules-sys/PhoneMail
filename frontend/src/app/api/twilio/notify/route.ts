@@ -15,7 +15,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    // Extract the actual phone number from the recipient address (e.g. 9279581387@phonemail.com -> 9279581387)
+    // Extract the actual phone number from the recipient address (e.g. 9279581387@pmail.vixiya.com -> 9279581387)
     const phoneNumber = to.split('@')[0]
     
     // We append the + to ensure it is in E.164 format for Twilio (assuming the user registered without the +)
@@ -24,7 +24,7 @@ export async function POST(request: Request) {
 
     // Format a clean subject
     const safeSubject = subject ? `Subject: ${subject}` : '(No Subject)'
-    const senderDisplay = sender.replace('@phonemail.com', '')
+    const senderDisplay = sender.replace('@pmail.vixiya.com', '')
 
     const messageBody = `New email from ${senderDisplay}. ${safeSubject}. Open PhoneMail to reply.`
 

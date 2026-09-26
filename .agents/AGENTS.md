@@ -80,9 +80,10 @@ The application serves two distinct user experiences depending on the device:
 1. **Web Portal/Mobile Web**: Enter Phone Number -> Trigger OTP via Supabase Auth (or fallback to Password only if explicitly needed). Verify and issue JWT.
 2. **IVR (Twilio)**: User calls a Toll-Free number -> Presses "1" -> Twilio webhook registers the number via Next.js API -> Sends temporary password via SMS.
 
-### 5.2 Email Routing System
-- **Receiving**: The Node.js `smtp-server` runs on Port 25. It intercepts emails aimed at `@phonemail.com`, parses the MIME data, extracts the phone number, and inserts the record into the PostgreSQL `emails` table.
-- **SMS Notification**: If the user doesn't have the Mobile App logged in, trigger Twilio to send a generic notification SMS: `"You have received an email from <Sender>. Subject: <Subject>."`
+### 5.2 Email Routing System (Cloud Architecture)
+- **Receiving (Cloudflare Email Routing)**: Cloudflare intercepts raw emails aimed at `*@pmail.vixiya.com` and passes them to a Cloudflare Email Worker. The worker parses the MIME data and sends a JSON POST payload to our Vercel Next.js `/api/incoming-email` webhook, which inserts into Supabase.
+- **Sending (Brevo API)**: Next.js backend leverages the Brevo API to send outward emails to external domains (e.g. `@gmail.com`). Internal emails bypass this and route directly via Supabase.
+- **SMS Notification**: Twilio sends a generic notification SMS for offline users.
 
 ---
 
@@ -99,7 +100,8 @@ c:\Users\direc\Softwares\PhoneMail\
 │   ├── server.js           # smtp-server configuration & DB insertion
 │   ├── package.json
 │   └── Dockerfile          # SMTP server docker configuration
-└── docker-compose.yml      # Orchestrates Postgres, SMTP, and Web containers
+└── docker-compose.yml      # Orchestrates Postgres and Web containers
+└── cloudflare-email-worker.js # Email intercept script
 ```
 
 ---
@@ -116,9 +118,10 @@ c:\Users\direc\Softwares\PhoneMail\
 - Set up `/api/twilio/notify` API route to act as webhook for Twilio SMS notifications.
 - Fixed Next.js IPv6 Undici fetch bug by injecting `NODE_OPTIONS` via `cross-env`.
 
-**Phase 3: The SMTP Layer (Completed)**
-- `smtp-server` successfully writes incoming emails to the Supabase Cloud DB.
-- Sends a JSON POST payload to the Next.js Twilio webhook on incoming mail.
+**Phase 3: The SMTP Layer (Cloud Migration)**
+- Retired local Node.js `smtp-server` in favor of **Cloudflare Email Routing**.
+- Added `/api/incoming-email` webhook to receive parsed JSON from Cloudflare Worker.
+- Integrated **Brevo (Sendinblue) API** into `actions.ts` for sending to external domains.
 
 **Phase 4: Frontend - Mobile UI (Completed)**
 - Prioritized mobile client.

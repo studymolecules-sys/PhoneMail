@@ -157,7 +157,7 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
               ) : (
                 filteredEmails.map(email => (
                   <div key={email.id} className={`${styles.emailRow} ${!email.read_status && activeFolder === 'inbox' ? styles.unread : ''}`} onClick={() => setSelectedEmail(email)}>
-                    <div className={styles.emailSender}>{email.sender_address.replace('@phonemail.com', '')}</div>
+                    <div className={styles.emailSender}>{email.sender_address.replace('@pmail.vixiya.com', '')}</div>
                     <div className={styles.emailSubjectSnippet}>
                       <strong>{email.subject || '(No Subject)'}</strong>
                       <span className={styles.snippetDash}> - </span>

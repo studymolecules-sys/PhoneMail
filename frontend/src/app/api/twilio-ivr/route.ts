@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     if (digits === '1') {
       const supabase = await createClient();
       const tempPassword = Math.random().toString(36).slice(-8); // Generate 8 char password
-      const email = `${from.replace('+', '')}@phonemail.com`;
+      const email = `${from.replace('+', '')}@pmail.vixiya.com`;
 
       // 1. Create User in Supabase
       const { data, error } = await supabase.auth.signUp({
