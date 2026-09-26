@@ -333,3 +333,31 @@
   color: var(--wa-text-secondary);
   font-size: 14px;
 }
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+.collapsed {
+  width: 60px !important;
+}
+.collapsed .composeBtn {
+  border-radius: 50%;
+  width: 44px;
+  padding: 0;
+  justify-content: center;
+}
+.collapsed .composeBtn span {
+  margin: 0;
+}
+.collapsed .navItem {
+  justify-content: center;
+  padding: 10px;
+}
+.collapsed .navItem svg {
+  margin: 0;
+}
+

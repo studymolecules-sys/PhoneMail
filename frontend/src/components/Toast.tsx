@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { CheckCircle2, AlertCircle, Info } from 'lucide-react'
 import styles from './Toast.module.css'
 
 export type ToastType = 'success' | 'error' | 'info'
@@ -42,9 +41,6 @@ export default function Toast() {
   return (
     <div className={`${styles.toastContainer} ${isVisible ? styles.slideIn : ''}`}>
       <div className={`${styles.toastPill} ${styles[toastData.type]}`}>
-        {toastData.type === 'success' && <CheckCircle2 size={16} />}
-        {toastData.type === 'error' && <AlertCircle size={16} />}
-        {toastData.type === 'info' && <Info size={16} />}
         <span>{toastData.message}</span>
       </div>
     </div>

@@ -136,3 +136,31 @@ button, input, textarea {
     color-scheme: dark;
   }
 }
+
+[data-theme="light"] {
+  --wa-header-bg: #f0f2f5;
+  --wa-header-text: #111b21;
+  --wa-app-bg: #ffffff;
+  --wa-panel-bg: #ffffff;
+  --wa-chat-bg: #efeae2;
+  --wa-item-hover: #f5f6f6;
+  --wa-item-active: #f0f2f5;
+  --wa-accent: #00a884;
+  --wa-accent-light: #008f6f;
+  --wa-bubble-sent: #d9fdd3;
+  --wa-bubble-sent-text: #111b21;
+  --wa-bubble-received: #ffffff;
+  --wa-bubble-received-text: #111b21;
+  --wa-text-primary: #111b21;
+  --wa-text-secondary: #54656f;
+  --wa-text-muted: #667781;
+  --wa-border: #d1d7db;
+  --wa-tick-blue: #53bdeb;
+  
+  --bg-primary: #ffffff;
+  --bg-secondary: #f6f8fc;
+  --bg-tertiary: #f0f2f5;
+  --text-primary: #111b21;
+  --text-secondary: #54656f;
+  --text-tertiary: #667781;
+}

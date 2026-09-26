@@ -325,3 +325,23 @@
 .signoutBtn:active {
   transform: scale(0.98);
 }
+
+.themeToggleBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--wa-app-bg);
+  border: 1px solid var(--wa-border);
+  color: var(--wa-text-primary);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.themeToggleBtn:hover {
+  border-color: var(--wa-accent);
+}

@@ -20,6 +20,8 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
   const [searchQuery, setSearchQuery] = useState('')
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [selectedEmail, setSelectedEmail] = useState<EmailMessage | null>(null)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+  const [isRefreshing, setIsRefreshing] = useState(false)
   const router = useRouter()
 
   // Superhuman-style Keyboard Shortcuts
@@ -62,12 +64,12 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
     <div className={styles.desktopContainer}>
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <div className={styles.hamburger}>
+          <div className={styles.hamburger} onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}>
             <div className={styles.line} />
             <div className={styles.line} />
             <div className={styles.line} />
           </div>
-          <h1 className={styles.brandTitle}>PhoneMail</h1>
+          <h1 className={styles.brandTitle}>PMail</h1>
         </div>
 
         <div className={styles.searchBar}>
@@ -82,9 +84,6 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
         </div>
 
         <div className={styles.headerRight}>
-          <button className={styles.iconBtn} aria-label="Settings" onClick={() => setIsProfileOpen(true)}>
-            <Settings size={22} />
-          </button>
           <button className={styles.profileBtn} aria-label="Account" onClick={() => setIsProfileOpen(true)}>
             <div className={styles.avatar}>{userPhone ? userPhone.slice(-2) : 'PM'}</div>
           </button>
@@ -92,7 +91,7 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
       </header>
 
       <div className={styles.mainArea}>
-        <aside className={styles.sidebar}>
+        <aside className={`${styles.sidebar} ${isSidebarCollapsed ? styles.collapsed : ''}`}>
           <Link href="/compose" className={styles.composeBtn}>
             <span className={styles.composeIcon}>+</span>
             Compose
@@ -108,13 +107,13 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
             <button className={`${styles.navItem} ${activeFolder === 'sent' ? styles.active : ''}`} onClick={() => { setActiveFolder('sent'); setSelectedEmail(null); }}>
               <Send size={18} /> Sent
             </button>
-            <button className={styles.navItem} onClick={() => showToast('Drafts folder is empty', 'info')}>
+            <button className={`${styles.navItem} ${activeFolder === 'drafts' ? styles.active : ''}`} onClick={() => { setActiveFolder('drafts'); setSelectedEmail(null); }}>
               <FileText size={18} /> Drafts
             </button>
-            <button className={styles.navItem} onClick={() => showToast('Spam folder is empty', 'info')}>
+            <button className={`${styles.navItem} ${activeFolder === 'spam' ? styles.active : ''}`} onClick={() => { setActiveFolder('spam'); setSelectedEmail(null); }}>
               <AlertOctagon size={18} /> Spam
             </button>
-            <button className={styles.navItem} onClick={() => showToast('Trash folder is empty', 'info')}>
+            <button className={`${styles.navItem} ${activeFolder === 'trash' ? styles.active : ''}`} onClick={() => { setActiveFolder('trash'); setSelectedEmail(null); }}>
               <Trash2 size={18} /> Trash
             </button>
           </nav>
@@ -146,14 +145,30 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
             </div>
           ) : (
             <div className={styles.listToolbar}>
-               <button className={styles.toolbarIcon}><RefreshCcw size={16} /></button>
+               <button 
+                 className={styles.toolbarIcon}
+                 onClick={() => {
+                   setIsRefreshing(true)
+                   showToast('Refreshing inbox...')
+                   setTimeout(() => setIsRefreshing(false), 1000)
+                 }}
+               >
+                 <RefreshCcw size={16} className={isRefreshing ? styles.spin : ''} />
+               </button>
             </div>
           )}
 
           {!selectedEmail && (
             <div className={styles.emailList}>
               {filteredEmails.length === 0 ? (
-                <div className={styles.emptyState}>No emails found.</div>
+                <div className={styles.emptyState}>
+                  {activeFolder === 'inbox' && "Your inbox is empty!"}
+                  {activeFolder === 'sent' && "You haven't sent anything yet!"}
+                  {activeFolder === 'starred' && "No starred emails yet."}
+                  {activeFolder === 'drafts' && "No drafts saved."}
+                  {activeFolder === 'spam' && "Hooray, no spam!"}
+                  {activeFolder === 'trash' && "Trash is empty."}
+                </div>
               ) : (
                 filteredEmails.map(email => (
                   <div key={email.id} className={`${styles.emailRow} ${!email.read_status && activeFolder === 'inbox' ? styles.unread : ''}`} onClick={() => setSelectedEmail(email)}>

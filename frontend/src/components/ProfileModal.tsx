@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import styles from './ProfileModal.module.css'
-import { X, Copy, Check, LogOut, Plus, Trash2 } from 'lucide-react'
+import { X, Copy, Check, LogOut, Plus, Trash2, Moon, Sun } from 'lucide-react'
 import { showToast } from './Toast'
 
 interface ProfileModalProps {
@@ -23,6 +23,12 @@ export default function ProfileModal({
   const [newAlias, setNewAlias] = useState('')
   const [language, setLanguage] = useState('en')
   const [displayName, setDisplayName] = useState('')
+  const [theme, setTheme] = useState('light')
+
+  // Apply theme to document
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+  }, [theme])
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -35,6 +41,9 @@ export default function ProfileModal({
       
       const storedName = localStorage.getItem('pm_name')
       if (storedName) setDisplayName(storedName)
+      
+      const storedTheme = localStorage.getItem('pm_theme')
+      if (storedTheme) setTheme(storedTheme)
     }
   }, [isOpen])
 
@@ -79,6 +88,12 @@ export default function ProfileModal({
   const handleLangChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setLanguage(e.target.value)
     localStorage.setItem('pm_lang', e.target.value)
+  }
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light'
+    setTheme(newTheme)
+    localStorage.setItem('pm_theme', newTheme)
   }
 
   return (
@@ -128,6 +143,18 @@ export default function ProfileModal({
               <option value="fr">Français</option>
               <option value="hi">हिन्दी</option>
             </select>
+          </div>
+
+          <div className={styles.settingGroup}>
+            <label className={styles.settingLabel}>Theme</label>
+            <button 
+              className={styles.themeToggleBtn} 
+              onClick={toggleTheme}
+              type="button"
+            >
+              {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
+              <span>{theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}</span>
+            </button>
           </div>
 
           {/* Alias IDs */}
