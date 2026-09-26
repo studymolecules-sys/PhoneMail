@@ -110,7 +110,7 @@ a {
 button, input, textarea {
   font-family: var(--font-sans);
   outline: none;
-
+}
 
 /* Beautiful Custom Webkit Scrollbars globally */
 ::-webkit-scrollbar {
