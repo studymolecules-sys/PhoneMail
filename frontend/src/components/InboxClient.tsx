@@ -6,11 +6,13 @@ import { useRouter } from 'next/navigation'
 import styles from './inbox.module.css'
 import Drawer from './Drawer'
 import ProfileModal from './ProfileModal'
-import { Menu, Search, PenSquare, Star, CheckCheck, X, Sparkles } from 'lucide-react'
+import { Menu, Search, PenSquare, Star, CheckCheck, X, Sparkles, Trash2 } from 'lucide-react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import SwipeableChatRow from './SwipeableChatRow'
 import { getTranslations } from '@/app/i18n'
+import { EmailMessage } from '@/app/(main)/chat/[contact]/SpikeChatView'
+import { showToast } from './Toast'
 
 export interface ChatItemData {
   contact: string
@@ -29,12 +31,14 @@ export interface ChatItemData {
 
 interface InboxClientProps {
   initialChats: ChatItemData[]
+  rawEmails?: EmailMessage[]
   userEmailId: string
   userPhone: string
 }
 
 export default function InboxClient({
   initialChats,
+  rawEmails = [],
   userEmailId,
   userPhone,
 }: InboxClientProps) {
@@ -45,8 +49,14 @@ export default function InboxClient({
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [activeFolder, setActiveFolder] = useState('all')
   const [starredContacts, setStarredContacts] = useState<string[]>([])
+  
+  const [selectedEmail, setSelectedEmail] = useState<EmailMessage | null>(null)
+  const [starredEmails, setStarredEmails] = useState<string[]>([])
+  const [trashEmails, setTrashEmails] = useState<string[]>([])
+  const [spamEmails, setSpamEmails] = useState<string[]>([])
 
   const listRef = useRef<HTMLDivElement>(null)
+  const readRef = useRef<HTMLDivElement>(null)
   const fabRef = useRef<HTMLAnchorElement>(null)
   const router = useRouter()
 
@@ -59,16 +69,18 @@ export default function InboxClient({
   }, [])
   const t = getTranslations(lang)
 
-  // Persist starred contacts in localStorage
+  // Persist starred contacts and folder states
   useEffect(() => {
-    const saved = localStorage.getItem('pm_starred')
-    if (saved) {
-      try {
-        setStarredContacts(JSON.parse(saved))
-      } catch (e) {
-        // fallback
-      }
-    }
+    try {
+      const saved = localStorage.getItem('pm_starred')
+      if (saved) setStarredContacts(JSON.parse(saved))
+      const s = localStorage.getItem('pm_starred_emails')
+      if (s) setStarredEmails(JSON.parse(s))
+      const t = localStorage.getItem('pm_trash_emails')
+      if (t) setTrashEmails(JSON.parse(t))
+      const sp = localStorage.getItem('pm_spam_emails')
+      if (sp) setSpamEmails(JSON.parse(sp))
+    } catch (e) {}
   }, [])
 
   const toggleStar = (contact: string, e?: React.MouseEvent | React.TouchEvent) => {
@@ -123,10 +135,39 @@ export default function InboxClient({
     })
   }, [chats, searchQuery, filterChip, activeFolder, starredContacts])
 
-  // GSAP animation for chat list elements
+  // Normal Gmail Mobile chronological list logic
+  const filteredEmails = useMemo(() => {
+    return rawEmails.filter(email => {
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase()
+        if (!email.subject?.toLowerCase().includes(q) && !email.sender_address.toLowerCase().includes(q) && !email.body_text?.toLowerCase().includes(q)) return false
+      }
+
+      const isTrash = trashEmails.includes(email.id)
+      const isSpam = spamEmails.includes(email.id)
+      const isStarred = starredEmails.includes(email.id)
+
+      if (activeFolder === 'trash') return isTrash
+      if (activeFolder === 'spam') return isSpam
+      if (isTrash || isSpam) return false
+
+      if (activeFolder === 'starred' || filterChip === 'favorites') return isStarred
+      if (activeFolder === 'sent') return email.sender_address === userEmailId
+      if (activeFolder === 'drafts') return false
+      
+      // Default Inbox
+      if (activeFolder === 'all' || activeFolder === 'chat_interface') {
+        if (filterChip === 'unread') return !email.read_status
+        return email.recipient_address === userEmailId
+      }
+      return false
+    })
+  }, [rawEmails, searchQuery, filterChip, activeFolder, starredEmails, trashEmails, spamEmails])
+
+  // GSAP animation for chat/email list elements
   useGSAP(() => {
     if (!listRef.current) return
-    const items = listRef.current.querySelectorAll('.chat-item-row')
+    const items = listRef.current.querySelectorAll('.item-row-anim')
     if (items.length === 0) return
 
     gsap.fromTo(
@@ -134,7 +175,29 @@ export default function InboxClient({
       { opacity: 0, y: 15 },
       { opacity: 1, y: 0, duration: 0.25, stagger: 0.04, ease: 'power2.out' }
     )
-  }, [filteredChats.length, filterChip])
+  }, [filteredChats.length, filteredEmails.length, filterChip, activeFolder])
+
+  useGSAP(() => {
+    if (selectedEmail && readRef.current) {
+      gsap.fromTo(readRef.current, { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.2, ease: 'power3.out' })
+    }
+  }, [selectedEmail])
+
+  const toggleEmailStar = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation()
+    const updated = starredEmails.includes(id) ? starredEmails.filter(i => i !== id) : [...starredEmails, id]
+    setStarredEmails(updated)
+    localStorage.setItem('pm_starred_emails', JSON.stringify(updated))
+    if (navigator.vibrate) navigator.vibrate(50)
+  }
+
+  const moveEmailToTrash = (id: string) => {
+    const updated = [...trashEmails, id]
+    setTrashEmails(updated)
+    localStorage.setItem('pm_trash_emails', JSON.stringify(updated))
+    setSelectedEmail(null)
+    showToast('Moved to Trash')
+  }
 
   const formatWhatsAppTime = (isoString?: string) => {
     if (!isoString) return ''
@@ -182,11 +245,7 @@ export default function InboxClient({
               <Menu size={22} />
             </button>
             <div className={styles.titleColumn}>
-              <h1 className={styles.brandHeading}>PhoneMail</h1>
-              <span className={styles.onlineBadge}>
-                <span className={styles.onlineDot} />
-                {t.online}
-              </span>
+              <h1 className={styles.brandHeading}>PMail</h1>
             </div>
           </div>
 
@@ -262,106 +321,177 @@ export default function InboxClient({
         </div>
       </header>
 
-      {/* Main Chat Feed */}
+      {/* Main Content Feed */}
       <main className={styles.mainContent}>
-        {filteredChats.length === 0 ? (
-          <div className={styles.emptyState}>
-            <div className={styles.emptyIconCircle}>
-              <Sparkles size={28} className={styles.emptySparkle} />
+        {selectedEmail ? (
+          <div ref={readRef} className={styles.mobileReadView}>
+            <div className={styles.readHeaderMobile}>
+              <button className={styles.iconButton} onClick={() => setSelectedEmail(null)}>
+                &larr; Back
+              </button>
+              <div className={styles.readActions}>
+                <button className={styles.iconButton} onClick={() => moveEmailToTrash(selectedEmail.id)}>
+                  <Trash2 size={18} />
+                </button>
+              </div>
             </div>
-            <h3>
-              {searchQuery
-                ? 'No matching conversations'
-                : filterChip !== 'all'
-                ? `No ${filterChip} conversations found`
-                : 'No conversations yet'}
-            </h3>
-            <p>
-              Your phone number is your universal email address. Share it with anyone to receive
-              messages directly here.
-            </p>
-            <div className={styles.identityBadge}>
-              <span>Your Email:</span>
-              <strong>{userEmailId}</strong>
+            <h2 className={styles.readSubject}>{selectedEmail.subject || '(No Subject)'}</h2>
+            <div className={styles.readMetaMobile}>
+              <div className={styles.senderAvatar}>{selectedEmail.sender_address.charAt(0).toUpperCase()}</div>
+              <div>
+                <strong>{selectedEmail.sender_address === userEmailId ? 'Me' : selectedEmail.sender_address}</strong>
+                <div className={styles.readDate}>{new Date(selectedEmail.created_at).toLocaleString()}</div>
+              </div>
             </div>
-
-            <Link href={`/compose?to=${encodeURIComponent(userEmailId)}&subject=Magic%20Test%20Email&body=This%20is%20a%20test%20email%20sent%20from%20my%20own%20inbox!`} className={styles.emptyActionBtn}>
-              <Sparkles size={16} /> Send a Magic Test Email
-            </Link>
+            <div className={styles.readBodyMobile}>
+              {selectedEmail.body_html ? (
+                <div dangerouslySetInnerHTML={{ __html: selectedEmail.body_html }} />
+              ) : (
+                <p>{selectedEmail.body_text}</p>
+              )}
+            </div>
           </div>
         ) : (
-          <div ref={listRef} className={styles.chatListContainer}>
-            {filteredChats.map((chat) => {
-              const isStarred = starredContacts.includes(chat.contact)
-              const displayName = chat.contact.replace('@pmail.vixiya.com', '')
-              const initials = displayName.slice(0, 2).toUpperCase()
-
-              return (
-                <SwipeableChatRow
-                  key={chat.contact}
-                  href={`/chat/${encodeURIComponent(chat.contact)}`}
-                  contact={chat.contact}
-                  isStarred={isStarred}
-                  onToggleStar={toggleStar}
-                >
-                  <div className={`chat-item-row ${styles.chatItem}`}>
-                    <div className={styles.avatar}>
-                      <span>{initials}</span>
-                    </div>
-
-                  <div className={styles.chatContent}>
-                    <div className={styles.chatHeader}>
-                      <h4 className={styles.contactName}>{displayName}</h4>
-                      <span className={styles.time} suppressHydrationWarning>
-                        {formatWhatsAppTime(chat.latestMessage?.created_at)}
-                      </span>
-                    </div>
-
-                    <div className={styles.chatPreview}>
-                      <div className={styles.previewLeft}>
-                        {chat.latestMessage?.sender_address === userEmailId && (
-                          <CheckCheck size={16} className={styles.checkIcon} />
-                        )}
-                        <p className={styles.subject}>
-                          <strong>{chat.latestMessage?.subject || '(No Subject)'}</strong>
-                          {chat.latestMessage?.body_text ? ` — ${chat.latestMessage.body_text}` : ''}
-                        </p>
-                      </div>
-
-                      <div className={styles.previewRight}>
-                        <button
-                          type="button"
-                          className={`${styles.starBtn} ${isStarred ? styles.starBtnActive : ''}`}
-                          onClick={(e) => toggleStar(chat.contact, e)}
-                          aria-label={isStarred ? 'Unstar' : 'Star conversation'}
-                        >
-                          <Star size={16} fill={isStarred ? '#f9ab00' : 'none'} />
-                        </button>
-
-                        {chat.unreadCount > 0 && (
-                          <span className={styles.unreadBadge}>{chat.unreadCount}</span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+          <>
+            {(activeFolder === 'chat_interface' ? filteredChats : filteredEmails).length === 0 ? (
+              <div className={styles.emptyState}>
+                <div className={styles.emptyIconCircle}>
+                  <Sparkles size={28} className={styles.emptySparkle} />
                 </div>
-                </SwipeableChatRow>
-              )
-            })}
-          </div>
+                <h3>
+                  {searchQuery
+                    ? 'No matching conversations'
+                    : activeFolder === 'all' && filterChip === 'all' ? t.emptyInbox
+                    : activeFolder === 'spam' ? t.emptySpam
+                    : activeFolder === 'drafts' ? t.emptyDrafts
+                    : activeFolder === 'trash' ? t.emptyTrash
+                    : activeFolder === 'favorites' || filterChip === 'favorites' ? t.emptyStarred
+                    : filterChip !== 'all'
+                    ? `No ${filterChip} conversations found`
+                    : t.emptyInbox}
+                </h3>
+                <p>
+                  Your phone number is your universal email address. Share it with anyone to receive
+                  messages directly here.
+                </p>
+                <div className={styles.identityBadge}>
+                  <span>Your Email:</span>
+                  <strong>{userEmailId}</strong>
+                </div>
+
+                <Link href={`/compose?to=${encodeURIComponent(userEmailId)}&subject=Magic%20Test%20Email&body=This%20is%20a%20test%20email%20sent%20from%20my%20own%20inbox!`} className={styles.emptyActionBtn}>
+                  <Sparkles size={16} /> Send a Magic Test Email
+                </Link>
+              </div>
+            ) : (
+              <div ref={listRef} className={styles.chatListContainer}>
+                {activeFolder === 'chat_interface' ? (
+                  filteredChats.map((chat) => {
+                    const isStarred = starredContacts.includes(chat.contact)
+                    const displayName = chat.contact.replace('@pmail.vixiya.com', '')
+                    const initials = displayName.slice(0, 2).toUpperCase()
+
+                    return (
+                      <SwipeableChatRow
+                        key={chat.contact}
+                        href={`/chat/${encodeURIComponent(chat.contact)}`}
+                        contact={chat.contact}
+                        isStarred={isStarred}
+                        onToggleStar={toggleStar}
+                      >
+                        <div className={`item-row-anim ${styles.chatItem}`}>
+                          <div className={styles.avatar}>
+                            <span>{initials}</span>
+                          </div>
+
+                        <div className={styles.chatContent}>
+                          <div className={styles.chatHeader}>
+                            <h4 className={styles.contactName}>{displayName}</h4>
+                            <span className={styles.time} suppressHydrationWarning>
+                              {formatWhatsAppTime(chat.latestMessage?.created_at)}
+                            </span>
+                          </div>
+
+                          <div className={styles.chatPreview}>
+                            <div className={styles.previewLeft}>
+                              {chat.latestMessage?.sender_address === userEmailId && (
+                                <CheckCheck size={16} className={styles.checkIcon} />
+                              )}
+                              <p className={styles.subject}>
+                                <strong>{chat.latestMessage?.subject || '(No Subject)'}</strong>
+                                {chat.latestMessage?.body_text ? ` — ${chat.latestMessage.body_text}` : ''}
+                              </p>
+                            </div>
+
+                            <div className={styles.previewRight}>
+                              <button
+                                type="button"
+                                className={`${styles.starBtn} ${isStarred ? styles.starBtnActive : ''}`}
+                                onClick={(e) => toggleStar(chat.contact, e)}
+                                aria-label={isStarred ? 'Unstar' : 'Star conversation'}
+                              >
+                                <Star size={16} fill={isStarred ? '#f9ab00' : 'none'} />
+                              </button>
+
+                              {chat.unreadCount > 0 && (
+                                <span className={styles.unreadBadge}>{chat.unreadCount}</span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      </SwipeableChatRow>
+                    )
+                  })
+                ) : (
+                  filteredEmails.map((email) => {
+                    const isStarred = starredEmails.includes(email.id)
+                    return (
+                      <div key={email.id} className={`item-row-anim ${styles.emailRowMobile} ${!email.read_status && activeFolder === 'all' ? styles.unread : ''}`} onClick={() => setSelectedEmail(email)}>
+                        <div className={styles.avatar}>
+                          {email.sender_address === userEmailId ? 'M' : email.sender_address.charAt(0).toUpperCase()}
+                        </div>
+                        <div className={styles.chatContent}>
+                          <div className={styles.chatHeader}>
+                            <h4 className={styles.contactName}>{email.sender_address === userEmailId ? 'Me' : email.sender_address.replace('@pmail.vixiya.com', '')}</h4>
+                            <span className={styles.time}>{formatWhatsAppTime(email.created_at)}</span>
+                          </div>
+                          <div className={styles.chatPreview}>
+                            <div className={styles.previewLeft}>
+                              <p className={styles.subject}>
+                                <strong>{email.subject || '(No Subject)'}</strong>
+                                <span className={styles.snippetText}> — {email.body_text?.slice(0, 80)}</span>
+                              </p>
+                            </div>
+                            <div className={styles.previewRight}>
+                              <button className={styles.starIconBtnMobile} onClick={(e) => toggleEmailStar(e, email.id)}>
+                                <Star size={18} fill={isStarred ? '#f9ab00' : 'none'} color={isStarred ? '#f9ab00' : '#888'} />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })
+                )}
+              </div>
+            )}
+          </>
         )}
       </main>
 
-      {/* Floating Action Button (FAB) for composing new email */}
-      <a 
-        href="/compose" 
-        ref={fabRef}
-        className={styles.fab} 
-        aria-label="Compose New Email"
-        onClick={handleFabClick}
-      >
-        <PenSquare size={22} />
-      </a>
+      {/* Floating Action Button (FAB) */}
+      {!selectedEmail && (
+        <a 
+          href="/compose" 
+          ref={fabRef}
+          className={styles.fab} 
+          aria-label="Compose New Email"
+          onClick={handleFabClick}
+        >
+          <PenSquare size={22} />
+        </a>
+      )}
 
       {/* Slide-out Navigation Drawer */}
       <Drawer

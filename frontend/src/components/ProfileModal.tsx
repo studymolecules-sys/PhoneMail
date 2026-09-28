@@ -101,6 +101,7 @@ export default function ProfileModal({
   const handleLangChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setLanguage(e.target.value)
     localStorage.setItem('pm_lang', e.target.value)
+    window.dispatchEvent(new Event('pm_languageChange'))
   }
 
   const toggleTheme = () => {
@@ -156,7 +157,7 @@ export default function ProfileModal({
               {displayName ? displayName.slice(0, 2).toUpperCase() : (userPhone ? userPhone.slice(-2) : 'PM')}
             </div>
             <div className={styles.identityDetails}>
-              <h3 className={styles.phoneHeading}>{userPhone || 'PhoneMail User'}</h3>
+              <h3 className={styles.phoneHeading}>{userPhone || 'PMail User'}</h3>
               <div className={styles.emailRow}>
                 <span className={styles.emailBadge}>{userEmailId}</span>
                 <button className={styles.copyBtn} onClick={handleCopy} aria-label="Copy Email Address">

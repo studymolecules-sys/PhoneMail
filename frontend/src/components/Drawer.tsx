@@ -1,7 +1,9 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import styles from './Drawer.module.css'
-import { Inbox, Settings, X, Shield, FileText, AlertOctagon, Trash2 } from 'lucide-react'
+import { Inbox, Settings, X, Shield, FileText, AlertOctagon, Trash2, Star, Send, MessageSquare } from 'lucide-react'
+import { getTranslations } from '@/app/i18n'
 
 interface DrawerProps {
   isOpen: boolean
@@ -22,13 +24,25 @@ export default function Drawer({
   onSelectFolder,
   onOpenSettings,
 }: DrawerProps) {
+  const [lang, setLang] = useState('en')
+  useEffect(() => {
+    setLang(localStorage.getItem('pm_lang') || 'en')
+    const handleLangChange = () => setLang(localStorage.getItem('pm_lang') || 'en')
+    window.addEventListener('pm_languageChange', handleLangChange)
+    return () => window.removeEventListener('pm_languageChange', handleLangChange)
+  }, [])
+  const t = getTranslations(lang)
+
   if (!isOpen) return null
 
   const navItems = [
-    { id: 'all', label: 'All Chats', icon: Inbox },
-    { id: 'drafts', label: 'Drafts', icon: FileText },
-    { id: 'spam', label: 'Spam', icon: AlertOctagon },
-    { id: 'trash', label: 'Trash', icon: Trash2 },
+    { id: 'all', label: t.inbox, icon: Inbox },
+    { id: 'starred', label: t.starred || 'Starred', icon: Star },
+    { id: 'sent', label: t.sent || 'Sent', icon: Send },
+    { id: 'drafts', label: t.drafts || 'Drafts', icon: FileText },
+    { id: 'spam', label: t.spam || 'Spam', icon: AlertOctagon },
+    { id: 'trash', label: t.trash || 'Trash', icon: Trash2 },
+    { id: 'chat_interface', label: 'Chat Interface', icon: MessageSquare },
   ]
 
   const handleItemClick = (id: string) => {
@@ -45,7 +59,7 @@ export default function Drawer({
             {userPhone ? userPhone.slice(-2) : 'PM'}
           </div>
           <div className={styles.userInfo}>
-            <h3 className={styles.userName}>{userPhone || 'PhoneMail'}</h3>
+            <h3 className={styles.userName}>{userPhone || 'PMail'}</h3>
             <p className={styles.userEmail}>{userEmailId}</p>
           </div>
           <button className={styles.closeBtn} onClick={onClose} aria-label="Close Drawer">
@@ -88,7 +102,7 @@ export default function Drawer({
             }}
           >
             <Settings size={18} className={styles.itemIcon} />
-            <span className={styles.itemLabel}>Settings & Account</span>
+            <span className={styles.itemLabel}>{t.settingsAccount}</span>
           </button>
         </div>
 

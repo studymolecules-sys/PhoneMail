@@ -73,6 +73,7 @@ export default async function InboxPane() {
   return (
     <InboxClient
       initialChats={chatList}
+      rawEmails={emails || []}
       userEmailId={userEmailId}
       userPhone={rawPhone}
     />

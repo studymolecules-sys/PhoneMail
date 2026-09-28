@@ -9,6 +9,9 @@ import ProfileModal from './ProfileModal'
 import { EmailMessage } from '@/app/(main)/chat/[contact]/SpikeChatView'
 import { showToast } from './Toast'
 import { getTranslations } from '@/app/i18n'
+import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
+import { useRef } from 'react'
 
 interface GmailDesktopClientProps {
   rawEmails: EmailMessage[]
@@ -26,13 +29,66 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
   const router = useRouter()
 
   const [lang, setLang] = useState('en')
+  
+  // Folder state stored in localStorage for completeness
+  const [starredEmails, setStarredEmails] = useState<string[]>([])
+  const [trashEmails, setTrashEmails] = useState<string[]>([])
+  const [spamEmails, setSpamEmails] = useState<string[]>([])
+
+  const listRef = useRef<HTMLDivElement>(null)
+  const readRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     setLang(localStorage.getItem('pm_lang') || 'en')
     const handleLangChange = () => setLang(localStorage.getItem('pm_lang') || 'en')
     window.addEventListener('pm_languageChange', handleLangChange)
+
+    // Load folders
+    try {
+      const s = localStorage.getItem('pm_starred_emails')
+      if (s) setStarredEmails(JSON.parse(s))
+      const t = localStorage.getItem('pm_trash_emails')
+      if (t) setTrashEmails(JSON.parse(t))
+      const sp = localStorage.getItem('pm_spam_emails')
+      if (sp) setSpamEmails(JSON.parse(sp))
+    } catch (e) {}
+
     return () => window.removeEventListener('pm_languageChange', handleLangChange)
   }, [])
   const t = getTranslations(lang)
+
+  // GSAP Animations
+  useGSAP(() => {
+    if (listRef.current) {
+      const items = listRef.current.querySelectorAll('.email-row-anim')
+      if (items.length > 0) {
+        gsap.fromTo(items, { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: 0.2, stagger: 0.03, ease: 'power2.out' })
+      }
+    }
+  }, [activeFolder, searchQuery, rawEmails.length])
+
+  useGSAP(() => {
+    if (selectedEmail && readRef.current) {
+      gsap.fromTo(readRef.current, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.3, ease: 'power3.out' })
+    }
+  }, [selectedEmail])
+
+  const toggleStar = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation()
+    const isStarred = starredEmails.includes(id)
+    const updated = isStarred ? starredEmails.filter(i => i !== id) : [...starredEmails, id]
+    setStarredEmails(updated)
+    localStorage.setItem('pm_starred_emails', JSON.stringify(updated))
+  }
+
+  const moveToTrash = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation()
+    const updated = [...trashEmails, id]
+    setTrashEmails(updated)
+    localStorage.setItem('pm_trash_emails', JSON.stringify(updated))
+    if (selectedEmail?.id === id) setSelectedEmail(null)
+    showToast('Moved to Trash')
+  }
 
   // Superhuman-style Keyboard Shortcuts
   useEffect(() => {
@@ -56,16 +112,27 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [router, isProfileOpen, selectedEmail])
 
-  // Simple folder logic based on sender/recipient
+  // Simple folder logic based on sender/recipient and localStorage states
   const filteredEmails = rawEmails.filter(email => {
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase()
-      if (!email.subject?.toLowerCase().includes(q) && !email.sender_address.toLowerCase().includes(q)) return false
+      if (!email.subject?.toLowerCase().includes(q) && !email.sender_address.toLowerCase().includes(q) && !email.body_text?.toLowerCase().includes(q)) return false
     }
 
+    const isTrash = trashEmails.includes(email.id)
+    const isSpam = spamEmails.includes(email.id)
+    const isStarred = starredEmails.includes(email.id)
+
+    if (activeFolder === 'trash') return isTrash
+    if (activeFolder === 'spam') return isSpam
+    
+    // If it's in trash or spam, it shouldn't show up in other folders unless explicitly in them
+    if (isTrash || isSpam) return false
+
+    if (activeFolder === 'starred') return isStarred
     if (activeFolder === 'inbox') return email.recipient_address === userEmailId
     if (activeFolder === 'sent') return email.sender_address === userEmailId
-    if (activeFolder === 'starred') return false // Mock for demo
+    if (activeFolder === 'drafts') return false // Drafts are not stored in emails table for now
     
     return false
   })
@@ -131,11 +198,16 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
 
         <main className={styles.contentPane}>
           {selectedEmail ? (
-            <div className={styles.readView}>
+            <div ref={readRef} className={styles.readView}>
               <div className={styles.readHeader}>
                 <button className={styles.backToListBtn} onClick={() => setSelectedEmail(null)}>
                   &larr; Back to list
                 </button>
+                <div className={styles.readActions}>
+                  <button className={styles.toolbarIcon} onClick={(e) => moveToTrash(e, selectedEmail.id)} title="Delete">
+                    <Trash2 size={18} />
+                  </button>
+                </div>
               </div>
               <h2 className={styles.readSubject}>{selectedEmail.subject || '(No Subject)'}</h2>
               <div className={styles.readMeta}>
@@ -169,7 +241,7 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
           )}
 
           {!selectedEmail && (
-            <div className={styles.emailList}>
+            <div ref={listRef} className={styles.emailList}>
               {filteredEmails.length === 0 ? (
                 <div className={styles.emptyState}>
                   {activeFolder === 'inbox' && t.emptyInbox}
@@ -180,9 +252,16 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
                   {activeFolder === 'trash' && t.emptyTrash}
                 </div>
               ) : (
-                filteredEmails.map(email => (
-                  <div key={email.id} className={`${styles.emailRow} ${!email.read_status && activeFolder === 'inbox' ? styles.unread : ''}`} onClick={() => setSelectedEmail(email)}>
-                    <div className={styles.emailSender}>{email.sender_address.replace('@pmail.vixiya.com', '')}</div>
+                filteredEmails.map(email => {
+                  const isStarred = starredEmails.includes(email.id)
+                  return (
+                  <div key={email.id} className={`email-row-anim ${styles.emailRow} ${!email.read_status && activeFolder === 'inbox' ? styles.unread : ''}`} onClick={() => setSelectedEmail(email)}>
+                    <div className={styles.emailRowActions}>
+                      <button className={styles.starIconBtn} onClick={(e) => toggleStar(e, email.id)}>
+                        <Star size={18} fill={isStarred ? '#f9ab00' : 'none'} color={isStarred ? '#f9ab00' : '#888'} />
+                      </button>
+                    </div>
+                    <div className={styles.emailSender}>{email.sender_address === userEmailId ? 'Me' : email.sender_address.replace('@pmail.vixiya.com', '')}</div>
                     <div className={styles.emailSubjectSnippet}>
                       <strong>{email.subject || '(No Subject)'}</strong>
                       <span className={styles.snippetDash}> - </span>
@@ -192,7 +271,7 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
                       {new Date(email.created_at).toLocaleDateString([], { month: 'short', day: 'numeric' })}
                     </div>
                   </div>
-                ))
+                )})
               )}
             </div>
           )}
