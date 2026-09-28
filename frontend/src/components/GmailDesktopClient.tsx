@@ -8,6 +8,7 @@ import { Search, Inbox, Star, Send, FileText, AlertOctagon, Trash2, Settings, Us
 import ProfileModal from './ProfileModal'
 import { EmailMessage } from '@/app/(main)/chat/[contact]/SpikeChatView'
 import { showToast } from './Toast'
+import { getTranslations } from '@/app/i18n'
 
 interface GmailDesktopClientProps {
   rawEmails: EmailMessage[]
@@ -23,6 +24,15 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const router = useRouter()
+
+  const [lang, setLang] = useState('en')
+  useEffect(() => {
+    setLang(localStorage.getItem('pm_lang') || 'en')
+    const handleLangChange = () => setLang(localStorage.getItem('pm_lang') || 'en')
+    window.addEventListener('pm_languageChange', handleLangChange)
+    return () => window.removeEventListener('pm_languageChange', handleLangChange)
+  }, [])
+  const t = getTranslations(lang)
 
   // Superhuman-style Keyboard Shortcuts
   useEffect(() => {
@@ -76,7 +86,7 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
           <Search size={18} className={styles.searchIcon} />
           <input 
             type="text" 
-            placeholder="Search mail" 
+            placeholder={t.search}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className={styles.searchInput}
@@ -94,27 +104,27 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
         <aside className={`${styles.sidebar} ${isSidebarCollapsed ? styles.collapsed : ''}`}>
           <Link href="/compose" className={styles.composeBtn}>
             <span className={styles.composeIcon}>+</span>
-            <span className={styles.navText}>Compose</span>
+            <span className={styles.navText}>{t.compose}</span>
           </Link>
 
           <nav className={styles.nav}>
             <button className={`${styles.navItem} ${activeFolder === 'inbox' ? styles.active : ''}`} onClick={() => { setActiveFolder('inbox'); setSelectedEmail(null); }}>
-              <Inbox size={18} /> <span className={styles.navText}>Inbox</span>
+              <Inbox size={18} /> <span className={styles.navText}>{t.inbox}</span>
             </button>
             <button className={`${styles.navItem} ${activeFolder === 'starred' ? styles.active : ''}`} onClick={() => { setActiveFolder('starred'); setSelectedEmail(null); }}>
-              <Star size={18} /> <span className={styles.navText}>Starred</span>
+              <Star size={18} /> <span className={styles.navText}>{t.starred}</span>
             </button>
             <button className={`${styles.navItem} ${activeFolder === 'sent' ? styles.active : ''}`} onClick={() => { setActiveFolder('sent'); setSelectedEmail(null); }}>
-              <Send size={18} /> <span className={styles.navText}>Sent</span>
+              <Send size={18} /> <span className={styles.navText}>{t.sent}</span>
             </button>
             <button className={`${styles.navItem} ${activeFolder === 'drafts' ? styles.active : ''}`} onClick={() => { setActiveFolder('drafts'); setSelectedEmail(null); }}>
-              <FileText size={18} /> <span className={styles.navText}>Drafts</span>
+              <FileText size={18} /> <span className={styles.navText}>{t.drafts}</span>
             </button>
             <button className={`${styles.navItem} ${activeFolder === 'spam' ? styles.active : ''}`} onClick={() => { setActiveFolder('spam'); setSelectedEmail(null); }}>
-              <AlertOctagon size={18} /> <span className={styles.navText}>Spam</span>
+              <AlertOctagon size={18} /> <span className={styles.navText}>{t.spam}</span>
             </button>
             <button className={`${styles.navItem} ${activeFolder === 'trash' ? styles.active : ''}`} onClick={() => { setActiveFolder('trash'); setSelectedEmail(null); }}>
-              <Trash2 size={18} /> <span className={styles.navText}>Trash</span>
+              <Trash2 size={18} /> <span className={styles.navText}>{t.trash}</span>
             </button>
           </nav>
         </aside>
@@ -162,12 +172,12 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
             <div className={styles.emailList}>
               {filteredEmails.length === 0 ? (
                 <div className={styles.emptyState}>
-                  {activeFolder === 'inbox' && "Your inbox is empty!"}
-                  {activeFolder === 'sent' && "You haven't sent anything yet!"}
-                  {activeFolder === 'starred' && "No starred emails yet."}
-                  {activeFolder === 'drafts' && "No drafts saved."}
-                  {activeFolder === 'spam' && "Hooray, no spam!"}
-                  {activeFolder === 'trash' && "Trash is empty."}
+                  {activeFolder === 'inbox' && t.emptyInbox}
+                  {activeFolder === 'sent' && t.emptySent}
+                  {activeFolder === 'starred' && t.emptyStarred}
+                  {activeFolder === 'drafts' && t.emptyDrafts}
+                  {activeFolder === 'spam' && t.emptySpam}
+                  {activeFolder === 'trash' && t.emptyTrash}
                 </div>
               ) : (
                 filteredEmails.map(email => (

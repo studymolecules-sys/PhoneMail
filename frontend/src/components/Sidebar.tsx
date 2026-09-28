@@ -15,6 +15,8 @@ import {
 } from 'lucide-react'
 import styles from './Sidebar.module.css'
 import ProfileModal from './ProfileModal'
+import { useEffect } from 'react'
+import { getTranslations } from '@/app/i18n'
 
 interface SidebarProps {
   userEmailId?: string
@@ -26,6 +28,15 @@ export default function Sidebar({
   userPhone = '+15550192834',
 }: SidebarProps) {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  
+  const [lang, setLang] = useState('en')
+  useEffect(() => {
+    setLang(localStorage.getItem('pm_lang') || 'en')
+    const handleLangChange = () => setLang(localStorage.getItem('pm_lang') || 'en')
+    window.addEventListener('pm_languageChange', handleLangChange)
+    return () => window.removeEventListener('pm_languageChange', handleLangChange)
+  }, [])
+  const t = getTranslations(lang)
 
   return (
     <div className={styles.sidebarContainer}>
@@ -44,7 +55,7 @@ export default function Sidebar({
       <div className={styles.composeWrapper}>
         <Link href="/compose" className={styles.composePill}>
           <PenSquare size={18} className={styles.composeIcon} />
-          <span className={styles.composeLabel}>Compose</span>
+          <span className={styles.composeLabel}>{t.compose}</span>
         </Link>
       </div>
 
@@ -53,9 +64,9 @@ export default function Sidebar({
         <Link href="/" className={`${styles.navItem} ${styles.active}`}>
           <div className={styles.navItemLeft}>
             <Inbox size={18} />
-            <span>Inbox</span>
+            <span>{t.inbox}</span>
           </div>
-          <span className={styles.counterBadge}>New</span>
+          <span className={styles.counterBadge}>{t.new}</span>
         </Link>
 
       </nav>
@@ -69,7 +80,7 @@ export default function Sidebar({
           onClick={() => setIsSettingsOpen(true)}
         >
           <Settings size={18} />
-          <span>Settings & Account</span>
+          <span>{t.settingsAccount}</span>
         </button>
       </div>
 

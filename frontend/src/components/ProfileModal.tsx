@@ -117,6 +117,7 @@ export default function ProfileModal({
       localStorage.setItem('pm_lang', language)
       localStorage.setItem('pm_theme', theme)
       localStorage.setItem('pm_aliases', JSON.stringify(aliases))
+      window.dispatchEvent(new Event('pm_languageChange'))
 
       // Save to cloud
       const res = await updateUserProfile({

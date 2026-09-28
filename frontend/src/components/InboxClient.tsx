@@ -10,6 +10,7 @@ import { Menu, Search, PenSquare, Star, CheckCheck, X, Sparkles } from 'lucide-r
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import SwipeableChatRow from './SwipeableChatRow'
+import { getTranslations } from '@/app/i18n'
 
 export interface ChatItemData {
   contact: string
@@ -48,6 +49,15 @@ export default function InboxClient({
   const listRef = useRef<HTMLDivElement>(null)
   const fabRef = useRef<HTMLAnchorElement>(null)
   const router = useRouter()
+
+  const [lang, setLang] = useState('en')
+  useEffect(() => {
+    setLang(localStorage.getItem('pm_lang') || 'en')
+    const handleLangChange = () => setLang(localStorage.getItem('pm_lang') || 'en')
+    window.addEventListener('pm_languageChange', handleLangChange)
+    return () => window.removeEventListener('pm_languageChange', handleLangChange)
+  }, [])
+  const t = getTranslations(lang)
 
   // Persist starred contacts in localStorage
   useEffect(() => {
@@ -175,7 +185,7 @@ export default function InboxClient({
               <h1 className={styles.brandHeading}>PhoneMail</h1>
               <span className={styles.onlineBadge}>
                 <span className={styles.onlineDot} />
-                Online
+                {t.online}
               </span>
             </div>
           </div>
@@ -200,7 +210,7 @@ export default function InboxClient({
             <Search size={18} className={styles.searchIcon} />
             <input
               type="text"
-              placeholder="Search by phone, email, or subject..."
+              placeholder={t.searchMobile}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className={styles.searchInput}
@@ -225,28 +235,28 @@ export default function InboxClient({
               className={`${styles.chip} ${filterChip === 'all' ? styles.chipActiveText : ''}`}
               onClick={() => setFilterChip('all')}
             >
-              All
+              {t.all}
             </button>
             <button
               type="button"
               className={`${styles.chip} ${filterChip === 'unread' ? styles.chipActiveText : ''}`}
               onClick={() => setFilterChip('unread')}
             >
-              Unread
+              {t.unread}
             </button>
             <button
               type="button"
               className={`${styles.chip} ${filterChip === 'favorites' ? styles.chipActiveText : ''}`}
               onClick={() => setFilterChip('favorites')}
             >
-              Favorites
+              {t.favorites}
             </button>
             <button
               type="button"
               className={`${styles.chip} ${filterChip === 'attachments' ? styles.chipActiveText : ''}`}
               onClick={() => setFilterChip('attachments')}
             >
-              Attachments
+              {t.attachments}
             </button>
           </div>
         </div>

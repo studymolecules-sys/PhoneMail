@@ -124,8 +124,8 @@
   position: relative;
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--glass-border);
+  background: var(--wa-item-hover);
+  border: 1px solid var(--wa-border);
   border-radius: 12px;
   padding: 0 12px;
   height: 44px;
@@ -133,7 +133,7 @@
 }
 
 .searchContainer:focus-within {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--wa-app-bg);
   border-color: var(--wa-accent);
 }
 
@@ -190,8 +190,8 @@
 .chip {
   padding: 6px 14px;
   border-radius: 9999px;
-  border: 1px solid transparent; /* Remove border to rely on background */
-  background: rgba(255, 255, 255, 0.05); /* Match search container */
+  border: 1px solid var(--wa-border);
+  background: var(--wa-item-hover);
   font-size: 13px;
   font-weight: 500;
   color: var(--wa-text-secondary);
@@ -202,7 +202,7 @@
 }
 
 .chip:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--wa-border);
   color: var(--wa-text-primary);
 }
 

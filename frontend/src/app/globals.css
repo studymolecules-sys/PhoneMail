@@ -152,6 +152,10 @@ button, input, textarea {
   --text-primary: #111b21;
   --text-secondary: #54656f;
   --text-tertiary: #667781;
+
+  /* Glassmorphism overrides for Light Mode */
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(0, 0, 0, 0.1);
 }
 
 [data-theme="dark"] {
