@@ -1,65 +1,108 @@
 # PhoneMail Application Blueprint & Agent Instructions
 
-This document serves as the master blueprint and instruction set for AI agents working on the **PhoneMail** project. It provides all architectural decisions, design paradigms, technology stack details, and phase-by-phase implementation guidelines to prevent hallucinations and maintain project continuity.
+This document is the single source of truth for the **PhoneMail** project. It outlines architectural decisions, design paradigms, the technology stack, and phase-by-phase implementation guidelines to ensure project continuity and prevent hallucinations.
 
 ---
 
-## 1. Project Overview
-**PhoneMail** is a modern, zero-cost, high-performance web application mimicking an email application but utilizing phone numbers as email IDs (e.g., `9876543210@phonemail.com`). 
+## 1. AI Agent Persona & Primary Directives
+
+**Role:** You are an elite AI Software Engineer and UI/UX Design Expert.
+
+**Primary Directives:**
+- **Excellence in Engineering:** Write production-ready, performant, and secure code. Avoid boilerplate where possible. Focus on high-quality, maintainable, and well-structured implementations.
+- **World-Class UI/UX:** Treat every user interface task as an opportunity to build a $50k Buildathon-winning application. Your design sensibilities must be top-tier: prioritize glassmorphism, smooth micro-animations (60FPS via GSAP), premium typography, and a tactile, native-app-like feel.
+- **Strict Constraints:**
+  - **Zero Cost:** Maximize free tiers (Supabase, Twilio free trial, Node.js local SMTP).
+  - **No TailwindCSS:** Use purely Vanilla CSS (CSS Modules). Tailwind is strictly prohibited.
+  - **No Fake UI:** Do not implement dead buttons. If a button is added, it must have functional state (even if just `localStorage` or UI transitions).
+
+---
+
+## 2. Project Overview
+
+**PhoneMail** is a modern, high-performance web application mimicking an email service but utilizing phone numbers as email IDs (e.g., `9876543210@phonemail.com`).
+
 The application serves two distinct user experiences depending on the device:
-- **Mobile Client (PWA)**: Implements a "WhatsApp-style" chat interface where emails are grouped by sender, providing an instant messenger feel (similar to Spike Mail).
-- **Desktop Web Client**: Provides a robust, multi-pane experience mimicking **Gmail** (Light Theme, traditional email table list). This is a strict requirement from the Buildathon rubric to distinguish the web client from the mobile client.
+- **Mobile Client (PWA):** Implements a "WhatsApp-style" chat interface where emails are grouped by sender, providing an instant messenger feel (similar to Spike Mail).
+- **Desktop Web Client:** Provides a robust, multi-pane experience mimicking **Gmail** (Light Theme, traditional email table list). This is a strict requirement to distinguish the web client from the mobile client.
 
-**Key Requirements & Constraints:**
-- **Zero Cost**: Maximize free tiers (Supabase, Twilio free trial, Node.js local SMTP).
-- **Performance**: High loading speed (Next.js SSR), zero stutter, minimal and polished interface.
-- **Styling**: Vanilla CSS / CSS Modules only (NO TailwindCSS unless explicitly permitted).
-- **Animations**: Use GSAP for fluid 60FPS animations.
-- **Deployment**: Must be fully dockerized (`docker compose up -d`).
+**Key Requirements:**
+- **Performance:** High loading speed (Next.js SSR), zero layout shift, minimal and polished interface.
+- **Animations:** Use GSAP for fluid, staggering, and morphing animations.
+- **Deployment:** Fully dockerized (`docker compose up -d`).
 
 ---
 
-## 2. Technology Stack
+## 3. Technology Stack
 
-- **Frontend**: Next.js (App Router, TypeScript).
-- **Styling**: Vanilla CSS (CSS Modules) + GSAP.
-- **Backend (API)**: Next.js Server Actions / API Routes.
-- **SMTP Microservice**: Node.js (`smtp-server`, `mailparser`, `pg`). Runs locally to catch all incoming emails to `@phonemail.com`.
-- **Database & Auth**: PostgreSQL via Supabase (or local Postgres via Docker Compose). OTP SMS auth via Supabase or fallback to Password.
-- **SMS Notifications**: Twilio (for sending alerts about received emails and IVR registration).
-- **Infrastructure**: Docker & Docker Compose.
+- **Frontend:** Next.js (App Router, TypeScript).
+- **Styling:** Vanilla CSS (CSS Modules) + GSAP for animations.
+- **Backend (API):** Next.js Server Actions / API Routes.
+- **SMTP Layer (Cloud Architecture):**
+  - **Receiving:** Cloudflare Email Routing intercepts emails and passes them to a Cloudflare Worker, sending a JSON POST to Vercel Next.js `/api/incoming-email` webhook.
+  - **Sending:** Brevo API (Sendinblue) used for external outgoing emails; internal emails route directly to Supabase.
+- **Database & Auth:** Supabase (PostgreSQL) + OTP SMS Auth (fallback to password if needed).
+- **SMS Notifications:** Twilio.
+- **Infrastructure:** Docker & Docker Compose.
 
 ---
 
-## 3. UI/UX Design Guidelines
+## 4. UI/UX Design Guidelines
 
-### A. Mobile Client (Modern Email UX with Optional Chat Feature)
-- **Goal**: Feel like a native app. Zero layout shift, fluid swipe gestures, and instant feedback.
-- **Navigation**: 
-  - Top-left hamburger menu with consistent folders (Inbox, Starred, Sent, Drafts, Spam, Trash) and an optional "Chat Interface" section.
+### A. Mobile Client (Modern Email UX & Chat Feature)
+- **Goal:** Native app feel. Fluid swipe gestures and instant feedback.
+- **Navigation:**
+  - Hamburger menu with consistent folders (Inbox, Starred, Sent, Drafts, Spam, Trash).
   - Profile icon top-right (Settings, Alias Management).
-  - Full-width search bar at the top, with filter chips (All, Unread, Attachments, Favorites) directly below.
-- **Home Screen**:
-  - Standard chronological email list mimicking Gmail mobile.
-  - Floating Action Button (FAB) for composing new emails positioned strategically at the bottom right.
-- **Chat Interface (Optional Feature)**:
-  - Accessible via the "Chat Interface" sidebar section.
-  - Groups emails by sender like a WhatsApp/Spike thread. Inside a chat, the To field is locked.
-  - **Gestures**: Swipe right on a message to reply (links to original email). Tap long emails to expand into traditional view.
+  - Full-width search bar with staggered animated filter chips below.
+- **Home Screen:** Chronological email list with a Floating Action Button (FAB) for composing.
+- **Chat Interface:** Groups emails by sender like a WhatsApp/Spike thread. Includes a locked "To" field.
+- **Gestures:** Swipe right to reply. Tap long emails to expand.
 
 ### B. Desktop Web Client (Gmail UX)
-- **Goal**: High information density and productivity matching the Gmail web interface.
-- **Layout**: 3-pane layout (Sidebar -> Inbox List -> Reading Pane) styled in a sleek, premium Light Theme (`--gm-app-bg: #f6f8fc`).
-- **Features**: Native keyboard shortcuts (e.g., 'c' to compose, 'Esc' to clear selection). No chat-style interface on Desktop.
+- **Goal:** High information density and productivity matching Gmail web.
+- **Layout:** 3-pane layout (Sidebar -> Inbox List -> Reading Pane) styled in a sleek Light Theme (`--gm-app-bg: #f6f8fc`).
+- **Features:** Native keyboard shortcuts (e.g., 'c' to compose, 'Esc' to clear). No chat-style interface on Desktop.
 
 ---
 
-## 4. Database Schema (PostgreSQL)
+## 5. Core Workflows
+
+### 5.1 Account Creation & Auth
+1. **Web Portal/Mobile Web:** Enter Phone Number -> Trigger OTP via Supabase Auth -> Verify and issue JWT.
+2. **IVR (Twilio):** User calls a Toll-Free number -> Presses "1" -> Twilio webhook registers the number via Next.js API -> Sends temporary password via SMS.
+
+### 5.2 Email Routing System
+- **Receiving:** Cloudflare Email Routing -> Cloudflare Worker (MIME parse) -> Next.js `/api/incoming-email` webhook -> Supabase insertion.
+- **Sending:** Next.js Server Actions -> Brevo API (for external domains) or direct DB insert (for internal domains).
+- **Alerts:** Twilio sends generic SMS notifications for offline users.
+
+---
+
+## 6. Project Structure
+
+```text
+c:\Users\direc\Softwares\PhoneMail\
+├── frontend/               # Next.js Application (App Router)
+│   ├── app/                # Pages & API routes
+│   ├── components/         # Reusable React components (mobile/ and desktop/ split)
+│   ├── src/styles/         # Vanilla CSS Modules
+│   └── Dockerfile          # Next.js docker configuration
+├── smtp-server/            # Node.js SMTP Microservice (Legacy/Local usage)
+│   ├── server.js           # smtp-server configuration
+│   └── Dockerfile          # SMTP server docker configuration
+├── docker-compose.yml      # Orchestrates Web and related containers
+└── cloudflare-email-worker.js # Email intercept script
+```
+
+---
+
+## 7. Database Schema (PostgreSQL via Supabase)
 
 **Table: `users`**
 - `id` (UUID, PK)
 - `phone_number` (String, Unique)
-- `password` (String, nullable if using OTP)
+- `password` (String, nullable)
 - `created_at` (Timestamp)
 
 **Table: `emails`**
@@ -74,102 +117,22 @@ The application serves two distinct user experiences depending on the device:
 
 ---
 
-## 5. Core Workflows
+## 8. Implementation Roadmap (History & Current Polish)
 
-### 5.1 Account Creation & Auth
-1. **Web Portal/Mobile Web**: Enter Phone Number -> Trigger OTP via Supabase Auth (or fallback to Password only if explicitly needed). Verify and issue JWT.
-2. **IVR (Twilio)**: User calls a Toll-Free number -> Presses "1" -> Twilio webhook registers the number via Next.js API -> Sends temporary password via SMS.
-
-### 5.2 Email Routing System (Cloud Architecture)
-- **Receiving (Cloudflare Email Routing)**: Cloudflare intercepts raw emails aimed at `*@pmail.vixiya.com` and passes them to a Cloudflare Email Worker. The worker parses the MIME data and sends a JSON POST payload to our Vercel Next.js `/api/incoming-email` webhook, which inserts into Supabase.
-- **Sending (Brevo API)**: Next.js backend leverages the Brevo API to send outward emails to external domains (e.g. `@gmail.com`). Internal emails bypass this and route directly via Supabase.
-- **SMS Notification**: Twilio sends a generic notification SMS for offline users.
-
----
-
-## 6. Project Structure
-
-```
-c:\Users\direc\Softwares\PhoneMail\
-├── frontend/               # Next.js Application (App Router)
-│   ├── app/                # Pages & API routes
-│   ├── components/         # Reusable React components (mobile/ and desktop/ split)
-│   ├── src/styles/         # Vanilla CSS Modules
-│   └── Dockerfile          # Next.js docker configuration
-├── smtp-server/            # Node.js SMTP Microservice
-│   ├── server.js           # smtp-server configuration & DB insertion
-│   ├── package.json
-│   └── Dockerfile          # SMTP server docker configuration
-└── docker-compose.yml      # Orchestrates Postgres and Web containers
-└── cloudflare-email-worker.js # Email intercept script
-```
+- **Phases 1-6 (Completed):** Infrastructure, DB Setup, SMTP Local -> Cloud Migration (Cloudflare + Brevo), Auth integration, Mobile/Desktop UI splitting, and PWA setup.
+- **Phase 7: $50k Buildathon Masterplan (UX Overhaul)**
+  - Frosted glass UI (Glassmorphism), dynamic morphing micro-animations, staggered filter chips, intelligent empty states.
+  - Tactile haptic feedback (`navigator.vibrate`).
+  - Native keyboard shortcuts for Desktop and custom dynamic island-style `Toast.tsx`.
+- **Phase 8: Rich Text Formatting:** Zero-dependency `RichTextEditor.tsx` using `contenteditable`. Includes explicit "View Original" toggles for complex HTML emails.
+- **Phase 9: Unified UI:** Consistent folders across views. Overhauled iconography with premium glassmorphic `.iconBox` wrappers. Smooth toast exit animations (CSS `@starting-style` logic). Real-time global language synchronization (`pm_languageChange` event).
 
 ---
 
-## 7. Implementation Roadmap & Agent Instructions
+## 9. Critical Rules to Enforce During Development
 
-**Phase 1: Setup & Infrastructure (Completed)**
-- Next.js initialized without Tailwind.
-- Node.js SMTP service initialized.
-- `docker-compose.yml` orchestrates the Frontend and SMTP containers natively (Local Postgres was removed in favor of Supabase Cloud).
-
-**Phase 2: Authentication & Twilio Integration (Completed)**
-- Implemented Supabase Auth (OTP) within Next.js.
-- Set up `/api/twilio/notify` API route to act as webhook for Twilio SMS notifications.
-- Fixed Next.js IPv6 Undici fetch bug by injecting `NODE_OPTIONS` via `cross-env`.
-
-**Phase 3: The SMTP Layer (Cloud Migration)**
-- Retired local Node.js `smtp-server` in favor of **Cloudflare Email Routing**.
-- Added `/api/incoming-email` webhook to receive parsed JSON from Cloudflare Worker.
-- Integrated **Brevo (Sendinblue) API** into `actions.ts` for sending to external domains.
-
-**Phase 4: Frontend - Mobile UI (Completed)**
-- Prioritized mobile client.
-- Styled using CSS Modules exclusively, with premium aesthetic overrides.
-- Implemented Spike Mail style chat interface logic (grouped by sender).
-
-**Phase 5: Frontend - Desktop UI (Completed)**
-- Built a responsive 3-pane Layout (Sidebar -> Inbox List -> Chat Thread).
-- Implemented Next.js Route Groups for conditional layout rendering.
-
-**Phase 6: Polish, Security & PWA (Completed)**
-- Added PWA `manifest.json` and meta viewport tags.
-- Auth.users `auth.jwt()` extraction used in Supabase RLS policies for strict row-level security.
-- All temporary artifacts removed.
-
-**Phase 7: $50k Buildathon Masterplan & UX Overhaul**
-To win the $50k prize and beat AI competitors, we are implementing a 10-step UX Masterplan to make the app feel like a premium native OS application.
-
-**Masterplan Checklist:**
-- [x] **1. Frosted Glass UI (Glassmorphism)**: Mobile headers and FAB upgraded with translucent blurring and premium gradients.
-- [x] **2. Tactile Haptic Feedback (Web)**: `navigator.vibrate` integrated for critical actions (sending, starring).
-- [x] **3. Superhuman-Style Keyboard Shortcuts**: Native shortcuts (`C`, `Esc`) added to Desktop Gmail client.
-- [x] **4. Dynamic Island Notifications**: Built custom `Toast.tsx` system replacing generic browser alerts.
-- [x] **5. Swipe-to-Action Physics**: Mobile chat list items can be swiped to reveal quick actions.
-- [x] **6. Morphing Micro-Animations**: FAB smoothly morphs and scales when pressed.
-- [x] **7. Intelligent "Zero Data" Magic States**: Empty inboxes guide the user with subtle animations.
-- [x] **8. Staggered Animated Filter Chips**: Mobile chips use native iOS segment control physics.
-- [x] **9. Fluid Conversation Transitions**: Chat screens slide in over the inbox seamlessly.
-- [x] **10. PWA Offline Polish**: Optimistic UI and loading skeletons for slow networks.
-
-**Additional Phase 7 Adjustments:**
-- **Strict Separation of Clients**: Desktop users receive a bespoke `GmailDesktopClient.tsx` (Light theme, table layout) while mobile users receive the `ClientShell.tsx` WhatsApp layout, split purely via CSS media queries.
-- **Alias Management**: Restored missing Alias ID and Language settings to `ProfileModal.tsx`, completely functional via `localStorage`.
-- **Traditional Compose**: Maintained Spike-style camera icon toggle to open a locked "Traditional Compose" modal inside chats.
-
-**Phase 8: Rich Text Formatting & Native Email rendering**
-- Built a zero-dependency `RichTextEditor.tsx` using `contenteditable` to allow bold, italic, underline, list, and link formatting without bloating the app.
-- Implemented the Rich Text Editor inside `/compose` and the Traditional Compose modal.
-- Added explicit "View Original" toggles to chat bubbles, allowing users to pop out complex HTML emails (from Gmail, newsletters, etc.) into a safe `iframe`/modal view without breaking the native WhatsApp-style chat UI.
-
-**Phase 9: Unified UI & Component Parity**
-- Implemented consistent folder navigation (Starred, Sent, Drafts, Spam, Trash) across both Desktop (Sidebar) and Mobile (Drawer) views.
-- Overhauled iconography: replaced standard `lucide-react` icons with unique variants (`Mails`, `Bookmark`, `SendHorizontal`, `Pencil`, `ShieldAlert`) wrapped in premium glassmorphic `.iconBox` wrappers with custom `data-color` tints (blue, yellow, green, gray, orange, red).
-- Relocated the Compose button from the desktop Sidebar to a floating action button (FAB), mimicking modern email clients.
-- Refined Toast notification lifecycle using CSS `@starting-style` equivalent logic (conditional `pointer-events: none` and `opacity`) to ensure smooth exit animations without React unmount flashes.
-- Enhanced localization synchronization by dispatching a global `pm_languageChange` event when the language is changed in `ProfileModal.tsx`, instantly updating the Sidebar, Drawer, and Desktop layouts without a page reload or save click.
-
----
-**Agent Rule 1**: Always check this file before generating significant architecture changes or altering the tech stack. Adhere to the zero-cost and Vanilla CSS rules rigidly. No Tailwind.
-**Agent Rule 2**: Do NOT revert the desktop client back to a WhatsApp clone. The desktop MUST remain Gmail-style per the AlphaStack rubric.
-**Agent Rule 3**: Do NOT implement "fake" buttons. If a button is added, it must have functional state (even if just `localStorage` or UI transitions) to maintain a $50k-quality user experience.
+1. **Check First:** Always consult this document before generating significant architecture changes or altering the tech stack.
+2. **Strict CSS Policy:** Adhere rigidly to the Vanilla CSS (CSS Modules) constraint. **No TailwindCSS.**
+3. **No Fake Elements:** Everything must have a state. If it exists in the UI, it must work (at least visually and temporarily via `localStorage`).
+4. **Desktop Continuity:** The desktop client MUST remain a Gmail-style table/pane layout. Do NOT revert the desktop client back to a WhatsApp clone.
+5. **Animation Excellence:** Default to using GSAP for complex timelines. Animations should feel organic, not stiff.
