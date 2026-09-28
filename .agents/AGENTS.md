@@ -33,18 +33,18 @@ The application serves two distinct user experiences depending on the device:
 
 ## 3. UI/UX Design Guidelines
 
-### A. Mobile Client (WhatsApp Design Language + Spike Mail UX)
+### A. Mobile Client (Modern Email UX with Optional Chat Feature)
 - **Goal**: Feel like a native app. Zero layout shift, fluid swipe gestures, and instant feedback.
 - **Navigation**: 
-  - Top-left hamburger menu (Home, Drafts, Spam, Trash).
+  - Top-left hamburger menu with consistent folders (Inbox, Starred, Sent, Drafts, Spam, Trash) and an optional "Chat Interface" section.
   - Profile icon top-right (Settings, Alias Management).
   - Full-width search bar at the top, with filter chips (All, Unread, Attachments, Favorites) directly below.
 - **Home Screen**:
-  - Unified inbox (no separate Sent folder). Conversations are grouped by Phone Number.
-  - Floating Action Button (FAB) for composing new emails.
-- **Conversation View (Spike-like)**:
-  - Inside a chat, the To field is locked.
-  - A compact Subject field rests above the message input box. Hidden on replies, visible on new threads.
+  - Standard chronological email list mimicking Gmail mobile.
+  - Floating Action Button (FAB) for composing new emails positioned strategically at the bottom right.
+- **Chat Interface (Optional Feature)**:
+  - Accessible via the "Chat Interface" sidebar section.
+  - Groups emails by sender like a WhatsApp/Spike thread. Inside a chat, the To field is locked.
   - **Gestures**: Swipe right on a message to reply (links to original email). Tap long emails to expand into traditional view.
 
 ### B. Desktop Web Client (Gmail UX)
@@ -161,6 +161,13 @@ To win the $50k prize and beat AI competitors, we are implementing a 10-step UX 
 - Built a zero-dependency `RichTextEditor.tsx` using `contenteditable` to allow bold, italic, underline, list, and link formatting without bloating the app.
 - Implemented the Rich Text Editor inside `/compose` and the Traditional Compose modal.
 - Added explicit "View Original" toggles to chat bubbles, allowing users to pop out complex HTML emails (from Gmail, newsletters, etc.) into a safe `iframe`/modal view without breaking the native WhatsApp-style chat UI.
+
+**Phase 9: Unified UI & Component Parity**
+- Implemented consistent folder navigation (Starred, Sent, Drafts, Spam, Trash) across both Desktop (Sidebar) and Mobile (Drawer) views.
+- Overhauled iconography: replaced standard `lucide-react` icons with unique variants (`Mails`, `Bookmark`, `SendHorizontal`, `Pencil`, `ShieldAlert`) wrapped in premium glassmorphic `.iconBox` wrappers with custom `data-color` tints (blue, yellow, green, gray, orange, red).
+- Relocated the Compose button from the desktop Sidebar to a floating action button (FAB), mimicking modern email clients.
+- Refined Toast notification lifecycle using CSS `@starting-style` equivalent logic (conditional `pointer-events: none` and `opacity`) to ensure smooth exit animations without React unmount flashes.
+- Enhanced localization synchronization by dispatching a global `pm_languageChange` event when the language is changed in `ProfileModal.tsx`, instantly updating the Sidebar, Drawer, and Desktop layouts without a page reload or save click.
 
 ---
 **Agent Rule 1**: Always check this file before generating significant architecture changes or altering the tech stack. Adhere to the zero-cost and Vanilla CSS rules rigidly. No Tailwind.

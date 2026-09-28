@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Send, Info } from 'lucide-react'
+import { Send } from 'lucide-react'
 import styles from './compose.module.css'
 import RichTextEditor from '@/components/RichTextEditor'
 
@@ -30,12 +30,7 @@ export default function ComposeClientForm({
       <input type="hidden" name="body" value={textContent} />
       <input type="hidden" name="body_html" value={htmlContent} />
 
-      <div className={styles.noticeBanner}>
-        <Info size={16} className={styles.noticeIcon} />
-        <span>
-          Enter any phone number or email ID. To create a <strong>Group Chat</strong>, enter 2 or more phone numbers separated by commas.
-        </span>
-      </div>
+
 
       <div className={styles.inputGroup}>
         <label htmlFor="to">To:</label>
