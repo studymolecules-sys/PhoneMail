@@ -355,33 +355,17 @@ export default function InboxClient({
           <>
             {(activeFolder === 'chat_interface' ? filteredChats : filteredEmails).length === 0 ? (
               <div className={styles.emptyState}>
-                <div className={styles.emptyIconCircle}>
-                  <Sparkles size={28} className={styles.emptySparkle} />
-                </div>
-                <h3>
-                  {searchQuery
-                    ? 'No matching conversations'
-                    : activeFolder === 'all' && filterChip === 'all' ? t.emptyInbox
-                    : activeFolder === 'spam' ? t.emptySpam
-                    : activeFolder === 'drafts' ? t.emptyDrafts
-                    : activeFolder === 'trash' ? t.emptyTrash
-                    : activeFolder === 'favorites' || filterChip === 'favorites' ? t.emptyStarred
-                    : filterChip !== 'all'
-                    ? `No ${filterChip} conversations found`
-                    : t.emptyInbox}
-                </h3>
-                <p>
-                  Your phone number is your universal email address. Share it with anyone to receive
-                  messages directly here.
-                </p>
-                <div className={styles.identityBadge}>
-                  <span>Your Email:</span>
-                  <strong>{userEmailId}</strong>
-                </div>
-
-                <Link href={`/compose?to=${encodeURIComponent(userEmailId)}&subject=Magic%20Test%20Email&body=This%20is%20a%20test%20email%20sent%20from%20my%20own%20inbox!`} className={styles.emptyActionBtn}>
-                  <Sparkles size={16} /> Send a Magic Test Email
-                </Link>
+                {searchQuery
+                  ? 'No matching conversations'
+                  : activeFolder === 'all' && filterChip === 'all' ? t.emptyInbox
+                  : activeFolder === 'sent' ? t.emptySent
+                  : activeFolder === 'spam' ? t.emptySpam
+                  : activeFolder === 'drafts' ? t.emptyDrafts
+                  : activeFolder === 'trash' ? t.emptyTrash
+                  : activeFolder === 'favorites' || filterChip === 'favorites' ? t.emptyStarred
+                  : filterChip !== 'all'
+                  ? `No ${filterChip} conversations found`
+                  : t.emptyInbox}
               </div>
             ) : (
               <div ref={listRef} className={styles.chatListContainer}>

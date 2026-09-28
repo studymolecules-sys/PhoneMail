@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import styles from './Drawer.module.css'
-import { Inbox, Settings, X, Shield, FileText, AlertOctagon, Trash2, Star, Send, MessageSquare } from 'lucide-react'
+import { Mails, Settings, X, Shield, Pencil, ShieldAlert, Trash, Bookmark, SendHorizontal, MessageSquare } from 'lucide-react'
 import { getTranslations } from '@/app/i18n'
 
 interface DrawerProps {
@@ -36,13 +36,13 @@ export default function Drawer({
   if (!isOpen) return null
 
   const navItems = [
-    { id: 'all', label: t.inbox, icon: Inbox },
-    { id: 'starred', label: t.starred || 'Starred', icon: Star },
-    { id: 'sent', label: t.sent || 'Sent', icon: Send },
-    { id: 'drafts', label: t.drafts || 'Drafts', icon: FileText },
-    { id: 'spam', label: t.spam || 'Spam', icon: AlertOctagon },
-    { id: 'trash', label: t.trash || 'Trash', icon: Trash2 },
-    { id: 'chat_interface', label: 'Chat Interface', icon: MessageSquare },
+    { id: 'all', label: t.inbox, icon: Mails, color: 'blue' },
+    { id: 'starred', label: t.starred || 'Starred', icon: Bookmark, color: 'yellow' },
+    { id: 'sent', label: t.sent || 'Sent', icon: SendHorizontal, color: 'green' },
+    { id: 'drafts', label: t.drafts || 'Drafts', icon: Pencil, color: 'gray' },
+    { id: 'spam', label: t.spam || 'Spam', icon: ShieldAlert, color: 'orange' },
+    { id: 'trash', label: t.trash || 'Trash', icon: Trash, color: 'red' },
+    { id: 'chat_interface', label: 'Chat Interface', icon: MessageSquare, color: 'blue' },
   ]
 
   const handleItemClick = (id: string) => {
@@ -80,7 +80,9 @@ export default function Drawer({
                 className={`${styles.navItem} ${isActive ? styles.navItemActive : ''}`}
                 onClick={() => handleItemClick(item.id)}
               >
-                <Icon size={18} className={styles.itemIcon} />
+                <div className={styles.iconBox} data-color={item.color}>
+                  <Icon size={16} />
+                </div>
                 <span className={styles.itemLabel}>{item.label}</span>
                 {isActive && <div className={styles.activeDot} />}
               </button>

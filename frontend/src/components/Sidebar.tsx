@@ -3,15 +3,14 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import {
-  Inbox,
-  Send,
-  FileText,
-  Trash2,
-  AlertOctagon,
+  Mails,
+  SendHorizontal,
+  Pencil,
+  Trash,
+  ShieldAlert,
   Settings,
-  Star,
-  PenSquare,
-  ShieldCheck,
+  Bookmark,
+  MessageSquare
 } from 'lucide-react'
 import styles from './Sidebar.module.css'
 import ProfileModal from './ProfileModal'
@@ -51,24 +50,58 @@ export default function Sidebar({
         </div>
       </div>
 
-      {/* Compose Pill Button */}
-      <div className={styles.composeWrapper}>
-        <Link href="/compose" className={styles.composePill}>
-          <PenSquare size={18} className={styles.composeIcon} />
-          <span className={styles.composeLabel}>{t.compose}</span>
-        </Link>
-      </div>
+      {/* Compose Pill Button Removed */}
 
       {/* Navigation Items */}
       <nav className={styles.nav}>
         <Link href="/" className={`${styles.navItem} ${styles.active}`}>
           <div className={styles.navItemLeft}>
-            <Inbox size={18} />
+            <div className={styles.iconBox} data-color="blue">
+              <Mails size={16} />
+            </div>
             <span>{t.inbox}</span>
           </div>
-          <span className={styles.counterBadge}>{t.new}</span>
         </Link>
-
+        <Link href="/" className={styles.navItem}>
+          <div className={styles.navItemLeft}>
+            <div className={styles.iconBox} data-color="yellow">
+              <Bookmark size={16} />
+            </div>
+            <span>{t.starred}</span>
+          </div>
+        </Link>
+        <Link href="/" className={styles.navItem}>
+          <div className={styles.navItemLeft}>
+            <div className={styles.iconBox} data-color="green">
+              <SendHorizontal size={16} />
+            </div>
+            <span>{t.sent}</span>
+          </div>
+        </Link>
+        <Link href="/" className={styles.navItem}>
+          <div className={styles.navItemLeft}>
+            <div className={styles.iconBox} data-color="gray">
+              <Pencil size={16} />
+            </div>
+            <span>{t.drafts}</span>
+          </div>
+        </Link>
+        <Link href="/" className={styles.navItem}>
+          <div className={styles.navItemLeft}>
+            <div className={styles.iconBox} data-color="orange">
+              <ShieldAlert size={16} />
+            </div>
+            <span>{t.spam}</span>
+          </div>
+        </Link>
+        <Link href="/" className={styles.navItem}>
+          <div className={styles.navItemLeft}>
+            <div className={styles.iconBox} data-color="red">
+              <Trash size={16} />
+            </div>
+            <span>{t.trash}</span>
+          </div>
+        </Link>
       </nav>
 
       {/* Footer / Settings */}

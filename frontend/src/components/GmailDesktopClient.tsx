@@ -62,7 +62,7 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
     if (listRef.current) {
       const items = listRef.current.querySelectorAll('.email-row-anim')
       if (items.length > 0) {
-        gsap.fromTo(items, { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: 0.2, stagger: 0.03, ease: 'power2.out' })
+        gsap.fromTo(items, { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: 0.3, stagger: 0.04, ease: 'power3.out' })
       }
     }
   }, [activeFolder, searchQuery, rawEmails.length])
@@ -169,29 +169,24 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
 
       <div className={styles.mainArea}>
         <aside className={`${styles.sidebar} ${isSidebarCollapsed ? styles.collapsed : ''}`}>
-          <Link href="/compose" className={styles.composeBtn}>
-            <span className={styles.composeIcon}>+</span>
-            <span className={styles.navText}>{t.compose}</span>
-          </Link>
-
           <nav className={styles.nav}>
             <button className={`${styles.navItem} ${activeFolder === 'inbox' ? styles.active : ''}`} onClick={() => { setActiveFolder('inbox'); setSelectedEmail(null); }}>
-              <Inbox size={18} /> <span className={styles.navText}>{t.inbox}</span>
+              <div className={styles.iconBox} data-color="blue"><Inbox size={16} /></div> <span className={styles.navText}>{t.inbox}</span>
             </button>
             <button className={`${styles.navItem} ${activeFolder === 'starred' ? styles.active : ''}`} onClick={() => { setActiveFolder('starred'); setSelectedEmail(null); }}>
-              <Star size={18} /> <span className={styles.navText}>{t.starred}</span>
+              <div className={styles.iconBox} data-color="yellow"><Star size={16} /></div> <span className={styles.navText}>{t.starred}</span>
             </button>
             <button className={`${styles.navItem} ${activeFolder === 'sent' ? styles.active : ''}`} onClick={() => { setActiveFolder('sent'); setSelectedEmail(null); }}>
-              <Send size={18} /> <span className={styles.navText}>{t.sent}</span>
+              <div className={styles.iconBox} data-color="green"><Send size={16} /></div> <span className={styles.navText}>{t.sent}</span>
             </button>
             <button className={`${styles.navItem} ${activeFolder === 'drafts' ? styles.active : ''}`} onClick={() => { setActiveFolder('drafts'); setSelectedEmail(null); }}>
-              <FileText size={18} /> <span className={styles.navText}>{t.drafts}</span>
+              <div className={styles.iconBox} data-color="gray"><FileText size={16} /></div> <span className={styles.navText}>{t.drafts}</span>
             </button>
             <button className={`${styles.navItem} ${activeFolder === 'spam' ? styles.active : ''}`} onClick={() => { setActiveFolder('spam'); setSelectedEmail(null); }}>
-              <AlertOctagon size={18} /> <span className={styles.navText}>{t.spam}</span>
+              <div className={styles.iconBox} data-color="orange"><AlertOctagon size={16} /></div> <span className={styles.navText}>{t.spam}</span>
             </button>
             <button className={`${styles.navItem} ${activeFolder === 'trash' ? styles.active : ''}`} onClick={() => { setActiveFolder('trash'); setSelectedEmail(null); }}>
-              <Trash2 size={18} /> <span className={styles.navText}>{t.trash}</span>
+              <div className={styles.iconBox} data-color="red"><Trash2 size={16} /></div> <span className={styles.navText}>{t.trash}</span>
             </button>
           </nav>
         </aside>
@@ -258,7 +253,7 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
                   <div key={email.id} className={`email-row-anim ${styles.emailRow} ${!email.read_status && activeFolder === 'inbox' ? styles.unread : ''}`} onClick={() => setSelectedEmail(email)}>
                     <div className={styles.emailRowActions}>
                       <button className={styles.starIconBtn} onClick={(e) => toggleStar(e, email.id)}>
-                        <Star size={18} fill={isStarred ? '#f9ab00' : 'none'} color={isStarred ? '#f9ab00' : '#888'} />
+                        <Star size={18} fill={isStarred ? '#f9ab00' : 'none'} color={isStarred ? '#f9ab00' : '#a1a1aa'} />
                       </button>
                     </div>
                     <div className={styles.emailSender}>{email.sender_address === userEmailId ? 'Me' : email.sender_address.replace('@pmail.vixiya.com', '')}</div>
@@ -273,6 +268,9 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
                   </div>
                 )})
               )}
+              <Link href="/compose" className={styles.fabComposeBtn}>
+                <span className={styles.fabIcon}>+</span> {t.compose}
+              </Link>
             </div>
           )}
         </main>

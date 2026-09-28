@@ -19,11 +19,13 @@ export const showToast = (message: string, type: ToastType = 'info') => {
 
 export default function Toast() {
   const [isVisible, setIsVisible] = useState(false)
+  const [hasFired, setHasFired] = useState(false)
   const [toastData, setToastData] = useState<ToastEventDetail>({ message: '', type: 'info' })
 
   useEffect(() => {
     const handleToast = (e: CustomEvent<ToastEventDetail>) => {
       setToastData(e.detail)
+      setHasFired(true)
       setIsVisible(true)
       
       // Auto-hide after 3 seconds
@@ -36,10 +38,13 @@ export default function Toast() {
     return () => window.removeEventListener('show-toast', handleToast as EventListener)
   }, [])
 
-  if (!isVisible) return null
+  if (!hasFired) return null
 
   return (
-    <div className={`${styles.toastContainer} ${isVisible ? styles.slideIn : ''}`}>
+    <div 
+      className={`${styles.toastContainer} ${isVisible ? styles.slideIn : styles.slideOut}`}
+      style={{ pointerEvents: isVisible ? 'auto' : 'none' }}
+    >
       <div className={`${styles.toastPill} ${styles[toastData.type]}`}>
         <span>{toastData.message}</span>
       </div>
