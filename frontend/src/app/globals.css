@@ -133,24 +133,26 @@ button, input, textarea {
 
 [data-theme="light"] {
   color-scheme: light;
-  --wa-header-bg: #f0f2f5;
-  --wa-header-text: #111b21;
-  --wa-app-bg: #ffffff;
-  --wa-panel-bg: #ffffff;
-  --wa-chat-bg: #efeae2;
-  --wa-item-hover: #f5f6f6;
-  --wa-item-active: #f0f2f5;
-  --wa-accent: #586fa5;
-  --wa-accent-light: #7388bb;
-  --wa-bubble-sent: #e8edf8;
-  --wa-bubble-sent-text: #202b42;
-  --wa-bubble-received: #ffffff;
-  --wa-bubble-received-text: #111b21;
-  --wa-text-primary: #111b21;
-  --wa-text-secondary: #54656f;
-  --wa-text-muted: #667781;
-  --wa-border: #d1d7db;
-  --wa-tick-blue: #647cae;
+  --wa-header-bg: #f8f7f3;
+  --wa-header-text: #17243b;
+  --wa-app-bg: #f4f2ec;
+  --wa-panel-bg: #fffefa;
+  --wa-chat-bg: #f1efe8;
+  --wa-item-hover: #eeece5;
+  --wa-item-active: #e8e8e1;
+  --wa-accent: #405a86;
+  --wa-accent-light: #637da8;
+  --wa-bubble-sent: #dce5f2;
+  --wa-bubble-sent-text: #192946;
+  --wa-bubble-received: #fffefa;
+  --wa-bubble-received-text: #1d293c;
+  --wa-text-primary: #1d293c;
+  --wa-text-secondary: #647084;
+  --wa-text-muted: #8490a0;
+  --wa-border: #dedfdc;
+  --wa-tick-blue: #5879b0;
+  --settings-surface: #fffefa;
+  --settings-card: #f2f0e9;
   
   --bg-primary: #fbfaf7;
   --bg-secondary: #f4f3ef;
@@ -166,50 +168,53 @@ button, input, textarea {
 
 [data-theme="dark"] {
   color-scheme: dark;
-  /* Premium Indigo Dark Theme Tokens (WhatsApp UI) */
-  --wa-header-bg: #121214;
-  --wa-header-text: #f4f4f5;
-  --wa-app-bg: #09090b;
-  --wa-panel-bg: #09090b;
-  --wa-chat-bg: #000000;
-  --wa-item-hover: #27272a;
-  --wa-item-active: #27272a;
-  --wa-accent: #6366f1;
-  --wa-accent-light: #818cf8;
-  --wa-bubble-sent: #4f46e5;
-  --wa-bubble-sent-text: #ffffff;
-  --wa-bubble-received: #27272a;
-  --wa-bubble-received-text: #e4e4e7;
-  --wa-text-primary: #f4f4f5;
-  --wa-text-secondary: #a1a1aa;
-  --wa-text-muted: #71717a;
-  --wa-border: #27272a;
-  --wa-tick-blue: #60a5fa;
+  --wa-header-bg: #1a202b;
+  --wa-header-text: #f0f2f7;
+  --wa-app-bg: #151a23;
+  --wa-panel-bg: #1b222e;
+  --wa-chat-bg: #141a23;
+  --wa-item-hover: #252e3b;
+  --wa-item-active: #2b3544;
+  --wa-accent: #849bc7;
+  --wa-accent-light: #a6b8dc;
+  --wa-bubble-sent: #384b70;
+  --wa-bubble-sent-text: #f3f5fa;
+  --wa-bubble-received: #252e3a;
+  --wa-bubble-received-text: #ebedf2;
+  --wa-text-primary: #eef0f5;
+  --wa-text-secondary: #b1bac9;
+  --wa-text-muted: #8c96a6;
+  --wa-border: #303a49;
+  --wa-tick-blue: #aac2ef;
+  --settings-surface: #1b222e;
+  --settings-card: #202937;
 
-  --bg-primary: #09090b;
-  --bg-secondary: #09090b;
-  --bg-tertiary: #121214;
-  --text-primary: #f4f4f5;
-  --text-secondary: #a1a1aa;
-  --text-tertiary: #71717a;
+  --bg-primary: #151a23;
+  --bg-secondary: #1b222e;
+  --bg-tertiary: #202937;
+  --text-primary: #eef0f5;
+  --text-secondary: #b1bac9;
+  --text-tertiary: #8c96a6;
 
   /* Gmail Dark Theme Tokens */
-  --gm-app-bg: #202124;
-  --gm-panel-bg: #202124;
-  --gm-surface-bg: #202124;
-  --gm-sidebar-bg: #202124;
-  --gm-active-pill: #3c4043;
-  --gm-active-text: #e8eaed;
-  --gm-primary-btn: #8ab4f8;
-  --gm-primary-btn-hover: #aecbfa;
-  --gm-text-primary: #e8eaed;
-  --gm-text-secondary: #9aa0a6;
-  --gm-text-muted: #5f6368;
-  --gm-border: #3c4043;
-  --gm-hover-row: #303134;
-  --gm-item-hover: #303134;
-  --gm-item-active: #3c4043;
-  --gm-accent: #8ab4f8;
-  --gm-star: #fbbc04;
-  --gm-star-empty: #5f6368;
+  --gm-app-bg: #171d27;
+  --gm-panel-bg: #1b222e;
+  --gm-surface-bg: #202937;
+  --gm-sidebar-bg: #171d27;
+  --gm-active-pill: #34435c;
+  --gm-active-text: #f0f2f7;
+  --gm-primary-btn: #a6b8dc;
+  --gm-primary-btn-hover: #c0cceb;
+  --gm-text-primary: #eef0f5;
+  --gm-text-secondary: #b1bac9;
+  --gm-text-muted: #8c96a6;
+  --gm-border: #303a49;
+  --gm-hover-row: #252e3b;
+  --gm-item-hover: #252e3b;
+  --gm-item-active: #2b3544;
+  --gm-accent: #a6b8dc;
+  --gm-star: #e8be70;
+  --gm-star-empty: #6e7888;
 }
+
+:focus-visible { outline: 2px solid var(--wa-accent-light); outline-offset: 2px; }

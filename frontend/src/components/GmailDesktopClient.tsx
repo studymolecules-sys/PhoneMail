@@ -30,6 +30,7 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
   const router = useRouter()
 
   const [lang, setLang] = useState('en')
+  const [profileInitial, setProfileInitial] = useState('P')
   
   // Folder state stored in localStorage for completeness
   const [starredEmails, setStarredEmails] = useState<string[]>([])
@@ -41,7 +42,13 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
 
   useEffect(() => {
     setLang(localStorage.getItem('pm_lang') || 'en')
-    const handleLangChange = () => setLang(localStorage.getItem('pm_lang') || 'en')
+    const storedName = localStorage.getItem('pm_name')?.trim()
+    if (storedName) setProfileInitial(storedName.charAt(0).toUpperCase())
+    const handleLangChange = () => {
+      setLang(localStorage.getItem('pm_lang') || 'en')
+      const name = localStorage.getItem('pm_name')?.trim()
+      setProfileInitial(name ? name.charAt(0).toUpperCase() : 'P')
+    }
     window.addEventListener('pm_languageChange', handleLangChange)
 
     // Load folders
@@ -164,7 +171,7 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
 
         <div className={styles.headerRight}>
           <button className={styles.profileBtn} aria-label="Account" onClick={() => setIsProfileOpen(true)}>
-            <div className={styles.avatar}>P</div>
+            <div className={styles.avatar}>{profileInitial}</div>
           </button>
         </div>
       </header>

@@ -1,9 +1,21 @@
 'use client'
 
 import { useState } from 'react'
+import { useFormStatus } from 'react-dom'
 import { Send } from 'lucide-react'
 import styles from './compose.module.css'
 import RichTextEditor from '@/components/RichTextEditor'
+
+function SendButton() {
+  const { pending } = useFormStatus()
+
+  return (
+    <button type="submit" className={styles.sendFab} disabled={pending}>
+      <Send size={17} />
+      <span>{pending ? 'Sending…' : 'Send message'}</span>
+    </button>
+  )
+}
 
 interface ComposeClientFormProps {
   userEmailId: string
@@ -38,11 +50,12 @@ export default function ComposeClientForm({
           type="text"
           id="to"
           name="to"
-          placeholder="Phone number or email address"
+          placeholder="Name, phone number or email address"
           defaultValue={initialTo}
           required
           className={styles.input}
           autoFocus
+          autoComplete="email"
         />
       </div>
 
@@ -52,7 +65,7 @@ export default function ComposeClientForm({
           type="text"
           id="subject"
           name="subject"
-          placeholder="Email subject..."
+          placeholder="Add a subject"
           defaultValue={initialSubject}
           className={styles.input}
         />
@@ -69,9 +82,10 @@ export default function ComposeClientForm({
         />
       </div>
 
-      <button type="submit" className={styles.sendFab} aria-label="Send Email">
-        <Send size={22} />
-      </button>
+      <div className={styles.formActions}>
+        <span className={styles.composeNote}>A clear subject helps people find your message later.</span>
+        <SendButton />
+      </div>
     </form>
   )
 }

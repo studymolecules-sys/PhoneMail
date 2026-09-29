@@ -68,3 +68,14 @@
   pointer-events: none;
   display: block; /* For Firefox */
 }
+
+.toolbar { padding: 7px 9px; gap: 5px; }
+.toolbarBtn { width: 36px; height: 36px; border-radius: 9px; }
+.toolbarBtn:active { background: var(--wa-item-active); }
+.editorContainer:focus-within { border-color: var(--wa-accent); }
+.editorArea { min-height: 120px; overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+  .toolbar { padding: 6px 7px; }
+  .toolbarBtn { width: 40px; height: 40px; }
+  .editorArea { padding: 13px 12px; font-size: 16px; }
+}

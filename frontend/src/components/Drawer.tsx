@@ -25,9 +25,16 @@ export default function Drawer({
   onOpenSettings,
 }: DrawerProps) {
   const [lang, setLang] = useState('en')
+  const [profileInitial, setProfileInitial] = useState('P')
   useEffect(() => {
     setLang(localStorage.getItem('pm_lang') || 'en')
-    const handleLangChange = () => setLang(localStorage.getItem('pm_lang') || 'en')
+    const storedName = localStorage.getItem('pm_name')?.trim()
+    if (storedName) setProfileInitial(storedName.charAt(0).toUpperCase())
+    const handleLangChange = () => {
+      setLang(localStorage.getItem('pm_lang') || 'en')
+      const name = localStorage.getItem('pm_name')?.trim()
+      setProfileInitial(name ? name.charAt(0).toUpperCase() : 'P')
+    }
     window.addEventListener('pm_languageChange', handleLangChange)
     return () => window.removeEventListener('pm_languageChange', handleLangChange)
   }, [])
@@ -56,7 +63,7 @@ export default function Drawer({
         {/* User Header */}
         <div className={styles.header}>
           <div className={styles.avatar}>
-            P
+            {profileInitial}
           </div>
           <div className={styles.userInfo}>
             <h3 className={styles.userName}>{userPhone || 'PhoneMail'}</h3>

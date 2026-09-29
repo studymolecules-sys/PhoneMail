@@ -19,6 +19,7 @@ export async function sendMessage(formData: FormData) {
   const rawTo = formData.get('to') as string
   const subject = formData.get('subject') as string
   const body = formData.get('body') as string
+  const bodyHtml = String(formData.get('body_html') || '')
 
   // Handle multiple recipients (Group Email / Group Chat creation per Task.docx)
   const recipientList = rawTo
@@ -36,7 +37,7 @@ export async function sendMessage(formData: FormData) {
     recipient_address: recipient,
     subject: subject || '',
     body_text: body,
-    body_html: `<p>${body.replace(/\n/g, '<br/>')}</p>`,
+    body_html: bodyHtml || `<p>${body.replace(/\n/g, '<br/>')}</p>`,
     read_status: false,
   }))
 
@@ -63,7 +64,7 @@ export async function sendMessage(formData: FormData) {
               sender: { email: from, name: from.split('@')[0] },
               to: [{ email: recipient }],
               subject: subject || 'No Subject',
-              htmlContent: `<p>${body.replace(/\n/g, '<br/>')}</p>`,
+              htmlContent: bodyHtml || `<p>${body.replace(/\n/g, '<br/>')}</p>`,
               textContent: body
             })
           })

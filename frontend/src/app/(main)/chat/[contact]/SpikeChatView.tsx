@@ -7,12 +7,9 @@ import gsap from 'gsap'
 import styles from './chat.module.css'
 import {
   ArrowLeft,
-  Phone,
-  Video,
-  MoreVertical,
   Send,
-  Camera,
-  Paperclip,
+  MailPlus,
+  Check,
   CheckCheck,
   Reply,
   X,
@@ -57,7 +54,7 @@ export default function SpikeChatView({
 
   const endRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
 
   // Scroll to bottom on load
   useEffect(() => {
@@ -122,14 +119,17 @@ export default function SpikeChatView({
 
     setMessages((prev) => [...prev, optimisticMsg])
     setMessageBody('')
+    setMessageHtml('')
     setSubjectText('')
     setReplyingTo(null)
+    if (inputRef.current) inputRef.current.style.height = '42px'
 
     const formData = new FormData()
     formData.append('from', currentUser)
     formData.append('to', contact)
     formData.append('subject', finalSubject)
     formData.append('body', fullBody)
+    formData.append('body_html', messageHtml)
 
     try {
       if (typeof navigator !== 'undefined' && navigator.vibrate) {
@@ -224,9 +224,9 @@ export default function SpikeChatView({
                     {/* Footer: Time + Ticks + View Full Email */}
                     <div className={styles.bubbleFooter}>
                       <span className={styles.msgTime}>{formatTime(msg.created_at)}</span>
-                      {isMe && (
-                        <CheckCheck size={15} className={styles.tickIcon} />
-                      )}
+                      {isMe && (msg.read_status
+                        ? <CheckCheck size={15} className={styles.tickIcon} aria-label="Read" />
+                        : <Check size={15} className={styles.tickIcon} aria-label="Sent" />)}
                       {msg.body_html && msg.body_html !== `<p>${msg.body_text}</p>` && (
                         <button
                           type="button"
@@ -289,7 +289,7 @@ export default function SpikeChatView({
         </div>
       )}
 
-      {/* Input Bar with Spike Subject + WhatsApp Camera Switcher */}
+      {/* A short reply field with an optional full email editor. */}
       <form className={styles.inputArea} onSubmit={handleSubmit}>
         {/* Compact Subject Field: Hidden when replying to a message (Mandated by Task.docx) */}
         {!replyingTo && (
@@ -309,30 +309,26 @@ export default function SpikeChatView({
         <div className={styles.messageRow}>
           <button
             type="button"
-            className={styles.mediaButton}
-            aria-label="Attach file"
-          >
-            <Paperclip size={20} />
-          </button>
-
-          {/* Traditional View Compose Toggle utilizing WhatsApp's camera slot (Mandated in Task.docx) */}
-          <button
-            type="button"
             className={styles.cameraSlotBtn}
             onClick={() => setIsTraditionalComposeOpen(true)}
-            title="Expand to full view"
+            title="Open the full email editor"
+            aria-label="Open the full email editor"
           >
-            <Camera size={20} />
+            <MailPlus size={19} />
           </button>
 
-          <input
+          <textarea
             ref={inputRef}
-            type="text"
             name="body"
+            rows={1}
             value={messageBody}
-            onChange={(e) => setMessageBody(e.target.value)}
+            onChange={(e) => {
+              setMessageBody(e.target.value)
+              e.currentTarget.style.height = 'auto'
+              e.currentTarget.style.height = `${Math.min(e.currentTarget.scrollHeight, 120)}px`
+            }}
             className={styles.messageInput}
-            placeholder={replyingTo ? 'Reply...' : 'Message'}
+            placeholder={replyingTo ? 'Write a reply…' : 'Write a message…'}
             required
             autoComplete="off"
           />

@@ -32,7 +32,7 @@ export default function ChatList({ chats }: { chats: any[] }) {
         <Link href={`/chat/${chat.contact}`} key={chat.contact} style={{ textDecoration: 'none' }}>
           <div className={styles.chatItem}>
             <div className={styles.avatar}>
-              {chat.contact.substring(0, 2).toUpperCase()}
+              {chat.contact.charAt(0).toUpperCase()}
             </div>
             
             <div className={styles.chatContent}>

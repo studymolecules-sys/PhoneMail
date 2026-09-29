@@ -45,24 +45,24 @@ export default function RichTextEditor({ value, onChange, placeholder = 'Write y
   return (
     <div className={`${styles.editorContainer} ${isFocused ? styles.focused : ''}`}>
       <div className={styles.toolbar}>
-        <button type="button" onClick={() => handleCommand('bold')} className={styles.toolbarBtn} title="Bold">
+        <button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => handleCommand('bold')} className={styles.toolbarBtn} title="Bold" aria-label="Bold">
           <Bold size={16} />
         </button>
-        <button type="button" onClick={() => handleCommand('italic')} className={styles.toolbarBtn} title="Italic">
+        <button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => handleCommand('italic')} className={styles.toolbarBtn} title="Italic" aria-label="Italic">
           <Italic size={16} />
         </button>
-        <button type="button" onClick={() => handleCommand('underline')} className={styles.toolbarBtn} title="Underline">
+        <button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => handleCommand('underline')} className={styles.toolbarBtn} title="Underline" aria-label="Underline">
           <Underline size={16} />
         </button>
         <div className={styles.divider} />
-        <button type="button" onClick={() => handleCommand('insertUnorderedList')} className={styles.toolbarBtn} title="Bullet List">
+        <button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => handleCommand('insertUnorderedList')} className={styles.toolbarBtn} title="Bullet List" aria-label="Bullet list">
           <List size={16} />
         </button>
-        <button type="button" onClick={() => handleCommand('insertOrderedList')} className={styles.toolbarBtn} title="Numbered List">
+        <button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => handleCommand('insertOrderedList')} className={styles.toolbarBtn} title="Numbered List" aria-label="Numbered list">
           <ListOrdered size={16} />
         </button>
         <div className={styles.divider} />
-        <button type="button" onClick={addLink} className={styles.toolbarBtn} title="Insert Link">
+        <button type="button" onMouseDown={(event) => event.preventDefault()} onClick={addLink} className={styles.toolbarBtn} title="Insert Link" aria-label="Insert link">
           <LinkIcon size={16} />
         </button>
       </div>

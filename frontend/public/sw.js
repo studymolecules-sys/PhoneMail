@@ -1,5 +1,5 @@
 // PhoneMail PWA Service Worker
-const CACHE_NAME = 'phonemail-v1';
+const CACHE_NAME = 'phonemail-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/manifest.json',
