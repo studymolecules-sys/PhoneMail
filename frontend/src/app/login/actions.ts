@@ -37,8 +37,8 @@ function sendErrorMessage(error: { message: string; status?: number; code?: stri
   if (!error.status || error.status === 0 || /fetch failed|network/i.test(error.message)) {
     return 'PhoneMail could not reach sign-in. Check your connection and try again.'
   }
-  if (/phone|sms|provider/i.test(error.message)) {
-    return 'The number could not receive a code right now. Check it and try again shortly.'
+  if (error.code === 'sms_send_failed') {
+    return 'We could not deliver a code right now. Your number may be fine; try again later.'
   }
   return 'We could not send a code. Check the number and try again.'
 }
