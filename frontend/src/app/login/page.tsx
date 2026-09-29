@@ -1,5 +1,5 @@
 import LoginForm from './LoginForm'
-import { sendOtp, verifyOtp, directLogin } from './actions'
+import { sendOtp, verifyOtp } from './actions'
 
 export default async function LoginPage({
   searchParams,
@@ -10,12 +10,12 @@ export default async function LoginPage({
 
   return (
     <LoginForm
+      key={`${params?.step || 'start'}:${params?.phone || ''}`}
       initialPhone={params?.phone}
       initialStep={params?.step}
       errorMessage={params?.message}
       onSendOtp={sendOtp}
       onVerifyOtp={verifyOtp}
-      onDirectLogin={directLogin}
     />
   )
 }

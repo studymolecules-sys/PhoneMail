@@ -504,3 +504,5 @@
   font-size: 13px;
   text-align: center;
 }
+
+.waPrimaryButton:disabled { cursor: not-allowed; opacity: 0.55; transform: none; }

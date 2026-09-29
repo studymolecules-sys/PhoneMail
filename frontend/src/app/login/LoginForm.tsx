@@ -12,7 +12,6 @@ interface LoginFormProps {
   errorMessage?: string
   onSendOtp: (formData: FormData) => void
   onVerifyOtp: (formData: FormData) => void
-  onDirectLogin: (formData: FormData) => void
 }
 
 const LANGUAGES = [
@@ -29,13 +28,12 @@ export default function LoginForm({
   errorMessage,
   onSendOtp,
   onVerifyOtp,
-  onDirectLogin
 }: LoginFormProps) {
   // Mobile 4-step onboarding:
   // 1: Language selection
   // 2: Terms & Conditions
-  // 3: Phone number verification (with auto-detect simulation)
-  // 4: OTP verification (with auto-fill simulation)
+  // 3: Phone number entry
+  // 4: OTP verification
   const [step, setStep] = useState<number>(() => {
     if (initialStep === 'verify') return 4
     if (initialPhone) return 3
@@ -43,10 +41,8 @@ export default function LoginForm({
   })
 
   const [selectedLang, setSelectedLang] = useState('en')
-  const [phone, setPhone] = useState(initialPhone || '')
+  const [phone, setPhone] = useState(initialStep !== 'verify' && initialPhone.startsWith('+91') ? initialPhone.slice(3) : initialPhone)
   const [otp, setOtp] = useState('')
-  const [isAutoDetecting, setIsAutoDetecting] = useState(false)
-  const [isVerifying, setIsVerifying] = useState(false)
   const [isDesktopMode, setIsDesktopMode] = useState(false)
 
   const cardRef = useRef<HTMLDivElement>(null)
@@ -71,32 +67,6 @@ export default function LoginForm({
     )
   }, [step, isDesktopMode])
 
-  // Simulated SIM auto-detection on mobile Step 3
-  const handleAutoDetectPhone = () => {
-    setIsAutoDetecting(true)
-    setTimeout(() => {
-      setPhone('+1 (555) 019-2834')
-      setIsAutoDetecting(false)
-    }, 600)
-  }
-
-  // Simulated OTP auto-fill on mobile Step 4
-  const handleAutoFillOtp = () => {
-    setIsVerifying(true)
-    let current = ''
-    const target = '849201'
-    let idx = 0
-    const interval = setInterval(() => {
-      if (idx < target.length) {
-        current += target[idx]
-        setOtp(current)
-        idx++
-      } else {
-        clearInterval(interval)
-        setIsVerifying(false)
-      }
-    }, 100)
-  }
 
   return (
     <div className={styles.wrapper}>
@@ -113,19 +83,19 @@ export default function LoginForm({
             </div>
           </div>
 
-          <form action={onDirectLogin} className={styles.desktopForm}>
+          <form action={step === 4 ? onVerifyOtp : onSendOtp} className={styles.desktopForm}>
             <div className={styles.inputGroup}>
               <label htmlFor="desktop-phone" className={styles.inputLabel}>
                 Phone Number
               </label>
               <div className={styles.phoneInputWrapper}>
-                <span className={styles.countryCode}>IN +91</span>
+                <span className={styles.countryCode}>International</span>
                 <input
                   id="desktop-phone"
                   name="phone"
                   type="tel"
                   className={styles.desktopInput}
-                  placeholder="Enter your mobile number"
+                  placeholder="Include country code, e.g. +1 555 010 0123"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   required
@@ -136,7 +106,8 @@ export default function LoginForm({
               </span>
             </div>
 
-            <div className={styles.inputGroup}>
+            {step === 4 && <div className={styles.inputGroup}>
+              <input type="hidden" name="phone" value={phone} />
               <label htmlFor="desktop-otp" className={styles.inputLabel}>
                 Verification Code
               </label>
@@ -144,16 +115,19 @@ export default function LoginForm({
                 <input
                   id="desktop-otp"
                   name="otp"
-                  type="text"
-                  inputMode="numeric"
+                  type="tel"
                   className={styles.desktopInput}
                   placeholder="6-digit code sent via SMS"
                   value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
+                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   maxLength={6}
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  pattern="[0-9]{6}"
+                  required
                 />
               </div>
-            </div>
+            </div>}
 
             {errorMessage && <div className={styles.errorBanner}>{errorMessage}</div>}
 
@@ -166,9 +140,10 @@ export default function LoginForm({
             </p>
 
             <button type="submit" className={styles.desktopNextButton}>
-              <span>Next</span>
+              <span>{step === 4 ? 'Verify and sign in' : 'Send code'}</span>
               <ArrowRight size={18} />
             </button>
+            {step === 4 && <button type="submit" formAction={onSendOtp} formNoValidate onClick={() => setOtp('')} className={styles.waGhostButton}>Send a new code</button>}
           </form>
 
           <div className={styles.desktopFooter}>
@@ -260,28 +235,27 @@ export default function LoginForm({
 
           {/* STEP 3: Phone Number Verification */}
           {step === 3 && (
-            <div className={styles.waStepContainer}>
+            <form action={onSendOtp} className={styles.waStepContainer}>
               <div className={styles.waStepHeader}>
                 <h2 className={styles.waTitle}>Enter your phone number</h2>
-                <p className={styles.waSubtitle}>
-                  We&apos;ll send a verification code to confirm your number.
-                </p>
+                <p className={styles.waSubtitle}>Enter your number with its country code. We&apos;ll text you a verification code.</p>
               </div>
-
-
 
               <div className={styles.phoneBox}>
                 <div className={styles.countrySelector}>
-                  <span>India</span>
-                  <span className={styles.countryCodeText}>+91</span>
+                  <span>International number</span>
+                  <span className={styles.countryCodeText}>Include +country code</span>
                 </div>
                 <input
                   type="tel"
+                  name="phone"
                   className={styles.waPhoneInput}
-                  placeholder="Mobile number"
+                  placeholder="Phone number with country code"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
+                  autoComplete="tel"
                   autoFocus
+                  required
                 />
               </div>
 
@@ -290,23 +264,17 @@ export default function LoginForm({
                 <strong>{phone.replace(/[^0-9]/g, '') || 'yournumber'}@pmail.vixiya.com</strong>
               </p>
 
+              {errorMessage && <div className={styles.errorBanner}>{errorMessage}</div>}
+
               <div className={styles.waButtonColumn}>
-                <button
-                  type="button"
-                  className={styles.waPrimaryButton}
-                  onClick={() => setStep(4)}
-                >
-                  Next
+                <button type="submit" className={styles.waPrimaryButton} disabled={!phone.trim()}>
+                  Send code
                 </button>
-                <button
-                  type="button"
-                  className={styles.waGhostButton}
-                  onClick={() => setStep(2)}
-                >
+                <button type="button" className={styles.waGhostButton} onClick={() => setStep(2)}>
                   Back
                 </button>
               </div>
-            </div>
+            </form>
           )}
 
           {/* STEP 4: OTP Verification */}
@@ -318,7 +286,7 @@ export default function LoginForm({
                 </div>
                 <h2 className={styles.waTitle}>Verifying your number</h2>
                 <p className={styles.waSubtitle}>
-                  Waiting to automatically detect an SMS sent to{' '}
+                  Enter the code sent to{' '}
                   <strong>{phone}</strong>.{' '}
                   <span className={styles.waLink} onClick={() => setStep(3)}>
                     Wrong number?
@@ -326,19 +294,23 @@ export default function LoginForm({
                 </p>
               </div>
 
-              <form action={onDirectLogin} className={styles.waOtpForm}>
+              <form action={onVerifyOtp} className={styles.waOtpForm}>
                 <input type="hidden" name="phone" value={phone} />
-                <input type="hidden" name="otp" value={otp || '123456'} />
+                <input type="hidden" name="otp" value={otp} />
 
                 <div className={styles.otpGrid}>
                   <input
-                    type="text"
+                    type="tel"
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
                     maxLength={6}
                     className={styles.waOtpFullInput}
                     placeholder="• • • • • •"
                     value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
+                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                     autoFocus
+                    required
+                    pattern="[0-9]{6}"
                   />
                 </div>
 
@@ -351,6 +323,9 @@ export default function LoginForm({
                 <div className={styles.waButtonColumn}>
                   <button type="submit" className={styles.waPrimaryButton}>
                     Continue
+                  </button>
+                  <button type="submit" formAction={onSendOtp} formNoValidate onClick={() => setOtp('')} className={styles.waGhostButton}>
+                    Resend code
                   </button>
                   <button
                     type="button"

@@ -5,91 +5,57 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
 function cleanPhoneNumber(raw: string): string {
-  // Retain digits and optional leading +
-  const digits = raw.replace(/[^\d+]/g, '')
-  if (digits.startsWith('+')) return digits
-  return `+${digits}`
+  const trimmed = raw.trim()
+  const digits = trimmed.replace(/\D/g, '')
+  return digits ? '+' + digits : ''
+}
+
+function phoneDigits(phone: string): number {
+  return phone.replace(/\D/g, '').length
+}
+
+function loginUrl(phone: string, step: 'phone' | 'verify', message?: string): string {
+  const params = new URLSearchParams({ phone, step })
+  if (message) params.set('message', message)
+  return '/login?' + params.toString()
 }
 
 export async function sendOtp(formData: FormData) {
-  const supabase = await createClient()
-  const rawPhone = formData.get('phone') as string
-  const phone = cleanPhoneNumber(rawPhone)
-
-  const { error } = await supabase.auth.signInWithOtp({
-    phone,
-  })
-
-  if (error) {
-    // If phone OTP provider isn't enabled in Supabase, provide seamless demo fallback
-    console.warn('Supabase SMS OTP failed, falling back to simulated verification:', error.message)
-    redirect(`/login?phone=${encodeURIComponent(phone)}&step=verify&providerNotice=simulated`)
+  const phone = cleanPhoneNumber(String(formData.get('phone') || ''))
+  if (phoneDigits(phone) < 8 || phoneDigits(phone) > 15) {
+    redirect(loginUrl(phone, 'phone', 'Enter a valid phone number with its country code.'))
   }
 
-  redirect(`/login?phone=${encodeURIComponent(phone)}&step=verify`)
+  const supabase = await createClient()
+  const { error } = await supabase.auth.signInWithOtp({ phone })
+
+  if (error) {
+    console.warn('PhoneMail could not send a sign-in code:', error.message)
+    redirect(loginUrl(phone, 'phone', 'We could not send a code. Check the number and try again.'))
+  }
+
+  redirect(loginUrl(phone, 'verify'))
 }
 
 export async function verifyOtp(formData: FormData) {
+  const phone = cleanPhoneNumber(String(formData.get('phone') || ''))
+  const otp = String(formData.get('otp') || '').trim()
+
+  if (phoneDigits(phone) < 10 || phoneDigits(phone) > 15) {
+    redirect(loginUrl(phone, 'phone', 'Enter a valid phone number, including its country code.'))
+  }
+  if (!/^\d{6}$/.test(otp)) {
+    redirect(loginUrl(phone, 'verify', 'Enter the six-digit code sent to your phone.'))
+  }
+
   const supabase = await createClient()
-  const rawPhone = formData.get('phone') as string
-  const otp = formData.get('otp') as string
-  const phone = cleanPhoneNumber(rawPhone)
+  const { error } = await supabase.auth.verifyOtp({ phone, token: otp, type: 'sms' })
 
-  // 1. Try real OTP verification first
-  const { error } = await supabase.auth.verifyOtp({
-    phone,
-    token: otp,
-    type: 'sms',
-  })
-
-  if (!error) {
-    revalidatePath('/', 'layout')
-    redirect('/')
+  if (error) {
+    console.warn('PhoneMail sign-in code verification failed:', error.message)
+    redirect(loginUrl(phone, 'verify', 'That code is invalid or expired. Request a new code and try again.'))
   }
-
-  // 2. If SMS provider not connected or OTP failed, fall back to email-password bridge
-  // This satisfies the Task.docx rule: "If no free OTP providers are available, use password-based authentication."
-  const cleanDigits = phone.replace(/[^\d]/g, '')
-  const email = `${cleanDigits}@pmail.vixiya.com`
-  const fallbackPassword = `PM_${cleanDigits}_Secure!`
-
-  // Attempt login with bridge credentials
-  const { error: signInError } = await supabase.auth.signInWithPassword({
-    email,
-    password: fallbackPassword,
-  })
-
-  if (!signInError) {
-    revalidatePath('/', 'layout')
-    redirect('/')
-  }
-
-  // Attempt signup if user doesn't exist
-  const { error: signUpError } = await supabase.auth.signUp({
-    email,
-    password: fallbackPassword,
-    options: {
-      data: {
-        phone: phone,
-        phone_number: phone,
-      },
-    },
-  })
-
-  if (signUpError && !signUpError.message.includes('already registered')) {
-    redirect(`/login?phone=${encodeURIComponent(phone)}&step=verify&message=${encodeURIComponent(signUpError.message)}`)
-  }
-
-  // Final sign in after account creation
-  await supabase.auth.signInWithPassword({
-    email,
-    password: fallbackPassword,
-  })
 
   revalidatePath('/', 'layout')
   redirect('/')
-}
-
-export async function directLogin(formData: FormData) {
-  return verifyOtp(formData)
 }
