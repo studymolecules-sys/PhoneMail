@@ -171,7 +171,7 @@ export default function SpikeChatView({
             type="button"
             className={styles.headerActionBtn}
             onClick={() => setIsTraditionalComposeOpen(true)}
-            aria-label="Compose in Traditional Email View"
+            aria-label="Expand to full email view"
           >
             <Maximize2 size={19} />
           </button>
@@ -320,7 +320,7 @@ export default function SpikeChatView({
             type="button"
             className={styles.cameraSlotBtn}
             onClick={() => setIsTraditionalComposeOpen(true)}
-            title="Switch to Traditional Email View (WhatsApp Camera Slot)"
+            title="Expand to full view"
           >
             <Camera size={20} />
           </button>
@@ -354,7 +354,7 @@ export default function SpikeChatView({
           <div className={styles.traditionalModal} onClick={(e) => e.stopPropagation()}>
             <div className={styles.traditionalHeader}>
               <div>
-                <span className={styles.traditionalCategory}>TRADITIONAL EMAIL VIEW</span>
+                <span className={styles.traditionalCategory}>Full Message</span>
                 <h3 className={styles.traditionalSubject}>
                   {selectedEmail.subject || '(No Subject)'}
                 </h3>
@@ -416,7 +416,7 @@ export default function SpikeChatView({
           <div className={styles.traditionalModal} onClick={(e) => e.stopPropagation()}>
             <div className={styles.traditionalHeader}>
               <div>
-                <span className={styles.traditionalCategory}>COMPOSE TRADITIONAL EMAIL</span>
+                <span className={styles.traditionalCategory}>New Message</span>
                 <h3 className={styles.traditionalSubject}>New Message</h3>
               </div>
               <button
@@ -442,7 +442,7 @@ export default function SpikeChatView({
 
               {/* To field is LOCKED per Task.docx requirement */}
               <div className={styles.lockedFieldRow}>
-                <label className={styles.lockedLabel}>To (Locked):</label>
+                <label className={styles.lockedLabel}>To:</label>
                 <input
                   type="text"
                   name="to"
@@ -470,7 +470,7 @@ export default function SpikeChatView({
                     setMessageHtml(html)
                     setMessageBody(text)
                   }}
-                  placeholder="Compose full traditional email..."
+                  placeholder="Write your message..."
                 />
                 <input type="hidden" name="body" value={messageBody} />
                 <input type="hidden" name="body_html" value={messageHtml} />
@@ -478,7 +478,7 @@ export default function SpikeChatView({
 
               <div className={styles.traditionalFooter}>
                 <button type="submit" className={styles.modalSendBtn}>
-                  <Send size={16} /> Send Email
+                  <Send size={16} /> Send
                 </button>
               </div>
             </form>

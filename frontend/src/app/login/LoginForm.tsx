@@ -108,8 +108,8 @@ export default function LoginForm({
               <span className={styles.logoLetter}>P</span>
             </div>
             <div>
-              <h1 className={styles.brandTitle}>PhoneMail Web</h1>
-              <p className={styles.brandSubtitle}>Sign in to your email inbox</p>
+              <h1 className={styles.brandTitle}>PhoneMail</h1>
+              <p className={styles.brandSubtitle}>Your phone number is your address</p>
             </div>
           </div>
 
@@ -138,7 +138,7 @@ export default function LoginForm({
 
             <div className={styles.inputGroup}>
               <label htmlFor="desktop-otp" className={styles.inputLabel}>
-                Security Code / OTP
+                Verification Code
               </label>
               <div className={styles.otpInputWrapper}>
                 <input
@@ -146,7 +146,7 @@ export default function LoginForm({
                   name="otp"
                   type="text"
                   className={styles.desktopInput}
-                  placeholder="Enter 6-digit code (e.g. 123456)"
+                  placeholder="6-digit code sent via SMS"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
                   maxLength={6}
@@ -155,9 +155,9 @@ export default function LoginForm({
                   type="button"
                   className={styles.simulateButton}
                   onClick={() => setOtp('123456')}
-                  title="Auto-fill demo code"
+                  title="Fill demo code"
                 >
-                  <Sparkles size={14} /> Auto-fill
+                  <Sparkles size={14} /> Demo
                 </button>
               </div>
             </div>
@@ -179,7 +179,7 @@ export default function LoginForm({
           </form>
 
           <div className={styles.desktopFooter}>
-            <span className={styles.switchModeText}>Toll-Free IVR Registration active on Port 25</span>
+            <span className={styles.switchModeText}>New number? You&apos;ll be registered automatically.</span>
           </div>
         </div>
       ) : (
@@ -271,7 +271,7 @@ export default function LoginForm({
               <div className={styles.waStepHeader}>
                 <h2 className={styles.waTitle}>Enter your phone number</h2>
                 <p className={styles.waSubtitle}>
-                  PhoneMail will verify your account. Carrier SMS charges may apply.
+                  We&apos;ll send a verification code to confirm your number.
                 </p>
               </div>
 
@@ -306,7 +306,7 @@ export default function LoginForm({
               </div>
 
               <p className={styles.waSmallHint}>
-                Your email identity will automatically be: <br />
+                Your PhoneMail address will be: <br />
                 <strong>{phone.replace(/[^0-9]/g, '') || 'yournumber'}@pmail.vixiya.com</strong>
               </p>
 
@@ -364,14 +364,14 @@ export default function LoginForm({
 
                 <div className={styles.simDetectBanner}>
                   <Sparkles size={16} />
-                  <span>SMS Auto-detector listening...</span>
+                  <span>Waiting for SMS code...</span>
                   <button
                     type="button"
                     className={styles.simDetectBtn}
                     onClick={handleAutoFillOtp}
                     disabled={isVerifying}
                   >
-                    {isVerifying ? 'Reading SMS...' : 'Simulate Auto-Detection'}
+                    {isVerifying ? 'Reading SMS...' : 'Try Demo'}
                   </button>
                 </div>
 
@@ -379,7 +379,7 @@ export default function LoginForm({
 
                 <div className={styles.waButtonColumn}>
                   <button type="submit" className={styles.waPrimaryButton}>
-                    Verify & Enter PhoneMail
+                    Continue
                   </button>
                   <button
                     type="button"

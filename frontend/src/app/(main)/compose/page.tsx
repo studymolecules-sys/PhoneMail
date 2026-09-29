@@ -33,8 +33,8 @@ export default async function ComposePage({
             <ArrowLeft size={22} />
           </Link>
           <div className={styles.headerTitle}>
-            <h2>Compose Email</h2>
-            <span className={styles.headerSubtitle}>From: {userEmailId}</span>
+            <h2>New Message</h2>
+            <span className={styles.headerSubtitle}>{userEmailId}</span>
           </div>
         </div>
       </header>

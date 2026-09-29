@@ -59,7 +59,7 @@ export default function Drawer({
             {userPhone ? userPhone.slice(-2) : 'PM'}
           </div>
           <div className={styles.userInfo}>
-            <h3 className={styles.userName}>{userPhone || 'PMail'}</h3>
+            <h3 className={styles.userName}>{userPhone || 'PhoneMail'}</h3>
             <p className={styles.userEmail}>{userEmailId}</p>
           </div>
           <button className={styles.closeBtn} onClick={onClose} aria-label="Close Drawer">
@@ -69,7 +69,7 @@ export default function Drawer({
 
         {/* Navigation List */}
         <div className={styles.navSection}>
-          <div className={styles.sectionLabel}>MAILBOXES</div>
+          <div className={styles.sectionLabel}>Folders</div>
           {navItems.map((item) => {
             const Icon = item.icon
             const isActive = activeFolder === item.id
@@ -94,7 +94,7 @@ export default function Drawer({
 
         {/* Settings Quick Action */}
         <div className={styles.navSection}>
-          <div className={styles.sectionLabel}>PREFERENCES</div>
+          <div className={styles.sectionLabel}>Settings</div>
           <button
             type="button"
             className={styles.navItem}
@@ -112,7 +112,7 @@ export default function Drawer({
         <div className={styles.footer}>
           <div className={styles.systemStatus}>
             <Shield size={14} className={styles.statusIcon} />
-            <span>Connection Secure</span>
+            <span>Encrypted &amp; secure</span>
           </div>
         </div>
       </aside>

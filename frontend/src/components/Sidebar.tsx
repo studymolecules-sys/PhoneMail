@@ -45,8 +45,8 @@ export default function Sidebar({
           <span className={styles.logoLetter}>P</span>
         </div>
         <div className={styles.brandText}>
-          <span className={styles.appName}>PMail</span>
-          <span className={styles.appSub}>Inbox</span>
+          <span className={styles.appName}>PhoneMail</span>
+          <span className={styles.appSub}>All messages</span>
         </div>
       </div>
 

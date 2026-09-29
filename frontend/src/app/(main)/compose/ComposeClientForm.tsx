@@ -38,7 +38,7 @@ export default function ComposeClientForm({
           type="text"
           id="to"
           name="to"
-          placeholder="e.g. 9876543210, 5550192834 or user@domain.com"
+          placeholder="Phone number or email address"
           defaultValue={initialTo}
           required
           className={styles.input}

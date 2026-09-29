@@ -48,9 +48,9 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #202c33, #374248);
-  border: 1.5px solid var(--wa-border);
-  color: var(--wa-text-primary);
+  background: linear-gradient(135deg, var(--wa-accent), #818cf8);
+  border: 1.5px solid rgba(99, 102, 241, 0.2);
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -488,9 +488,10 @@
 
 .traditionalCategory {
   font-size: 11px;
-  font-weight: 700;
-  color: var(--wa-accent-light);
-  letter-spacing: 0.8px;
+  font-weight: 600;
+  color: var(--wa-text-muted);
+  letter-spacing: 0.2px;
+  text-transform: none;
 }
 
 .traditionalSubject {

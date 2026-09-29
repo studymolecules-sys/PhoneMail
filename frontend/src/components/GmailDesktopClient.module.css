@@ -40,10 +40,11 @@
 .line { width: 18px; height: 2px; background-color: var(--gm-text-secondary); }
 
 .brandTitle {
-  font-size: 22px;
-  font-weight: 400;
-  color: var(--gm-text-secondary);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--gm-text-primary);
   margin: 0;
+  letter-spacing: -0.3px;
 }
 
 .searchBar {
@@ -51,17 +52,17 @@
   max-width: 720px;
   display: flex;
   align-items: center;
-  background-color: #eaf1fb;
-  border-radius: 24px;
-  padding: 0 16px;
-  height: 48px;
+  background-color: var(--gm-hover-row);
+  border-radius: 28px;
+  padding: 0 20px;
+  height: 46px;
   gap: 12px;
-  transition: background-color 0.15s, box-shadow 0.15s;
+  transition: background-color 0.2s, box-shadow 0.2s;
 }
 
 .searchBar:focus-within {
   background-color: var(--gm-panel-bg);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
 }
 
 .searchIcon { color: var(--gm-text-secondary); }
@@ -136,17 +137,19 @@
 .navItem {
   display: flex;
   align-items: center;
-  gap: 18px;
-  padding: 8px 24px;
+  gap: 16px;
+  padding: 8px 20px;
   border: none;
   background: transparent;
   color: var(--gm-text-primary);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  border-top-right-radius: 16px;
-  border-bottom-right-radius: 16px;
+  border-top-right-radius: 24px;
+  border-bottom-right-radius: 24px;
   transition: background-color 150ms ease-out, transform 150ms cubic-bezier(0.23, 1, 0.32, 1);
+  width: 100%;
+  text-align: left;
 }
 
 .navItem:hover {
@@ -223,7 +226,8 @@
   padding: 8px 16px;
   border-bottom: 1px solid var(--gm-border);
   cursor: pointer;
-  background-color: #f2f6fc;
+  background-color: var(--gm-hover-row);
+  transition: box-shadow 0.15s, background-color 0.15s;
 }
 .emailRow:hover {
   box-shadow: inset 1px 0 0 #dadce0, inset -1px 0 0 #dadce0, 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
@@ -365,25 +369,26 @@
 /* FAB Compose Button */
 .fabComposeBtn {
   position: absolute;
-  bottom: 32px;
-  right: 32px;
+  bottom: 28px;
+  right: 28px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  background-color: #c2e7ff;
-  color: #001d35;
-  padding: 16px 24px;
-  border-radius: 24px;
-  font-weight: 500;
-  font-size: 15px;
+  gap: 10px;
+  background-color: var(--gm-item-active);
+  color: var(--gm-active-text);
+  padding: 14px 22px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 14px;
   text-decoration: none;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
   transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms ease-out;
   z-index: 10;
+  letter-spacing: -0.1px;
 }
 
 .fabComposeBtn:hover {
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.08);
   transform: translateY(-2px);
 }
 

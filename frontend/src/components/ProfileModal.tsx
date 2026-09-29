@@ -29,7 +29,7 @@ export default function ProfileModal({
 
   // Translations Map
   const translations: any = {
-    en: { title: 'Account Settings', save: 'Save Changes', name: 'Display Name', lang: 'Language', theme: 'Theme', aliases: 'Manage Alias IDs', signout: 'Sign Out', add: 'Add', saving: 'Saving & Syncing...', themeDark: 'Switch to Dark Mode', themeLight: 'Switch to Light Mode' },
+    en: { title: 'Account & Settings', save: 'Save Changes', name: 'Display Name', lang: 'Language', theme: 'Theme', aliases: 'Email Aliases', signout: 'Sign Out', add: 'Add', saving: 'Saving…', themeDark: 'Switch to Dark Mode', themeLight: 'Switch to Light Mode' },
     es: { title: 'Configuración de la cuenta', save: 'Guardar cambios', name: 'Nombre para mostrar', lang: 'Idioma', theme: 'Tema', aliases: 'Gestionar Alias', signout: 'Cerrar sesión', add: 'Añadir', saving: 'Guardando...', themeDark: 'Cambiar a modo oscuro', themeLight: 'Cambiar a modo claro' },
     fr: { title: 'Paramètres du compte', save: 'Enregistrer les modifications', name: 'Nom d\'affichage', lang: 'Langue', theme: 'Thème', aliases: 'Gérer les Alias', signout: 'Déconnexion', add: 'Ajouter', saving: 'Enregistrement...', themeDark: 'Passer en mode sombre', themeLight: 'Passer en mode clair' },
     hi: { title: 'खाता सेटिंग्स', save: 'परिवर्तन सहेजें', name: 'प्रदर्शन नाम', lang: 'भाषा', theme: 'थीम', aliases: 'उपनाम प्रबंधित करें', signout: 'साइन आउट', add: 'जोड़ें', saving: 'सहेज रहा है...', themeDark: 'डार्क मोड पर स्विच करें', themeLight: 'लाइट मोड पर स्विच करें' },

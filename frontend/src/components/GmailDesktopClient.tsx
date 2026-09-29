@@ -146,7 +146,7 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
             <div className={styles.line} />
             <div className={styles.line} />
           </div>
-          <h1 className={styles.brandTitle}>PMail</h1>
+          <h1 className={styles.brandTitle}>PhoneMail</h1>
         </div>
 
         <div className={styles.searchBar}>

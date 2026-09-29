@@ -1,6 +1,6 @@
 :root {
   /* Common Fonts */
-  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-sans: var(--font-inter), var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   /* Premium Indigo Dark Theme Tokens */
@@ -112,12 +112,17 @@ button, input, textarea {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(134, 150, 160, 0.2);
+  background: rgba(134, 150, 160, 0.18);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(134, 150, 160, 0.4);
+  background: rgba(134, 150, 160, 0.35);
+}
+
+::selection {
+  background: rgba(99, 102, 241, 0.2);
+  color: inherit;
 }
 
 @media (prefers-color-scheme: dark) {

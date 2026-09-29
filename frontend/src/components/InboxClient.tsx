@@ -245,7 +245,7 @@ export default function InboxClient({
               <Menu size={22} />
             </button>
             <div className={styles.titleColumn}>
-              <h1 className={styles.brandHeading}>PMail</h1>
+              <h1 className={styles.brandHeading}>PhoneMail</h1>
             </div>
           </div>
 

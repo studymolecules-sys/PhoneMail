@@ -39,7 +39,7 @@ export default function HomePlaceholder() {
           margin: '0 0 16px',
         }}
       >
-        PhoneMail Web
+        PhoneMail
       </h2>
 
       <p
