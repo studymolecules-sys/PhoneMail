@@ -436,7 +436,7 @@
 }
 
 .sendButton:hover:not(:disabled) {
-  background: #02906f;
+  background: #405782;
   transform: scale(1.05);
 }
 
@@ -671,4 +671,17 @@
 
 .viewFullBtn:hover {
   background-color: rgba(255, 255, 255, 0.1);
+}
+
+
+.chatContainer { height: 100vh; height: 100dvh; padding-bottom: env(safe-area-inset-bottom); }
+.header { background: var(--wa-panel-bg); padding: max(9px, env(safe-area-inset-top)) 12px 9px; }
+.headerAvatar { background: #e8edf8; color: #273a68; border: 0; }
+.headerActionBtn, .backButton { min-width: 42px; min-height: 42px; }
+.emailHtmlFrame { width: 100%; min-height: 320px; border: 0; background: #fff; }
+@media (max-width: 380px) {
+  .header { padding-inline: 8px; }
+  .headerLeft { gap: 7px; }
+  .headerSubtitle { max-width: 46vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .messageArea { padding-inline: 10px; }
 }

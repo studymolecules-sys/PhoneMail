@@ -147,7 +147,7 @@ export default function SpikeChatView({
   }
 
   const displayName = contact.replace('@pmail.vixiya.com', '')
-  const initials = displayName.slice(0, 2).toUpperCase()
+  const initials = displayName.charAt(0).toUpperCase()
 
   return (
     <div className={styles.chatContainer}>
@@ -387,7 +387,7 @@ export default function SpikeChatView({
 
             <div className={styles.traditionalBody}>
               {selectedEmail.body_html ? (
-                <div dangerouslySetInnerHTML={{ __html: selectedEmail.body_html }} />
+                <iframe className={styles.emailHtmlFrame} title="Email content" sandbox="" srcDoc={selectedEmail.body_html} />
               ) : (
                 <p style={{ whiteSpace: 'pre-wrap' }}>{selectedEmail.body_text}</p>
               )}

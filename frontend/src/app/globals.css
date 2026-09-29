@@ -30,22 +30,22 @@
   --bubble-received-text: #e4e4e7;
   
   /* Gmail Theme Tokens (Default Desktop - Light) */
-  --gm-app-bg: #f6f8fc;
+  --gm-app-bg: #f4f3ef;
   --gm-panel-bg: #ffffff;
   --gm-surface-bg: #ffffff;
-  --gm-sidebar-bg: #f6f8fc;
-  --gm-active-pill: #c2e7ff;
-  --gm-active-text: #001d35;
-  --gm-primary-btn: #0b57d0;
-  --gm-primary-btn-hover: #0842a0;
+  --gm-sidebar-bg: #f4f3ef;
+  --gm-active-pill: #e8edf8;
+  --gm-active-text: #273a68;
+  --gm-primary-btn: #273a68;
+  --gm-primary-btn-hover: #1c2b50;
   --gm-text-primary: #202124;
   --gm-text-secondary: #5f6368;
   --gm-text-muted: #727775;
   --gm-border: #e0e0e0;
-  --gm-hover-row: #f2f6fc;
+  --gm-hover-row: #f7f7f5;
   --gm-item-hover: #f1f3f4;
-  --gm-item-active: #d3e3fd;
-  --gm-accent: #0b57d0;
+  --gm-item-active: #e8edf8;
+  --gm-accent: #52689b;
   --gm-star: #e8710a;
   --gm-star-empty: #c4c7c5;
   
@@ -132,6 +132,7 @@ button, input, textarea {
 }
 
 [data-theme="light"] {
+  color-scheme: light;
   --wa-header-bg: #f0f2f5;
   --wa-header-text: #111b21;
   --wa-app-bg: #ffffff;
@@ -139,24 +140,24 @@ button, input, textarea {
   --wa-chat-bg: #efeae2;
   --wa-item-hover: #f5f6f6;
   --wa-item-active: #f0f2f5;
-  --wa-accent: #00a884;
-  --wa-accent-light: #008f6f;
-  --wa-bubble-sent: #d9fdd3;
-  --wa-bubble-sent-text: #111b21;
+  --wa-accent: #586fa5;
+  --wa-accent-light: #7388bb;
+  --wa-bubble-sent: #e8edf8;
+  --wa-bubble-sent-text: #202b42;
   --wa-bubble-received: #ffffff;
   --wa-bubble-received-text: #111b21;
   --wa-text-primary: #111b21;
   --wa-text-secondary: #54656f;
   --wa-text-muted: #667781;
   --wa-border: #d1d7db;
-  --wa-tick-blue: #53bdeb;
+  --wa-tick-blue: #647cae;
   
-  --bg-primary: #ffffff;
-  --bg-secondary: #f6f8fc;
-  --bg-tertiary: #f0f2f5;
-  --text-primary: #111b21;
-  --text-secondary: #54656f;
-  --text-tertiary: #667781;
+  --bg-primary: #fbfaf7;
+  --bg-secondary: #f4f3ef;
+  --bg-tertiary: #f4f3ef;
+  --text-primary: #202b42;
+  --text-secondary: #616879;
+  --text-tertiary: #85899a;
 
   /* Glassmorphism overrides for Light Mode */
   --glass-bg: rgba(255, 255, 255, 0.85);
@@ -164,6 +165,7 @@ button, input, textarea {
 }
 
 [data-theme="dark"] {
+  color-scheme: dark;
   /* Premium Indigo Dark Theme Tokens (WhatsApp UI) */
   --wa-header-bg: #121214;
   --wa-header-text: #f4f4f5;

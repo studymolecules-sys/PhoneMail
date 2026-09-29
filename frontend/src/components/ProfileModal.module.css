@@ -22,7 +22,7 @@
   color: var(--wa-text-primary);
   width: 100%;
   max-width: 500px;
-  max-height: 90vh;
+  max-height: min(90vh, 90dvh);
   border-radius: 20px;
   border: 1px solid var(--wa-border);
   display: flex;
@@ -42,7 +42,7 @@
   color: var(--wa-text-primary);
   width: 100%;
   max-width: 500px;
-  max-height: 90vh;
+  max-height: min(90vh, 90dvh);
   border-radius: 20px;
   border: 1px solid var(--wa-border);
   display: flex;

@@ -56,7 +56,7 @@ export default function HomePlaceholder() {
 
       <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--wa-text-muted)' }}>
         <Lock size={10} />
-        <span>End-to-end encrypted</span>
+        <span>Private to your account</span>
       </div>
     </div>
   )

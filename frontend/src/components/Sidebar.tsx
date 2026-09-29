@@ -10,7 +10,6 @@ import {
   ShieldAlert,
   Settings,
   Bookmark,
-  MessageSquare
 } from 'lucide-react'
 import styles from './Sidebar.module.css'
 import ProfileModal from './ProfileModal'

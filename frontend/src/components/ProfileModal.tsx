@@ -154,7 +154,7 @@ export default function ProfileModal({
           {/* Identity Card */}
           <div className={styles.identityCard}>
             <div className={styles.avatarLarge}>
-              {displayName ? displayName.slice(0, 2).toUpperCase() : (userPhone ? userPhone.slice(-2) : 'PM')}
+              P
             </div>
             <div className={styles.identityDetails}>
               <h3 className={styles.phoneHeading}>{userPhone || 'PMail User'}</h3>

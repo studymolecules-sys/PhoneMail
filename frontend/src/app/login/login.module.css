@@ -1,6 +1,7 @@
 .wrapper {
   min-height: 100vh;
-  width: 100vw;
+  min-height: 100dvh;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -38,14 +39,14 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #0b57d0 0%, #1a73e8 100%);
+  background: linear-gradient(135deg, #273a68 0%, #52689b 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-weight: 700;
   font-size: 22px;
-  box-shadow: 0 2px 8px rgba(11, 87, 208, 0.2);
+  box-shadow: 0 2px 8px rgba(39, 58, 104, 0.2);
   flex-shrink: 0;
 }
 
@@ -92,8 +93,8 @@
 }
 
 .phoneInputWrapper:focus-within, .otpInputWrapper:focus-within {
-  border-color: #0b57d0;
-  box-shadow: 0 0 0 2px rgba(11, 87, 208, 0.12);
+  border-color: #273a68;
+  box-shadow: 0 0 0 2px rgba(39, 58, 104, 0.12);
 }
 
 .countryCode {
@@ -122,7 +123,7 @@
 .simulateButton {
   background: #f0f4f9;
   border: none;
-  color: #0b57d0;
+  color: #273a68;
   font-size: 12px;
   font-weight: 600;
   padding: 8px 12px;
@@ -152,7 +153,7 @@
 }
 
 .legalLink {
-  color: #0b57d0;
+  color: #273a68;
   text-decoration: underline;
   font-weight: 500;
 }
@@ -162,7 +163,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: #0b57d0;
+  background: #273a68;
   color: white;
   border: none;
   padding: 14px 24px;
@@ -174,9 +175,9 @@
 }
 
 .desktopNextButton:hover {
-  background: #0747a6;
+  background: #1c2b50;
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(11, 87, 208, 0.25);
+  box-shadow: 0 4px 16px rgba(39, 58, 104, 0.25);
 }
 
 .desktopNextButton:active {
@@ -229,7 +230,7 @@
   width: 54px;
   height: 54px;
   border-radius: 50%;
-  background: rgba(0, 168, 132, 0.15);
+  background: rgba(82, 104, 155, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -251,7 +252,7 @@
   width: 160px;
   height: 160px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(0, 168, 132, 0.2) 0%, rgba(17, 27, 33, 0) 70%);
+  background: radial-gradient(circle, rgba(82, 104, 155, 0.2) 0%, rgba(17, 27, 33, 0) 70%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -319,7 +320,7 @@
 
 .langItemSelected {
   border-color: var(--wa-accent);
-  background: rgba(0, 168, 132, 0.1);
+  background: rgba(82, 104, 155, 0.1);
 }
 
 .langItemText {
@@ -472,11 +473,11 @@
   font-weight: 700;
   cursor: pointer;
   transition: transform 0.15s, background-color 0.2s;
-  box-shadow: 0 4px 14px rgba(0, 168, 132, 0.3);
+  box-shadow: 0 4px 14px rgba(39, 58, 104, 0.24);
 }
 
 .waPrimaryButton:hover {
-  background: #02906f;
+  background: #1c2b50;
   transform: translateY(-1px);
 }
 

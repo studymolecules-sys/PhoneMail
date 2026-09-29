@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import styles from './GmailDesktopClient.module.css'
-import { Search, Inbox, Star, Send, FileText, AlertOctagon, Trash2, Settings, UserCircle, RefreshCcw } from 'lucide-react'
+import { Search, Inbox, Star, Send, FileText, AlertOctagon, Trash2, RefreshCcw } from 'lucide-react'
 import ProfileModal from './ProfileModal'
 import { EmailMessage } from '@/app/(main)/chat/[contact]/SpikeChatView'
 import { showToast } from './Toast'
@@ -141,11 +142,12 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
     <div className={styles.desktopContainer}>
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <div className={styles.hamburger} onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}>
+          <button type="button" className={styles.hamburger} aria-label={isSidebarCollapsed ? 'Expand folders' : 'Collapse folders'} aria-expanded={!isSidebarCollapsed} onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} >
             <div className={styles.line} />
             <div className={styles.line} />
             <div className={styles.line} />
-          </div>
+          </button>
+          <Image src="/phonemail-mark.svg" alt="" width={34} height={34} className={styles.brandMark} priority />
           <h1 className={styles.brandTitle}>PhoneMail</h1>
         </div>
 
@@ -162,7 +164,7 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
 
         <div className={styles.headerRight}>
           <button className={styles.profileBtn} aria-label="Account" onClick={() => setIsProfileOpen(true)}>
-            <div className={styles.avatar}>{userPhone ? userPhone.slice(-2) : 'PM'}</div>
+            <div className={styles.avatar}>P</div>
           </button>
         </div>
       </header>
@@ -206,7 +208,7 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
               </div>
               <h2 className={styles.readSubject}>{selectedEmail.subject || '(No Subject)'}</h2>
               <div className={styles.readMeta}>
-                <div className={styles.senderAvatar}>{selectedEmail.sender_address.charAt(0).toUpperCase()}</div>
+                <div className={styles.senderAvatar}>{selectedEmail.sender_address === userEmailId ? 'P' : selectedEmail.sender_address.charAt(0).toUpperCase()}</div>
                 <div>
                   <strong>{selectedEmail.sender_address}</strong>
                   <div className={styles.readDate}>{new Date(selectedEmail.created_at).toLocaleString()}</div>
@@ -214,7 +216,7 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
               </div>
               <div className={styles.readBody}>
                 {selectedEmail.body_html ? (
-                  <div dangerouslySetInnerHTML={{ __html: selectedEmail.body_html }} />
+                  <iframe className={styles.emailHtmlFrame} title="Email content" sandbox="" srcDoc={selectedEmail.body_html} />
                 ) : (
                   <p>{selectedEmail.body_text}</p>
                 )}
@@ -226,6 +228,7 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
                  className={styles.toolbarIcon}
                  onClick={() => {
                    setIsRefreshing(true)
+                   router.refresh()
                    showToast('Refreshing inbox...')
                    setTimeout(() => setIsRefreshing(false), 1000)
                  }}

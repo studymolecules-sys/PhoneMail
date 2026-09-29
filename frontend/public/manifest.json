@@ -1,12 +1,13 @@
 {
   "name": "PhoneMail",
   "short_name": "PhoneMail",
-  "description": "The instant messaging email client.",
+  "description": "Email that starts with your phone number.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#111b21",
-  "theme_color": "#00a884",
+  "background_color": "#f8f7f3",
+  "theme_color": "#273a68",
   "icons": [
+    { "src": "/phonemail-mark.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
     {
       "src": "/icon-192x192.png",
       "sizes": "192x192",

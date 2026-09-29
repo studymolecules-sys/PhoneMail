@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import styles from './inbox.module.css'
 import Drawer from './Drawer'
@@ -232,7 +233,7 @@ export default function InboxClient({
 
   return (
     <div className={styles.appContainer}>
-      {/* Top Header - Authentic WhatsApp Design Language */}
+      {/* PhoneMail inbox header */}
       <header className={styles.header}>
         <div className={styles.topBar}>
           <div className={styles.leftBrand}>
@@ -245,6 +246,7 @@ export default function InboxClient({
               <Menu size={22} />
             </button>
             <div className={styles.titleColumn}>
+              <Image src="/phonemail-mark.svg" alt="" width={30} height={30} className={styles.brandMark} priority />
               <h1 className={styles.brandHeading}>PhoneMail</h1>
             </div>
           </div>
@@ -257,7 +259,7 @@ export default function InboxClient({
               aria-label="Account & Settings"
             >
               <div className={styles.profileAvatar}>
-                {userPhone ? userPhone.slice(-2) : 'PM'}
+                P
               </div>
             </button>
           </div>
@@ -337,7 +339,7 @@ export default function InboxClient({
             </div>
             <h2 className={styles.readSubject}>{selectedEmail.subject || '(No Subject)'}</h2>
             <div className={styles.readMetaMobile}>
-              <div className={styles.senderAvatar}>{selectedEmail.sender_address.charAt(0).toUpperCase()}</div>
+              <div className={styles.senderAvatar}>{selectedEmail.sender_address === userEmailId ? 'P' : selectedEmail.sender_address.charAt(0).toUpperCase()}</div>
               <div>
                 <strong>{selectedEmail.sender_address === userEmailId ? 'Me' : selectedEmail.sender_address}</strong>
                 <div className={styles.readDate}>{new Date(selectedEmail.created_at).toLocaleString()}</div>
@@ -345,7 +347,7 @@ export default function InboxClient({
             </div>
             <div className={styles.readBodyMobile}>
               {selectedEmail.body_html ? (
-                <div dangerouslySetInnerHTML={{ __html: selectedEmail.body_html }} />
+                <iframe className={styles.emailHtmlFrame} title="Email content" sandbox="" srcDoc={selectedEmail.body_html} />
               ) : (
                 <p>{selectedEmail.body_text}</p>
               )}
@@ -373,7 +375,7 @@ export default function InboxClient({
                   filteredChats.map((chat) => {
                     const isStarred = starredContacts.includes(chat.contact)
                     const displayName = chat.contact.replace('@pmail.vixiya.com', '')
-                    const initials = displayName.slice(0, 2).toUpperCase()
+                    const initials = displayName.charAt(0).toUpperCase()
 
                     return (
                       <SwipeableChatRow
@@ -433,7 +435,7 @@ export default function InboxClient({
                     return (
                       <div key={email.id} className={`item-row-anim ${styles.emailRowMobile} ${!email.read_status && activeFolder === 'all' ? styles.unread : ''}`} onClick={() => setSelectedEmail(email)}>
                         <div className={styles.avatar}>
-                          {email.sender_address === userEmailId ? 'M' : email.sender_address.charAt(0).toUpperCase()}
+                          {email.sender_address === userEmailId ? 'P' : email.sender_address.charAt(0).toUpperCase()}
                         </div>
                         <div className={styles.chatContent}>
                           <div className={styles.chatHeader}>

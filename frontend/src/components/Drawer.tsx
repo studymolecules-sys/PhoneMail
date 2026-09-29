@@ -42,7 +42,7 @@ export default function Drawer({
     { id: 'drafts', label: t.drafts || 'Drafts', icon: Pencil, color: 'gray' },
     { id: 'spam', label: t.spam || 'Spam', icon: ShieldAlert, color: 'orange' },
     { id: 'trash', label: t.trash || 'Trash', icon: Trash, color: 'red' },
-    { id: 'chat_interface', label: 'Chat Interface', icon: MessageSquare, color: 'blue' },
+    { id: 'chat_interface', label: 'Conversations', icon: MessageSquare, color: 'blue' },
   ]
 
   const handleItemClick = (id: string) => {
@@ -56,7 +56,7 @@ export default function Drawer({
         {/* User Header */}
         <div className={styles.header}>
           <div className={styles.avatar}>
-            {userPhone ? userPhone.slice(-2) : 'PM'}
+            P
           </div>
           <div className={styles.userInfo}>
             <h3 className={styles.userName}>{userPhone || 'PhoneMail'}</h3>
@@ -112,7 +112,7 @@ export default function Drawer({
         <div className={styles.footer}>
           <div className={styles.systemStatus}>
             <Shield size={14} className={styles.statusIcon} />
-            <span>Encrypted &amp; secure</span>
+            <span>PhoneMail account</span>
           </div>
         </div>
       </aside>

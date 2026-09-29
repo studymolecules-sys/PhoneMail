@@ -233,7 +233,7 @@ export default function LoginForm({
               <div className={styles.waTermsContent}>
                 <h2 className={styles.waTitle}>Welcome to PhoneMail</h2>
                 <p className={styles.waTermsText}>
-                  PhoneMail bridges the gap between instant messaging and email. Read our{' '}
+                  Your phone number is your email address. Read our{' '}
                   <span className={styles.waLink}>Privacy Policy</span>. Tap &ldquo;Agree and continue&rdquo; to accept the{' '}
                   <span className={styles.waLink}>Terms of Service</span>.
                 </p>

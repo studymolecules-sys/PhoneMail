@@ -20,16 +20,17 @@ const inter = Inter({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#6366f1",
+  themeColor: "#273a68",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
+  viewportFit: "cover",
 };
 
 export const metadata: Metadata = {
   title: "PhoneMail",
-  description: "PhoneMail bridges the gap between instant messaging and email.",
+  description: "Email that starts with your phone number.",
   manifest: "/manifest.json",
+  icons: { icon: "/phonemail-mark.svg", shortcut: "/phonemail-mark.svg", apple: "/apple-touch-icon.png" },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
