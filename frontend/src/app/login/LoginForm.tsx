@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import styles from './login.module.css'
-import { Check, ShieldCheck, Smartphone, KeyRound, Globe, ArrowRight, Sparkles } from 'lucide-react'
+import { Check, ShieldCheck, KeyRound, Globe, ArrowRight } from 'lucide-react'
 
 interface LoginFormProps {
   initialPhone?: string
@@ -43,7 +43,7 @@ export default function LoginForm({
   })
 
   const [selectedLang, setSelectedLang] = useState('en')
-  const [phone, setPhone] = useState(initialPhone || '+1 (555) 019-2834')
+  const [phone, setPhone] = useState(initialPhone || '')
   const [otp, setOtp] = useState('')
   const [isAutoDetecting, setIsAutoDetecting] = useState(false)
   const [isVerifying, setIsVerifying] = useState(false)
@@ -119,13 +119,13 @@ export default function LoginForm({
                 Phone Number
               </label>
               <div className={styles.phoneInputWrapper}>
-                <span className={styles.countryCode}>US +1</span>
+                <span className={styles.countryCode}>IN +91</span>
                 <input
                   id="desktop-phone"
                   name="phone"
                   type="tel"
                   className={styles.desktopInput}
-                  placeholder="(555) 000-0000"
+                  placeholder="Enter your mobile number"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   required
@@ -145,20 +145,13 @@ export default function LoginForm({
                   id="desktop-otp"
                   name="otp"
                   type="text"
+                  inputMode="numeric"
                   className={styles.desktopInput}
                   placeholder="6-digit code sent via SMS"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
                   maxLength={6}
                 />
-                <button
-                  type="button"
-                  className={styles.simulateButton}
-                  onClick={() => setOtp('123456')}
-                  title="Fill demo code"
-                >
-                  <Sparkles size={14} /> Demo
-                </button>
               </div>
             </div>
 
@@ -275,30 +268,17 @@ export default function LoginForm({
                 </p>
               </div>
 
-              <div className={styles.simDetectBanner}>
-                <div className={styles.simInfo}>
-                  <Smartphone size={18} />
-                  <span>SIM 1 Detected</span>
-                </div>
-                <button
-                  type="button"
-                  className={styles.simDetectBtn}
-                  onClick={handleAutoDetectPhone}
-                  disabled={isAutoDetecting}
-                >
-                  {isAutoDetecting ? 'Detecting...' : 'Auto-fill SIM'}
-                </button>
-              </div>
+
 
               <div className={styles.phoneBox}>
                 <div className={styles.countrySelector}>
-                  <span>United States</span>
-                  <span className={styles.countryCodeText}>+1</span>
+                  <span>India</span>
+                  <span className={styles.countryCodeText}>+91</span>
                 </div>
                 <input
                   type="tel"
                   className={styles.waPhoneInput}
-                  placeholder="phone number"
+                  placeholder="Mobile number"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   autoFocus
@@ -362,18 +342,9 @@ export default function LoginForm({
                   />
                 </div>
 
-                <div className={styles.simDetectBanner}>
-                  <Sparkles size={16} />
-                  <span>Waiting for SMS code...</span>
-                  <button
-                    type="button"
-                    className={styles.simDetectBtn}
-                    onClick={handleAutoFillOtp}
-                    disabled={isVerifying}
-                  >
-                    {isVerifying ? 'Reading SMS...' : 'Try Demo'}
-                  </button>
-                </div>
+                <p className={styles.waSmallHint}>
+                  We sent a code to <strong>{phone}</strong>.
+                </p>
 
                 {errorMessage && <div className={styles.errorBanner}>{errorMessage}</div>}
 
