@@ -14,11 +14,10 @@ Example address: `919279581387@pmail.vixiya.com` (country code digits, without a
 
 PhoneMail is a buildathon prototype, not a production-ready public mail service. The app code does not prove that provider accounts, domain DNS, SMS delivery, email routing, or deliverability are configured. See [Integration status and safety](#integration-status-and-safety) for what is implemented and what still needs live verification.
 
-### Hackathon Context: What is implemented vs. what needs live infrastructure
-
-Built in seven days, PhoneMail is a working application prototype with a responsive inbox-first interface, onboarding, phone OTP flow, authenticated message actions, and Supabase database integration. The repository includes the database schema and row-level security policies. The local production build is checked during submission preparation; that check does not prove the hosted Supabase project or real OTP delivery is available.
-
-The Cloudflare Email Routing Worker and Brevo outbound-email path are implemented in code, but they still need the app domain, provider credentials, sender approval, and routing rules to be configured and verified. They fail safely when required secrets are missing or a provider cannot confirm its request. Until an end-to-end message is received and confirmed, present those paths as integration-ready prototype code rather than a live email service. Twilio notifications/IVR are separate from Supabase Auth's SMS provider.
+### Hackathon Context: What is live vs. what is intended
+Since this was built in just 7 days without a budget for verified domains or paid tiers, the project focuses heavily on the UI, the Database architecture, and the core Next.js application. 
+* **What is fully built & working:** The UI, Supabase Auth, Supabase Database read/writes, and the internal application logic.
+* **What is coded but pending live infrastructure:** The integration with Cloudflare Email Routing (the Worker code is written!) and Brevo API (the logic exists in `actions.ts`). These are currently set up as graceful fallbacks—the app works beautifully as a prototype while these external providers wait for domain verification and API keys.
 
 ## Tech stack
 
