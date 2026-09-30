@@ -235,6 +235,13 @@
   position: relative;
 }
 
+.emailRow:focus-visible {
+  position: relative;
+  z-index: 1;
+  outline: 2px solid var(--gm-accent);
+  outline-offset: -2px;
+}
+
 .emailRow.unread {
   background-color: var(--gm-panel-bg);
   font-weight: 700;

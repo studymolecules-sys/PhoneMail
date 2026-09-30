@@ -74,7 +74,7 @@ flowchart TD
 ### Option 1: Docker Compose (1-Command Startup)
 
 ```bash
-docker compose up -d
+docker compose --env-file frontend/.env.local up -d --build
 ```
 - **Web Client**: [http://localhost:3000](http://localhost:3000)
 - **SMTP Daemon**: Listening on `0.0.0.0:25`

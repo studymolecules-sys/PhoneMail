@@ -58,16 +58,19 @@ export default function LoginForm({
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem('pm_lang')
+    // Read client-only preferences after hydration to keep the server and first client render aligned.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (savedLanguage && LANGUAGES.some((item) => item.code === savedLanguage)) setSelectedLang(savedLanguage)
   }, [])
 
   // GSAP animation on step change
   useGSAP(() => {
     if (!cardRef.current) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     gsap.fromTo(
       cardRef.current,
-      { opacity: 0, y: 15, scale: 0.98 },
-      { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: 'power2.out' }
+      { y: 10, scale: 0.99 },
+      { y: 0, scale: 1, duration: 0.25, ease: 'power2.out' }
     )
   }, [step])
 

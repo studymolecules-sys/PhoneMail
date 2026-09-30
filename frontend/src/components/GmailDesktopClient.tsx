@@ -41,6 +41,8 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
   const readRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    // Read client-only preferences after hydration to keep the server and first client render aligned.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLang(localStorage.getItem('pm_lang') || 'en')
     const storedName = localStorage.getItem('pm_name')?.trim()
     if (storedName) setProfileInitial(storedName.charAt(0).toUpperCase())
@@ -59,7 +61,7 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
       if (t) setTrashEmails(JSON.parse(t))
       const sp = localStorage.getItem('pm_spam_emails')
       if (sp) setSpamEmails(JSON.parse(sp))
-    } catch (e) {}
+    } catch {}
 
     return () => window.removeEventListener('pm_languageChange', handleLangChange)
   }, [])
@@ -170,7 +172,7 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
         </div>
 
         <div className={styles.headerRight}>
-          <button className={styles.profileBtn} aria-label="Account" onClick={() => setIsProfileOpen(true)}>
+          <button type="button" className={styles.profileBtn} aria-label="Account and settings" onClick={() => setIsProfileOpen(true)}>
             <div className={styles.avatar}>{profileInitial}</div>
           </button>
         </div>
@@ -179,22 +181,22 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
       <div className={styles.mainArea}>
         <aside className={`${styles.sidebar} ${isSidebarCollapsed ? styles.collapsed : ''}`}>
           <nav className={styles.nav}>
-            <button className={`${styles.navItem} ${activeFolder === 'inbox' ? styles.active : ''}`} onClick={() => { setActiveFolder('inbox'); setSelectedEmail(null); }}>
+            <button type="button" aria-current={activeFolder === 'inbox' ? 'page' : undefined} className={`${styles.navItem} ${activeFolder === 'inbox' ? styles.active : ''}`} onClick={() => { setActiveFolder('inbox'); setSelectedEmail(null); }}>
               <div className={styles.iconBox} data-color="blue"><Inbox size={16} /></div> <span className={styles.navText}>{t.inbox}</span>
             </button>
-            <button className={`${styles.navItem} ${activeFolder === 'starred' ? styles.active : ''}`} onClick={() => { setActiveFolder('starred'); setSelectedEmail(null); }}>
+            <button type="button" aria-current={activeFolder === 'starred' ? 'page' : undefined} className={`${styles.navItem} ${activeFolder === 'starred' ? styles.active : ''}`} onClick={() => { setActiveFolder('starred'); setSelectedEmail(null); }}>
               <div className={styles.iconBox} data-color="yellow"><Star size={16} /></div> <span className={styles.navText}>{t.starred}</span>
             </button>
-            <button className={`${styles.navItem} ${activeFolder === 'sent' ? styles.active : ''}`} onClick={() => { setActiveFolder('sent'); setSelectedEmail(null); }}>
+            <button type="button" aria-current={activeFolder === 'sent' ? 'page' : undefined} className={`${styles.navItem} ${activeFolder === 'sent' ? styles.active : ''}`} onClick={() => { setActiveFolder('sent'); setSelectedEmail(null); }}>
               <div className={styles.iconBox} data-color="green"><Send size={16} /></div> <span className={styles.navText}>{t.sent}</span>
             </button>
-            <button className={`${styles.navItem} ${activeFolder === 'drafts' ? styles.active : ''}`} onClick={() => { setActiveFolder('drafts'); setSelectedEmail(null); }}>
+            <button type="button" aria-current={activeFolder === 'drafts' ? 'page' : undefined} className={`${styles.navItem} ${activeFolder === 'drafts' ? styles.active : ''}`} onClick={() => { setActiveFolder('drafts'); setSelectedEmail(null); }}>
               <div className={styles.iconBox} data-color="gray"><FileText size={16} /></div> <span className={styles.navText}>{t.drafts}</span>
             </button>
-            <button className={`${styles.navItem} ${activeFolder === 'spam' ? styles.active : ''}`} onClick={() => { setActiveFolder('spam'); setSelectedEmail(null); }}>
+            <button type="button" aria-current={activeFolder === 'spam' ? 'page' : undefined} className={`${styles.navItem} ${activeFolder === 'spam' ? styles.active : ''}`} onClick={() => { setActiveFolder('spam'); setSelectedEmail(null); }}>
               <div className={styles.iconBox} data-color="orange"><AlertOctagon size={16} /></div> <span className={styles.navText}>{t.spam}</span>
             </button>
-            <button className={`${styles.navItem} ${activeFolder === 'trash' ? styles.active : ''}`} onClick={() => { setActiveFolder('trash'); setSelectedEmail(null); }}>
+            <button type="button" aria-current={activeFolder === 'trash' ? 'page' : undefined} className={`${styles.navItem} ${activeFolder === 'trash' ? styles.active : ''}`} onClick={() => { setActiveFolder('trash'); setSelectedEmail(null); }}>
               <div className={styles.iconBox} data-color="red"><Trash2 size={16} /></div> <span className={styles.navText}>{t.trash}</span>
             </button>
           </nav>
@@ -204,11 +206,11 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
           {selectedEmail ? (
             <div ref={readRef} className={styles.readView}>
               <div className={styles.readHeader}>
-                <button className={styles.backToListBtn} onClick={() => setSelectedEmail(null)}>
+                <button type="button" className={styles.backToListBtn} onClick={() => setSelectedEmail(null)}>
                   &larr; Back to list
                 </button>
                 <div className={styles.readActions}>
-                  <button className={styles.toolbarIcon} onClick={(e) => moveToTrash(e, selectedEmail.id)} title="Delete">
+                  <button type="button" className={styles.toolbarIcon} onClick={(e) => moveToTrash(e, selectedEmail.id)} title="Move to trash" aria-label="Move message to trash">
                     <Trash2 size={18} />
                   </button>
                 </div>
@@ -232,7 +234,9 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
           ) : (
             <div className={styles.listToolbar}>
                <button 
+                 type="button"
                  className={styles.toolbarIcon}
+                 aria-label="Refresh inbox"
                  onClick={() => {
                    setIsRefreshing(true)
                    router.refresh()
@@ -260,9 +264,23 @@ export default function GmailDesktopClient({ rawEmails, userEmailId, userPhone }
                 filteredEmails.map(email => {
                   const isStarred = starredEmails.includes(email.id)
                   return (
-                  <div key={email.id} className={`email-row-anim ${styles.emailRow} ${!email.read_status && activeFolder === 'inbox' ? styles.unread : ''}`} onClick={() => setSelectedEmail(email)}>
+                  <div
+                    key={email.id}
+                    className={`email-row-anim ${styles.emailRow} ${!email.read_status && activeFolder === 'inbox' ? styles.unread : ''}`}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Open message: ${email.subject || 'No subject'}, from ${email.sender_address}`}
+                    onClick={() => setSelectedEmail(email)}
+                    onKeyDown={(event) => {
+                      if (event.target !== event.currentTarget) return
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault()
+                        setSelectedEmail(email)
+                      }
+                    }}
+                  >
                     <div className={styles.emailRowActions}>
-                      <button className={styles.starIconBtn} onClick={(e) => toggleStar(e, email.id)}>
+                      <button type="button" className={styles.starIconBtn} aria-label={isStarred ? 'Remove from favorites' : 'Add to favorites'} aria-pressed={isStarred} onClick={(e) => toggleStar(e, email.id)}>
                         <Star size={18} fill={isStarred ? '#f9ab00' : 'none'} color={isStarred ? '#f9ab00' : '#a1a1aa'} />
                       </button>
                     </div>

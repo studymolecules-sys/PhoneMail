@@ -5,6 +5,7 @@ const { createClient } = require('@supabase/supabase-js');
 const http = require('http');
 
 // We are using the exact same Supabase keys you provided in the frontend!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const webUrl = process.env.WEB_URL || 'http://localhost:3000';
 

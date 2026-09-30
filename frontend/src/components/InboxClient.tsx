@@ -1,13 +1,11 @@
 'use client'
 
 import { useState, useMemo, useEffect, useRef } from 'react'
-import Link from 'next/link'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
 import styles from './inbox.module.css'
 import Drawer from './Drawer'
 import ProfileModal from './ProfileModal'
-import { Menu, Search, PenSquare, Star, CheckCheck, X, Sparkles, Trash2 } from 'lucide-react'
+import { Menu, Search, PenSquare, Star, CheckCheck, X, Trash2 } from 'lucide-react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import SwipeableChatRow from './SwipeableChatRow'
@@ -58,11 +56,10 @@ export default function InboxClient({
 
   const listRef = useRef<HTMLDivElement>(null)
   const readRef = useRef<HTMLDivElement>(null)
-  const fabRef = useRef<HTMLAnchorElement>(null)
-  const router = useRouter()
-
   const [lang, setLang] = useState('en')
   useEffect(() => {
+    // Read client-only preferences after hydration to keep the server and first client render aligned.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLang(localStorage.getItem('pm_lang') || 'en')
     const handleLangChange = () => setLang(localStorage.getItem('pm_lang') || 'en')
     window.addEventListener('pm_languageChange', handleLangChange)
@@ -74,6 +71,8 @@ export default function InboxClient({
   useEffect(() => {
     try {
       const saved = localStorage.getItem('pm_starred')
+      // Apply client-only persisted view state after hydration to avoid a server/client mismatch.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (saved) setStarredContacts(JSON.parse(saved))
       const s = localStorage.getItem('pm_starred_emails')
       if (s) setStarredEmails(JSON.parse(s))
@@ -81,7 +80,7 @@ export default function InboxClient({
       if (t) setTrashEmails(JSON.parse(t))
       const sp = localStorage.getItem('pm_spam_emails')
       if (sp) setSpamEmails(JSON.parse(sp))
-    } catch (e) {}
+    } catch {}
   }, [])
 
   const toggleStar = (contact: string, e?: React.MouseEvent | React.TouchEvent) => {
@@ -163,7 +162,7 @@ export default function InboxClient({
       }
       return false
     })
-  }, [rawEmails, searchQuery, filterChip, activeFolder, starredEmails, trashEmails, spamEmails])
+  }, [rawEmails, searchQuery, filterChip, activeFolder, starredEmails, trashEmails, spamEmails, userEmailId])
 
   // GSAP animation for chat/email list elements
   useGSAP(() => {
@@ -200,7 +199,7 @@ export default function InboxClient({
     showToast('Moved to Trash')
   }
 
-  const formatWhatsAppTime = (isoString?: string) => {
+  const formatMessageTime = (isoString?: string) => {
     if (!isoString) return ''
     const date = new Date(isoString)
     const now = new Date()
@@ -213,22 +212,6 @@ export default function InboxClient({
       return 'Yesterday'
     }
     return date.toLocaleDateString([], { month: 'short', day: 'numeric' })
-  }
-
-  const handleFabClick = (e: React.MouseEvent) => {
-    e.preventDefault()
-    if (!fabRef.current) return
-    
-    // Morphing animation
-    gsap.to(fabRef.current, {
-      scale: 50,
-      opacity: 0,
-      duration: 0.4,
-      ease: 'power3.in',
-      onComplete: () => {
-        router.push('/compose')
-      }
-    })
   }
 
   return (
@@ -271,6 +254,7 @@ export default function InboxClient({
             <Search size={18} className={styles.searchIcon} />
             <input
               type="text"
+              aria-label={t.searchMobile}
               placeholder={t.searchMobile}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -281,6 +265,7 @@ export default function InboxClient({
                 type="button"
                 className={styles.clearSearchBtn}
                 onClick={() => setSearchQuery('')}
+                aria-label="Clear search"
               >
                 <X size={16} />
               </button>
@@ -294,6 +279,7 @@ export default function InboxClient({
             <button
               type="button"
               className={`${styles.chip} ${filterChip === 'all' ? styles.chipActiveText : ''}`}
+              aria-pressed={filterChip === 'all'}
               onClick={() => setFilterChip('all')}
             >
               {t.all}
@@ -301,6 +287,7 @@ export default function InboxClient({
             <button
               type="button"
               className={`${styles.chip} ${filterChip === 'unread' ? styles.chipActiveText : ''}`}
+              aria-pressed={filterChip === 'unread'}
               onClick={() => setFilterChip('unread')}
             >
               {t.unread}
@@ -308,6 +295,7 @@ export default function InboxClient({
             <button
               type="button"
               className={`${styles.chip} ${filterChip === 'favorites' ? styles.chipActiveText : ''}`}
+              aria-pressed={filterChip === 'favorites'}
               onClick={() => setFilterChip('favorites')}
             >
               {t.favorites}
@@ -315,6 +303,7 @@ export default function InboxClient({
             <button
               type="button"
               className={`${styles.chip} ${filterChip === 'attachments' ? styles.chipActiveText : ''}`}
+              aria-pressed={filterChip === 'attachments'}
               onClick={() => setFilterChip('attachments')}
             >
               {t.attachments}
@@ -328,11 +317,11 @@ export default function InboxClient({
         {selectedEmail ? (
           <div ref={readRef} className={styles.mobileReadView}>
             <div className={styles.readHeaderMobile}>
-              <button className={styles.iconButton} onClick={() => setSelectedEmail(null)}>
+              <button type="button" className={styles.iconButton} onClick={() => setSelectedEmail(null)}>
                 &larr; Back
               </button>
               <div className={styles.readActions}>
-                <button className={styles.iconButton} onClick={() => moveEmailToTrash(selectedEmail.id)}>
+                <button type="button" className={styles.iconButton} aria-label="Move message to trash" onClick={() => moveEmailToTrash(selectedEmail.id)}>
                   <Trash2 size={18} />
                 </button>
               </div>
@@ -394,7 +383,7 @@ export default function InboxClient({
                           <div className={styles.chatHeader}>
                             <h4 className={styles.contactName}>{displayName}</h4>
                             <span className={styles.time} suppressHydrationWarning>
-                              {formatWhatsAppTime(chat.latestMessage?.created_at)}
+                              {formatMessageTime(chat.latestMessage?.created_at)}
                             </span>
                           </div>
 
@@ -433,14 +422,28 @@ export default function InboxClient({
                   filteredEmails.map((email) => {
                     const isStarred = starredEmails.includes(email.id)
                     return (
-                      <div key={email.id} className={`item-row-anim ${styles.emailRowMobile} ${!email.read_status && activeFolder === 'all' ? styles.unread : ''}`} onClick={() => setSelectedEmail(email)}>
+                      <div
+                        key={email.id}
+                        className={`item-row-anim ${styles.emailRowMobile} ${!email.read_status && activeFolder === 'all' ? styles.unread : ''}`}
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`Open message: ${email.subject || 'No subject'}, from ${email.sender_address}`}
+                        onClick={() => setSelectedEmail(email)}
+                        onKeyDown={(event) => {
+                          if (event.target !== event.currentTarget) return
+                          if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault()
+                            setSelectedEmail(email)
+                          }
+                        }}
+                      >
                         <div className={styles.avatar}>
                           {email.sender_address === userEmailId ? 'P' : email.sender_address.charAt(0).toUpperCase()}
                         </div>
                         <div className={styles.chatContent}>
                           <div className={styles.chatHeader}>
                             <h4 className={styles.contactName}>{email.sender_address === userEmailId ? 'Me' : email.sender_address.replace('@pmail.vixiya.com', '')}</h4>
-                            <span className={styles.time}>{formatWhatsAppTime(email.created_at)}</span>
+                            <span className={styles.time}>{formatMessageTime(email.created_at)}</span>
                           </div>
                           <div className={styles.chatPreview}>
                             <div className={styles.previewLeft}>
@@ -450,7 +453,7 @@ export default function InboxClient({
                               </p>
                             </div>
                             <div className={styles.previewRight}>
-                              <button className={styles.starIconBtnMobile} onClick={(e) => toggleEmailStar(e, email.id)}>
+                              <button type="button" className={styles.starIconBtnMobile} aria-label={isStarred ? 'Remove from favorites' : 'Add to favorites'} onClick={(e) => toggleEmailStar(e, email.id)}>
                                 <Star size={18} fill={isStarred ? '#f9ab00' : 'none'} color={isStarred ? '#f9ab00' : '#888'} />
                               </button>
                             </div>
@@ -470,10 +473,8 @@ export default function InboxClient({
       {!selectedEmail && (
         <a 
           href="/compose" 
-          ref={fabRef}
           className={styles.fab} 
           aria-label="Compose New Email"
-          onClick={handleFabClick}
         >
           <PenSquare size={22} />
         </a>

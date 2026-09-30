@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import styles from './Toast.module.css'
 
 export type ToastType = 'success' | 'error' | 'info'
@@ -21,6 +21,7 @@ export default function Toast() {
   const [isVisible, setIsVisible] = useState(false)
   const [hasFired, setHasFired] = useState(false)
   const [toastData, setToastData] = useState<ToastEventDetail>({ message: '', type: 'info' })
+  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     const handleToast = (e: CustomEvent<ToastEventDetail>) => {
@@ -28,22 +29,29 @@ export default function Toast() {
       setHasFired(true)
       setIsVisible(true)
       
-      // Auto-hide after 3 seconds
-      setTimeout(() => {
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
+      hideTimerRef.current = setTimeout(() => {
         setIsVisible(false)
+        hideTimerRef.current = null
       }, 3000)
     }
 
     window.addEventListener('show-toast', handleToast as EventListener)
-    return () => window.removeEventListener('show-toast', handleToast as EventListener)
+    return () => {
+      window.removeEventListener('show-toast', handleToast as EventListener)
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
+    }
   }, [])
 
   if (!hasFired) return null
 
   return (
-    <div 
+    <div
       className={`${styles.toastContainer} ${isVisible ? styles.slideIn : styles.slideOut}`}
       style={{ pointerEvents: isVisible ? 'auto' : 'none' }}
+      role={toastData.type === 'error' ? 'alert' : 'status'}
+      aria-live={toastData.type === 'error' ? 'assertive' : 'polite'}
+      aria-atomic="true"
     >
       <div className={`${styles.toastPill} ${styles[toastData.type]}`}>
         <span>{toastData.message}</span>
