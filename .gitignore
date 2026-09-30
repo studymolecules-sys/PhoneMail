@@ -1,7 +1,4 @@
-.agents/*
-!.agents/
-.agents/*
-!.agents/AGENTS.md
+.agents/
 .claude/
 .cursor/
 node_modules/
