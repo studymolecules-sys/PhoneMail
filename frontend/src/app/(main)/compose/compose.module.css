@@ -98,7 +98,7 @@
   border: 0;
   border-radius: 13px;
   background: var(--gm-primary-btn);
-  color: var(--gm-app-bg);
+  color: var(--gm-primary-foreground);
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;

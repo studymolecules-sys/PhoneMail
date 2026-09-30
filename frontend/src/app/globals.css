@@ -11,8 +11,10 @@
   --wa-chat-bg: #000000;
   --wa-item-hover: #27272a;
   --wa-item-active: #27272a;
-  --wa-accent: #6366f1;
+  --wa-accent: #5559df;
+  --wa-accent-foreground: #ffffff;
   --wa-accent-light: #818cf8;
+  --wa-accent-light-foreground: #171a3b;
   --wa-bubble-sent: #4f46e5;
   --wa-bubble-sent-text: #ffffff;
   --wa-bubble-received: #27272a;
@@ -38,6 +40,7 @@
   --gm-active-text: #273a68;
   --gm-primary-btn: #273a68;
   --gm-primary-btn-hover: #1c2b50;
+  --gm-primary-foreground: #ffffff;
   --gm-text-primary: #202124;
   --gm-text-secondary: #5f6368;
   --gm-text-muted: #727775;
@@ -141,7 +144,9 @@ button, input, textarea {
   --wa-item-hover: #eeece5;
   --wa-item-active: #e8e8e1;
   --wa-accent: #405a86;
+  --wa-accent-foreground: #ffffff;
   --wa-accent-light: #637da8;
+  --wa-accent-light-foreground: #172033;
   --wa-bubble-sent: #dce5f2;
   --wa-bubble-sent-text: #192946;
   --wa-bubble-received: #fffefa;
@@ -176,7 +181,9 @@ button, input, textarea {
   --wa-item-hover: #252e3b;
   --wa-item-active: #2b3544;
   --wa-accent: #849bc7;
+  --wa-accent-foreground: #172033;
   --wa-accent-light: #a6b8dc;
+  --wa-accent-light-foreground: #172033;
   --wa-bubble-sent: #384b70;
   --wa-bubble-sent-text: #f3f5fa;
   --wa-bubble-received: #252e3a;
@@ -205,6 +212,7 @@ button, input, textarea {
   --gm-active-text: #f0f2f7;
   --gm-primary-btn: #a6b8dc;
   --gm-primary-btn-hover: #c0cceb;
+  --gm-primary-foreground: #172033;
   --gm-text-primary: #eef0f5;
   --gm-text-secondary: #b1bac9;
   --gm-text-muted: #8c96a6;

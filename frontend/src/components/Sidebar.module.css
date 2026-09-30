@@ -60,7 +60,7 @@
   align-items: center;
   gap: 12px;
   background: var(--wa-accent);
-  color: #ffffff;
+  color: var(--wa-accent-foreground);
   text-decoration: none;
   padding: 14px 24px;
   border-radius: 16px;
@@ -71,7 +71,7 @@
 }
 
 .composePill:hover {
-  background: var(--wa-accent-light);
+  filter: brightness(0.92);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   transform: translateY(-1px);
 }
@@ -81,7 +81,7 @@
 }
 
 .composeIcon {
-  color: #ffffff;
+  color: currentColor;
 }
 
 .composeLabel {
@@ -159,8 +159,8 @@
 .counterBadge {
   font-size: 11px;
   font-weight: 700;
-  color: #ffffff;
-  background: var(--wa-accent-light);
+  color: var(--wa-accent-foreground);
+  background: var(--wa-accent);
   padding: 2px 7px;
   border-radius: 9999px;
 }

@@ -330,7 +330,7 @@
   font-size: 14px;
   color: var(--wa-text-secondary);
   line-height: 1.5;
-  max-width: 320px;
+  max-width: 380px;
 }
 
 .waTermsContent {
@@ -401,7 +401,7 @@
   height: 22px;
   border-radius: 50%;
   background: var(--wa-accent);
-  color: white;
+  color: var(--wa-accent-foreground);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -479,7 +479,7 @@
 
 .simDetectBtn {
   background: var(--wa-accent);
-  color: #111b21;
+  color: var(--wa-accent-foreground);
   border: none;
   padding: 6px 12px;
   border-radius: 6px;
@@ -576,7 +576,7 @@
   justify-content: center;
   gap: 8px;
   background: var(--wa-accent);
-  color: #111b21;
+  color: var(--wa-accent-foreground);
   border: none;
   padding: 14px 24px;
   border-radius: 9999px;
@@ -631,4 +631,9 @@
   color: #ffc3bd;
 }
 
-.waPrimaryButton:disabled { cursor: not-allowed; opacity: 0.55; transform: none; }
+.waPrimaryButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
+  transform: none;
+  box-shadow: none;
+}

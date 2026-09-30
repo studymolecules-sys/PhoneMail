@@ -425,7 +425,7 @@
   height: 42px;
   border-radius: 50%;
   background: var(--wa-accent);
-  color: #ffffff;
+  color: var(--wa-accent-foreground);
   border: none;
   display: flex;
   align-items: center;
@@ -436,7 +436,7 @@
 }
 
 .sendButton:hover:not(:disabled) {
-  background: #405782;
+  filter: brightness(0.92);
   transform: scale(1.05);
 }
 
@@ -565,7 +565,7 @@
   align-items: center;
   gap: 8px;
   background: var(--wa-accent);
-  color: #ffffff;
+  color: var(--wa-accent-foreground);
   border: none;
   padding: 10px 18px;
   border-radius: 8px;
@@ -576,7 +576,7 @@
 }
 
 .traditionalReplyBtn:hover, .modalSendBtn:hover {
-  background: var(--wa-accent-hover);
+  filter: brightness(0.92);
 }
 
 /* Traditional Compose Form */
@@ -708,8 +708,8 @@
 .messageRow { gap: 9px; }
 .cameraSlotBtn { width: 42px; height: 42px; flex: 0 0 auto; border: 1px solid var(--wa-border); border-radius: 13px; color: var(--wa-accent-light); }
 .messageInput { min-height: 42px; max-height: 120px; padding: 10px 15px; border-radius: 14px; resize: none; line-height: 1.4; }
-.sendButton { width: 42px; height: 42px; border-radius: 13px; background: var(--wa-accent); color: var(--wa-app-bg); }
-.sendButton:hover:not(:disabled) { background: var(--wa-accent-light); }
+.sendButton { width: 42px; height: 42px; border-radius: 13px; background: var(--wa-accent); color: var(--wa-accent-foreground); }
+.sendButton:hover:not(:disabled) { filter: brightness(0.92); }
 .emptyChat { max-width: 360px; margin-top: auto; margin-bottom: auto; border: 1px solid var(--wa-border); border-radius: 16px; background: var(--wa-panel-bg); }
 .traditionalMeta, .lockedFieldRow { background: var(--wa-app-bg); }
 .traditionalModal { max-height: min(88dvh, 820px); }

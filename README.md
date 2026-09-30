@@ -1,136 +1,127 @@
-# 📱 PhoneMail
+# PhoneMail
 
-> **Universal Email Using Phone Numbers as IDs**  
-> Built for the **AlphaStack 7-Day Buildathon**
+PhoneMail is an India-first email prototype that gives each account a mail address derived from its verified phone number. The mobile app centers on the inbox; conversation view is an optional way to read and reply to a thread. Desktop keeps a denser mail layout. The interface has its own visual system rather than copying another mail product.
 
-PhoneMail bridges the gap between universal email accessibility and the speed of modern instant messaging. Every user gets a universal email ID mapped directly to their phone number (e.g. `+15550192834@phonemail.com`).
+Example address: `919279581387@pmail.vixiya.com` (country code digits, without a leading `+`).
 
----
+## Product scope
 
-## 🌟 Key Experiences
+- Language and terms onboarding, then phone-number sign-in and OTP verification through Supabase Auth.
+- A responsive inbox with search, folders, favorites, message reading, settings, and compose screens.
+- A mobile conversation view for reading and replying to email threads; it is secondary to the inbox.
+- Supabase-backed email records and profile metadata, with light and dark themes.
+- Integration code for Cloudflare Email Routing, Twilio notifications/IVR, and optional Brevo outbound email.
 
-### 1. Mobile Client: WhatsApp Design Language + Spike Mail UX
-- **Authentic WhatsApp Aesthetics**: Dark slate surfaces (`#111b21`), emerald accents (`#00a884`), custom doodle chat wallpaper, speech tails, read double ticks (`✓✓`), and fluid GSAP transitions.
-- **4-Step Mobile Onboarding**:
-  1. *Language Selection*: Multi-language chooser (English, Español, हिन्दी, etc.).
-  2. *Terms & Privacy*: WhatsApp-style welcome screen with legal consent.
-  3. *SIM Detection*: Simulated SIM auto-fill for phone number verification.
-  4. *SMS Auto-Detection*: Automated 6-digit code detection and inbox launch.
-- **Spike Mail Chat Features**:
-  - *Compact Subject*: Displays above input box on new threads, automatically hides on replies.
-  - *Swipe-to-Reply*: Swipe right on any bubble to quote the original email.
-  - *Tap to Expand*: Tap any message to open the **Traditional Email View** with full headers (`From`, `To`, `Date`, `Subject`, `HTML`).
-  - *Traditional Compose Toggle*: Switch to full traditional email compose directly from WhatsApp's camera button slot.
-- **Drawer & Alias Management**:
-  - Slide-out navigation drawer (*Home Unified Inbox, Starred, Drafts, Spam, Trash*).
-  - Profile Modal with **Alias ID Management** (e.g. `work@phonemail.com`).
+PhoneMail is a buildathon prototype, not a production-ready public mail service. The app code does not prove that provider accounts, domain DNS, SMS delivery, email routing, or deliverability are configured. Several webhook paths also need authentication and stronger validation before they are safe to expose publicly; see [Integration status and safety](#integration-status-and-safety).
 
-### 2. Desktop Web Client: Google Workspace / Gmail 3-Pane UX
-- **Gmail Layout**: Collapsible left sidebar with floating **Compose** pill button (`#c2e7ff`), folder badges, and alias indicators.
-- **Dense Inbox**: Checkbox selection, star toggling, snippet preview, and hover actions.
-- **Desktop Login**: Google-style single-screen card with phone number, OTP, and hyperlinked Terms of Service.
+## Tech stack
 
----
+- **Web app:** Next.js 16 App Router, React 19, TypeScript.
+- **Authentication and database:** Supabase Auth, Supabase Postgres, and `@supabase/ssr`.
+- **Interface:** CSS Modules, Lucide icons, and GSAP for selected transitions.
+- **Optional incoming email:** Cloudflare Email Routing Worker with PostalMime.
+- **Optional outbound email:** Brevo API.
+- **Optional SMS/voice flows:** Twilio SDK and Supabase Auth's configured SMS provider.
+- **Local infrastructure:** Docker Compose and a Node.js SMTP receiver.
 
-## 🏗️ Architecture
+## Architecture
 
 ```mermaid
-flowchart TD
-    subgraph External["External Internet"]
-        Sender["Any Email Client (Gmail, Outlook, etc.)"]
-        Caller["Caller / User Phone"]
-    end
-
-    subgraph PhoneMailStack["PhoneMail Infrastructure"]
-        subgraph SMTPService["Node.js SMTP Daemon (:25)"]
-            Parser["MIME Parser (mailparser)"]
-        end
-
-        subgraph Backend["Next.js App Router (:3000)"]
-            TwilioNotify["/api/twilio/notify (SMS Alert)"]
-            TwilioIVR["/api/twilio-ivr (Toll-Free Call Registration)"]
-            WebClient["Mobile PWA (WhatsApp) & Desktop Web (Gmail)"]
-        end
-
-        subgraph CloudDB["Supabase Cloud (PostgreSQL)"]
-            EmailsTable[("emails table (RLS enabled)")]
-            AuthUsers[("auth.users")]
-        end
-    end
-
-    Sender -->|SMTP Port 25| Parser
-    Parser -->|Insert record| EmailsTable
-    Parser -->|Trigger Webhook| TwilioNotify
-    TwilioNotify -->|SMS Alert| Caller
-    Caller -->|Call Toll-Free Number| TwilioIVR
-    TwilioIVR -->|Create Account & SMS Pass| Caller
-    EmailsTable <-->|Realtime / SSR Sync| WebClient
+flowchart LR
+    Person[Person using PhoneMail] --> Web[Next.js web app]
+    Web -->|OTP sign-in and session| Auth[Supabase Auth]
+    Web -->|Read and write messages| DB[(Supabase emails table)]
+    Sender[External email sender] -->|Email Routing| Worker[Cloudflare Worker]
+    Worker -->|Parsed message API| Web
+    Web -->|Optional external delivery| Brevo[Brevo]
+    Web -->|Optional notifications| Twilio[Twilio]
 ```
 
----
+The app normalizes an Indian 10-digit number to `+91` E.164 format for Supabase phone authentication. After sign-in, the UI derives the PhoneMail address from the authenticated phone number. The inbox reads message rows from Supabase. The compose Server Action inserts message records and can call Brevo for external recipients when `BREVO_API_KEY` is configured. A present API key alone does not confirm delivery: provider response handling and failed database writes need stronger handling before relying on this path.
 
-## ⚡ Quick Start
+## Integration status and safety
 
-### Option 1: Docker Compose (1-Command Startup)
+- **Supabase Auth:** the login actions request and verify SMS OTPs through Supabase Auth. The app normalizes local Indian numbers to `+91` before calling Supabase. A configured Supabase test-number mapping can be used for a test login; it does not demonstrate live SMS delivery. Real OTP delivery depends on the Supabase project's Auth/SMS settings and provider limits.
+- **Supabase database:** inbox data is stored in `public.emails`. See [`supabase_setup.sql`](supabase_setup.sql) for the current table and RLS setup. Review existing schema and policies before applying it to an existing project.
+- **Cloudflare Email Routing:** the Worker parses inbound mail and posts to `/api/incoming-email`. That API currently uses the Supabase service-role key and does not authenticate the Worker request or sufficiently validate/rate-limit its payload. Do not expose it as a public mail-ingest endpoint until those protections are implemented.
+- **Twilio:** notification and IVR routes are present. They do not currently verify Twilio request signatures; protect them before exposing them publicly. The app's Supabase Auth SMS provider is configured separately from the Twilio variables used by these routes.
+- **Brevo:** the compose action attempts external delivery when `BREVO_API_KEY` is set. Configure and verify the sender/domain with Brevo, and check delivery at the provider. The current action does not robustly handle provider HTTP failures.
+- **SMTP demo service:** the separate Node SMTP receiver accepts unauthenticated plaintext SMTP and may trigger Twilio notifications. Keep it local or on a controlled network; it is not hardened for public mail-server use.
 
-```bash
-docker compose --env-file frontend/.env.local up -d --build
-```
-- **Web Client**: [http://localhost:3000](http://localhost:3000)
-- **SMTP Daemon**: Listening on `0.0.0.0:25`
+Domain DNS, routing, provider approval, webhook security, rate limits, abuse prevention, and end-to-end delivery have not been proven by a successful local build or test login.
 
-### Option 2: Local Development
+## Run locally
 
-1. **Frontend**:
-   ```bash
-   cd frontend
-   npm install
-   npm run dev
-   ```
-2. **SMTP Microservice**:
-   ```bash
-   cd smtp-server
-   npm install
-   npm start
-   ```
+### Requirements
 
----
+- Node.js 20 or newer and npm.
+- A Supabase project with phone authentication enabled and the `public.emails` table configured.
+- For real OTP delivery, a working Supabase Auth SMS provider and any current sender/template approvals it requires.
 
-## 🧪 Live Demo Runner (For Evaluators & Judges)
+### Environment
 
-Run the included automated verification script to test the complete pipeline:
+Put secrets in `frontend/.env` for this setup. The repository contains an empty placeholder at that path; supply real values locally or use the separate environment file provided for evaluation. Never commit secret values.
 
-```bash
-python demo_test.py
-```
+| Variable | Needed for | Notes |
+| --- | --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | Web app and Docker build | Supabase project URL. |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Web app and Docker build | Public anon key; database access must still be restricted by RLS. |
+| `SUPABASE_SERVICE_ROLE_KEY` | Incoming email and SMTP receiver | Privileged secret. Server-side only; never expose it in browser code. |
+| `TWILIO_ACCOUNT_SID` | Twilio notification/IVR routes | Server-side secret/configuration. |
+| `TWILIO_AUTH_TOKEN` | Twilio notification/IVR routes | Server-side secret; rotate if it has been exposed. |
+| `TWILIO_PHONE_NUMBER` | Twilio notification/IVR routes | Sender number enabled in the Twilio account. |
+| `BREVO_API_KEY` | Optional external outbound email | The current compose action only attempts Brevo delivery when this is set. Verify sender/domain approval and provider response. |
+| `PHONEMAIL_API_URL` | Optional Cloudflare Worker | Base URL of the deployed PhoneMail app. |
 
-This script:
-1. Connects to `localhost:25` and transmits a genuine RFC-822 email.
-2. Verifies MIME parsing and Supabase insertion in PostgreSQL.
-3. Tests the Twilio SMS notification webhook.
-4. Allows judges to see the email pop up live inside the WhatsApp chat thread!
+For local development, Next.js reads the supplied values from `frontend/.env` or `frontend/.env.local`:
 
----
-
-## 📱 Generating the Android APK
-
-PhoneMail is configured as a **Progressive Web App (PWA)** with 192x192 & 512x512 maskable icons, `manifest.json`, and offline service worker (`sw.js`).
-
-### Instant APK via PWABuilder:
-1. Expose your frontend or host it: `ngrok http 3000`
-2. Go to [PWABuilder.com](https://www.pwabuilder.com/)
-3. Enter your URL $\rightarrow$ Click **Package for Android** $\rightarrow$ **Download APK**.
-
-### Local APK via Bubblewrap CLI:
-```bash
-npm i -g @bubblewrap/cli
-bubblewrap init --manifest=https://your-url/manifest.json
-bubblewrap build
+```powershell
+cd frontend
+npm ci
+npm run dev
 ```
 
----
+Open [http://localhost:3000](http://localhost:3000). To verify a production build locally:
 
-## 🔒 Security & Database Model
+```powershell
+cd frontend
+npm run build
+npm run start
+```
 
-- **Row Level Security (RLS)**: Enforced in PostgreSQL via `auth.jwt()`. Users can only select, update, and delete emails where their authenticated phone number matches `sender_address` or `recipient_address`.
-- **Zero Cost Architecture**: Uses Supabase Free Tier, Twilio Free Trial, and local Node.js SMTP.
+For the included Docker setup, fill `frontend/.env` first, then run from the repository root:
+
+```powershell
+docker compose --env-file frontend/.env up --build
+```
+
+The web container builds and serves the optimized Next.js app. The SMTP container listens on port 25 and is configured to reach the web container at `http://web:3000`. The SMTP receiver accepts unauthenticated plaintext SMTP; do not expose it directly to the public internet without authentication, TLS, relay protections, and abuse controls.
+
+## Supabase database setup
+
+Review [`supabase_setup.sql`](supabase_setup.sql) and run it in the Supabase SQL editor for a fresh or compatible project. It creates/extends the `emails` table and applies RLS policies for the current `@pmail.vixiya.com` address format. It does not configure Supabase Auth's SMS provider or create Twilio/Cloudflare/Brevo credentials.
+
+If your project already has an `emails` table, back it up and compare the existing schema and policies before applying schema changes. Never give the browser the service-role key. The service-role key is intended only for trusted server-side ingestion and bypasses RLS.
+
+## Demo and verification
+
+A low-risk demo can show the onboarding screens, use the Supabase-configured test phone mapping, navigate the inbox, and demonstrate the compose/thread interface. A Supabase test OTP proves the app's test sign-in path; it does **not** prove that a real SMS was delivered.
+
+To claim real email or SMS delivery, verify it with approved test addresses/numbers and confirm the provider reports success. External email requires Brevo credentials and sender verification. Incoming mail requires Cloudflare routing plus a secured Worker-to-app request. `demo_test.py` is an opt-in live integration helper: it requires `PHONEMAIL_RUN_LIVE_DEMO=YES`, `PHONEMAIL_DEMO_RECIPIENT`, `NEXT_PUBLIC_SUPABASE_URL`, and `SUPABASE_SERVICE_ROLE_KEY`. It sends a real email and may trigger an SMS notification, so use only a controlled test recipient.
+
+Checks completed during submission preparation:
+
+- `cd frontend && npm run build` — production compilation and TypeScript checks; passed after the latest UI changes.
+- Targeted ESLint on the inbox, desktop client, login, and toast components.
+- Local `/login` HTTP smoke check returned HTTP 200 after the latest UI changes.
+
+These checks do not validate a real OTP send, inbound routing, external email delivery, or Twilio SMS.
+
+## Submission checklist
+
+- Keep this README with the stack, architecture, setup steps, and honest integration status.
+- Publish the GitHub repository and make it public as required by the form.
+- Push the final commit to the repository's `main` branch before the deadline.
+- Commit only the empty `frontend/.env` placeholder; never commit real environment values. Upload the filled environment/key files through the submission form only.
+- Put separately uploaded auth keys in a text file, one per line, using the form's format, for example: `frontend/.env SUPABASE_SERVICE_ROLE_KEY = "<value>"`. Do not include the value in this repository or in chat.
+- If you record the optional demo, show the product flow at readable 1080p and state which provider paths are simulated, test-only, or live.
