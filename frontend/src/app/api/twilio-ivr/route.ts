@@ -1,74 +1,31 @@
 import { NextResponse } from 'next/server';
 import twilio from 'twilio';
-import { createClient } from '@/lib/supabase/server';
-
-const twilioClient = twilio(
-  process.env.TWILIO_ACCOUNT_SID,
-  process.env.TWILIO_AUTH_TOKEN
-);
+import { isValidTwilioWebhook } from '@/lib/twilio-webhook';
+import { readRequestBodyWithLimit } from '@/lib/webhook-security';
 
 export async function POST(request: Request) {
   try {
-    // Twilio sends data as x-www-form-urlencoded
-    const formData = await request.formData();
-    const from = formData.get('From') as string; // Caller's phone number
-    const digits = formData.get('Digits') as string; // What they pressed
-
-    if (digits === '1') {
-      const supabase = await createClient();
-      const tempPassword = Math.random().toString(36).slice(-8); // Generate 8 char password
-      const email = `${from.replace('+', '')}@pmail.vixiya.com`;
-
-      // 1. Create User in Supabase
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password: tempPassword,
-        options: {
-          data: {
-            phone_number: from,
-          },
-        },
-      });
-
-      let message = '';
-
-      if (error) {
-        if (error.message.includes('already registered')) {
-            message = 'This phone number is already registered with PhoneMail.';
-        } else {
-            message = 'There was an error creating your PhoneMail account. Please try again.';
-        }
-      } else {
-        // 2. Send SMS via Twilio
-        try {
-          await twilioClient.messages.create({
-            body: `Welcome to PhoneMail! Your temporary password is: ${tempPassword}. Please log in and change it.`,
-            from: process.env.TWILIO_PHONE_NUMBER,
-            to: from,
-          });
-          message = 'Account created successfully. We have sent you an SMS with your temporary password.';
-        } catch (smsError) {
-           console.error('Twilio SMS Error:', smsError);
-           message = 'Account created, but we could not send the SMS. Please use the web portal to reset your password.';
-        }
-      }
-
-      // 3. Respond to Twilio with TwiML
-      const twiml = new twilio.twiml.VoiceResponse();
-      twiml.say(message);
-
-      return new NextResponse(twiml.toString(), {
-        headers: { 'Content-Type': 'text/xml' },
-      });
-    } else {
-      const twiml = new twilio.twiml.VoiceResponse();
-      twiml.say('Invalid option selected. Goodbye.');
-      return new NextResponse(twiml.toString(), {
-        headers: { 'Content-Type': 'text/xml' },
-      });
+    const rawBody = await readRequestBodyWithLimit(request, 64_000)
+    if (rawBody === null) {
+      return new NextResponse('Request too large', { status: 413 })
     }
+    const formRequest = new Request(request.url, {
+      method: 'POST',
+      headers: request.headers,
+      body: rawBody,
+    })
+    const formData = await formRequest.formData()
+    if (!isValidTwilioWebhook(request, formData)) {
+      return new NextResponse('Unauthorized', { status: 403 });
+    }
+
+    const response = new twilio.twiml.VoiceResponse();
+    response.say('PhoneMail sign-in is available on the PhoneMail website. Enter your Indian mobile number there to receive a verification code.');
+    return new NextResponse(response.toString(), {
+      headers: { 'Content-Type': 'text/xml; charset=utf-8', 'Cache-Control': 'no-store' },
+    });
   } catch (error) {
-    console.error('Webhook Error:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error('Twilio IVR request failed:', error instanceof Error ? error.name : 'UnknownError');
+    return new NextResponse('Invalid webhook request', { status: 400 });
   }
 }

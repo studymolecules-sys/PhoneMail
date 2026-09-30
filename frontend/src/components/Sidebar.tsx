@@ -29,6 +29,8 @@ export default function Sidebar({
   
   const [lang, setLang] = useState('en')
   useEffect(() => {
+    // Read the saved language after hydration so server and client render the same initial text.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLang(localStorage.getItem('pm_lang') || 'en')
     const handleLangChange = () => setLang(localStorage.getItem('pm_lang') || 'en')
     window.addEventListener('pm_languageChange', handleLangChange)

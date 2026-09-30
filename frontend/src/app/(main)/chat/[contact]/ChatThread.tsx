@@ -4,8 +4,9 @@ import { useRef, useEffect } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import styles from './chat.module.css'
+import type { EmailMessage } from './SpikeChatView'
 
-export default function ChatThread({ messages, currentUser }: { messages: any[], currentUser: string }) {
+export default function ChatThread({ messages, currentUser }: { messages: EmailMessage[], currentUser: string }) {
   const endRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -43,7 +44,7 @@ export default function ChatThread({ messages, currentUser }: { messages: any[],
           <p>No messages yet. Send a quick hello!</p>
         </div>
       ) : (
-        messages.map((msg, index) => {
+        messages.map((msg) => {
           const isMe = msg.sender_address === currentUser
           
           return (

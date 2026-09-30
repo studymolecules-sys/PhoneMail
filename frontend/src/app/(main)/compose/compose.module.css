@@ -87,6 +87,16 @@
   background: var(--gm-panel-bg);
 }
 .composeNote { color: var(--gm-text-muted); font-size: 11px; line-height: 1.4; }
+.formError {
+  margin: 0;
+  padding: 11px 18px;
+  border-top: 1px solid color-mix(in srgb, #b42318 22%, var(--gm-border));
+  background: color-mix(in srgb, #b42318 8%, var(--gm-surface-bg));
+  color: #b42318;
+  font-size: 13px;
+  line-height: 1.45;
+}
+[data-theme="dark"] .formError { color: #ffb4ab; }
 .sendFab {
   display: inline-flex;
   align-items: center;
@@ -108,6 +118,7 @@
 .sendFab:hover:not(:disabled) { filter: brightness(1.07); transform: translateY(-1px); }
 .sendFab:active:not(:disabled) { transform: scale(.98); }
 .sendFab:disabled { opacity: .65; cursor: wait; }
+.sendFab:focus-visible { outline: 2px solid var(--gm-accent); outline-offset: 3px; }
 
 @media (max-width: 700px) {
   .header { min-height: 60px; padding: max(8px, env(safe-area-inset-top)) 14px 8px; }

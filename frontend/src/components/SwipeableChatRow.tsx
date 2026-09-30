@@ -2,14 +2,14 @@
 
 import { useState, useRef, TouchEvent } from 'react'
 import Link from 'next/link'
-import { Star, Trash2, Archive } from 'lucide-react'
+import { Star } from 'lucide-react'
 import styles from './SwipeableChatRow.module.css'
 
 interface SwipeableChatRowProps {
   href: string
   contact: string
   isStarred: boolean
-  onToggleStar: (contact: string, e: React.MouseEvent | React.TouchEvent) => void
+  onToggleStar: (contact: string, e?: React.MouseEvent | React.TouchEvent) => void
   children: React.ReactNode
 }
 
@@ -27,36 +27,31 @@ export default function SwipeableChatRow({
   const currentX = useRef(0)
   const SWIPE_THRESHOLD = 80 // Pixels to reveal action
 
-  const handleTouchStart = (e: TouchEvent) => {
+  const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length !== 1) return
     startX.current = e.touches[0].clientX
     currentX.current = e.touches[0].clientX
     setIsDragging(true)
   }
 
-  const handleTouchMove = (e: TouchEvent) => {
+  const handleTouchMove = (e: TouchEvent<HTMLDivElement>) => {
     if (!isDragging) return
+    if (e.touches.length !== 1) return
     currentX.current = e.touches[0].clientX
     const diff = currentX.current - startX.current
 
-    // Allow swipe right (Star) and left (Archive/Trash)
-    // Dampen the movement
+    // A right swipe reveals Star. Unsupported left-swipe actions stay closed.
     if (diff > 0) {
       setTranslateX(Math.min(diff * 0.5, SWIPE_THRESHOLD + 20))
     } else {
-      setTranslateX(Math.max(diff * 0.5, -(SWIPE_THRESHOLD + 20)))
+      setTranslateX(0)
     }
   }
 
   const handleTouchEnd = () => {
     setIsDragging(false)
     if (translateX > SWIPE_THRESHOLD * 0.8) {
-      // Trigger Star on full swipe right
-      if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(50)
-      onToggleStar(contact, {} as any)
-    } else if (translateX < -SWIPE_THRESHOLD * 0.8) {
-      // Trigger Archive/Delete (mock) on full swipe left
-      if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate([30, 50, 30])
-      // onArchive(contact)
+      onToggleStar(contact)
     }
     
     // Snap back
@@ -69,9 +64,6 @@ export default function SwipeableChatRow({
       <div className={styles.backgroundActions}>
         <div className={`${styles.actionLeft} ${translateX > SWIPE_THRESHOLD * 0.8 ? styles.actionActive : ''}`}>
           <Star size={24} fill={isStarred ? '#fff' : 'none'} />
-        </div>
-        <div className={`${styles.actionRight} ${translateX < -SWIPE_THRESHOLD * 0.8 ? styles.actionActive : ''}`}>
-          <Archive size={24} />
         </div>
       </div>
 

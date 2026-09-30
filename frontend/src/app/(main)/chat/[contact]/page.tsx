@@ -1,11 +1,20 @@
 import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { sendMessage } from './actions'
 import SpikeChatView, { EmailMessage } from './SpikeChatView'
+import { getDemoEmails } from '@/lib/demo-emails'
 
 export default async function ChatPage({ params }: { params: Promise<{ contact: string }> }) {
   const resolvedParams = await params
-  const contact = decodeURIComponent(resolvedParams.contact)
+  let contact: string
+  try {
+    contact = decodeURIComponent(resolvedParams.contact).trim().toLowerCase()
+  } catch {
+    notFound()
+  }
+  if (contact.length > 254 || !/^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+$/i.test(contact)) {
+    notFound()
+  }
   const supabase = await createClient()
 
   const {
@@ -20,17 +29,37 @@ export default async function ChatPage({ params }: { params: Promise<{ contact: 
   const cleanDigits = rawPhone.replace(/[^\d]/g, '')
   const userEmailId = `${cleanDigits}@pmail.vixiya.com`
 
-  // Fetch emails between this user and the contact
-  const { data: emails } = await supabase
-    .from('emails')
-    .select('*')
-    .or(
-      `and(sender_address.eq.${userEmailId},recipient_address.eq.${contact}),and(sender_address.eq.${contact},recipient_address.eq.${userEmailId})`
-    )
-    .order('created_at', { ascending: true })
+  const demoMode = process.env.PHONEMAIL_DEMO_MODE === 'true'
+  // Use equality filters so a contact address cannot alter a PostgREST filter expression.
+  const demoMessages = demoMode
+    ? getDemoEmails(userEmailId).filter((email) =>
+        email.sender_address === contact || email.recipient_address === contact,
+      )
+    : null
+  // Demo fixtures are read-only and never touch Supabase message rows.
+  if (demoMode && (!demoMessages || demoMessages.length === 0)) notFound()
+  let emails: EmailMessage[]
+  if (demoMode) {
+    emails = demoMessages!
+  } else {
+    const [sentResult, receivedResult] = await Promise.all([
+      supabase
+        .from('emails')
+        .select('*')
+        .eq('sender_address', userEmailId)
+        .eq('recipient_address', contact),
+      supabase
+        .from('emails')
+        .select('*')
+        .eq('sender_address', contact)
+        .eq('recipient_address', userEmailId),
+    ])
+    emails = [...(sentResult.data || []), ...(receivedResult.data || [])]
+      .sort((left, right) => Date.parse(left.created_at) - Date.parse(right.created_at))
+  }
 
   // Mark unread messages from this contact as read
-  await supabase
+  if (!demoMode) await supabase
     .from('emails')
     .update({ read_status: true })
     .eq('sender_address', contact)

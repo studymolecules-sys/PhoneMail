@@ -1,7 +1,8 @@
 """Manual end-to-end check for a configured PhoneMail demo account.
 
-This script sends a real test email to the configured recipient. If the SMTP
-service is wired to Twilio notifications, that can also send a real SMS.
+This script submits one test message to the local PhoneMail SMTP receiver and
+checks that it was stored. If SMTP notifications are configured, it may also
+send a real SMS. It does not send an email over the public internet.
 Nothing is sent unless PHONEMAIL_RUN_LIVE_DEMO=YES is set explicitly.
 """
 
@@ -32,13 +33,13 @@ if os.environ.get('PHONEMAIL_RUN_LIVE_DEMO') != 'YES':
     )
 
 recipient_email = required('PHONEMAIL_DEMO_RECIPIENT').lower()
-if not re.fullmatch(r'\d{12}@pmail\.vixiya\.com', recipient_email):
+if not re.fullmatch(r'91[6-9]\d{9}@pmail\.vixiya\.com', recipient_email):
     raise SystemExit('PHONEMAIL_DEMO_RECIPIENT must use the form 91XXXXXXXXXX@pmail.vixiya.com.')
 
 supabase_url = required('NEXT_PUBLIC_SUPABASE_URL').rstrip('/')
 service_role_key = required('SUPABASE_SERVICE_ROLE_KEY')
 smtp_host = os.environ.get('PHONEMAIL_SMTP_HOST', '127.0.0.1')
-smtp_port = int(os.environ.get('PHONEMAIL_SMTP_PORT', '25'))
+smtp_port = int(os.environ.get('PHONEMAIL_SMTP_PORT', '2525'))
 sender_email = os.environ.get('PHONEMAIL_DEMO_SENDER', 'demo.sender@example.invalid')
 
 message = MIMEMultipart()

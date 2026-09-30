@@ -27,6 +27,8 @@ export default function Drawer({
   const [lang, setLang] = useState('en')
   const [profileInitial, setProfileInitial] = useState('P')
   useEffect(() => {
+    // Read client-only preferences after hydration to keep the first render aligned with the server.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLang(localStorage.getItem('pm_lang') || 'en')
     const storedName = localStorage.getItem('pm_name')?.trim()
     if (storedName) setProfileInitial(storedName.charAt(0).toUpperCase())

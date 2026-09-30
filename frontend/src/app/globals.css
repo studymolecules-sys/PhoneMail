@@ -1,7 +1,7 @@
 :root {
   /* Common Fonts */
-  --font-sans: var(--font-inter), var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   /* Premium Indigo Dark Theme Tokens */
   --wa-header-bg: #121214;
@@ -31,7 +31,7 @@
   --bubble-received: #27272a;
   --bubble-received-text: #e4e4e7;
   
-  /* Gmail Theme Tokens (Default Desktop - Light) */
+  /* Light mail-client surfaces and text */
   --gm-app-bg: #f4f3ef;
   --gm-panel-bg: #ffffff;
   --gm-surface-bg: #ffffff;
@@ -203,7 +203,7 @@ button, input, textarea {
   --text-secondary: #b1bac9;
   --text-tertiary: #8c96a6;
 
-  /* Gmail Dark Theme Tokens */
+  /* Dark mail-client surfaces and text */
   --gm-app-bg: #171d27;
   --gm-panel-bg: #1b222e;
   --gm-surface-bg: #202937;

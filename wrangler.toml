@@ -1,0 +1,6 @@
+name = "phonemail-email-routing"
+main = "cloudflare-email-worker.js"
+compatibility_date = "2026-09-30"
+
+[vars]
+PHONEMAIL_API_URL = "https://pmail.vixiya.com"

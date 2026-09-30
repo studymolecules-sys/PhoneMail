@@ -9,7 +9,7 @@
   position: relative;
 }
 
-/* WhatsApp Chat Header */
+/* Conversation header */
 .header {
   display: flex;
   align-items: center;
@@ -158,7 +158,7 @@
   color: var(--wa-text-muted);
 }
 
-/* WhatsApp Chat Bubbles */
+/* Conversation message cards */
 .messageWrapper {
   display: flex;
   max-width: 82%;
@@ -338,7 +338,7 @@
   padding: 4px;
 }
 
-/* Input Bar (WhatsApp + Spike) */
+/* Message composer */
 .inputArea {
   background-color: var(--wa-header-bg);
   padding: 10px 14px;
@@ -572,11 +572,27 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.15s;
+  transition: transform 140ms ease-out, filter 140ms ease-out;
 }
 
-.traditionalReplyBtn:hover, .modalSendBtn:hover {
-  filter: brightness(0.92);
+.traditionalReplyBtn:active, .modalSendBtn:active:not(:disabled) {
+  transform: scale(.98);
+}
+
+.modalSendBtn:disabled {
+  opacity: .65;
+  cursor: wait;
+}
+
+.traditionalReplyBtn:focus-visible, .modalSendBtn:focus-visible {
+  outline: 2px solid var(--wa-accent-light);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .traditionalReplyBtn:hover, .modalSendBtn:hover:not(:disabled) {
+    filter: brightness(.92);
+  }
 }
 
 /* Traditional Compose Form */

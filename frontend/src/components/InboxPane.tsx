@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import InboxClient, { ChatItemData } from './InboxClient'
+import InboxClient, { type ChatItemData } from './InboxClient'
+import type { EmailMessage } from '@/app/(main)/chat/[contact]/SpikeChatView'
+import { getDemoEmails } from '@/lib/demo-emails'
 
 export default async function InboxPane() {
   const supabase = await createClient()
@@ -17,7 +19,8 @@ export default async function InboxPane() {
   const cleanDigits = rawPhone.replace(/[^\d]/g, '')
   const userEmailId = `${cleanDigits}@pmail.vixiya.com`
 
-  const { data: emails, error } = await supabase
+  const demoMode = process.env.PHONEMAIL_DEMO_MODE === 'true'
+  const { data: emailRows, error } = demoMode ? { data: null, error: null } : await supabase
     .from('emails')
     .select('*')
     .or(`sender_address.eq.${userEmailId},recipient_address.eq.${userEmailId}`)
@@ -27,7 +30,17 @@ export default async function InboxPane() {
     console.error('Error fetching emails from Supabase:', error)
   }
 
-  const chatsMap = new Map<string, any[]>()
+  const emails: EmailMessage[] = demoMode ? getDemoEmails(userEmailId) : (emailRows || []).map((email) => ({
+    id: String(email.id),
+    sender_address: email.sender_address || '',
+    recipient_address: email.recipient_address || '',
+    subject: email.subject || '',
+    body_text: email.body_text || '',
+    body_html: email.body_html || '',
+    created_at: email.created_at,
+    read_status: email.read_status ?? false,
+  }))
+  const chatsMap = new Map<string, EmailMessage[]>()
 
   ;(emails || []).forEach((email) => {
     const otherParty =
@@ -39,7 +52,7 @@ export default async function InboxPane() {
     chatsMap.get(otherParty)!.push(email)
   })
 
-  let chatList: ChatItemData[] = Array.from(chatsMap.entries()).map(([contact, messages]) => {
+  const chatList: ChatItemData[] = Array.from(chatsMap.entries()).map(([contact, messages]) => {
     return {
       contact,
       latestMessage: messages[0],
@@ -49,31 +62,10 @@ export default async function InboxPane() {
     }
   })
 
-  // If inbox is brand new, provide a welcome email thread so the demo looks active and polished
-  if (chatList.length === 0) {
-    const welcomeContact = '18005550199@pmail.vixiya.com'
-    chatList = [
-      {
-        contact: welcomeContact,
-        latestMessage: {
-          id: 'welcome-01',
-          sender_address: welcomeContact,
-          recipient_address: userEmailId,
-          subject: 'Welcome to PhoneMail!',
-          body_text: 'Your phone number is now your universal email ID. Anyone in the world can email you at this address.',
-          body_html: '<p>Your phone number is now your universal email ID. Anyone in the world can email you at this address.</p>',
-          created_at: new Date().toISOString(),
-          read_status: false,
-        },
-        unreadCount: 1,
-      }
-    ]
-  }
-
   return (
     <InboxClient
       initialChats={chatList}
-      rawEmails={emails || []}
+      rawEmails={emails}
       userEmailId={userEmailId}
       userPhone={rawPhone}
     />

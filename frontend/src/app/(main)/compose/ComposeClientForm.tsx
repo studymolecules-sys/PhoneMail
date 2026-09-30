@@ -1,10 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useActionState, useEffect, useRef, useState } from 'react'
 import { useFormStatus } from 'react-dom'
 import { Send } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import styles from './compose.module.css'
 import RichTextEditor from '@/components/RichTextEditor'
+import { showToast } from '@/components/Toast'
+import { sendMessage, type SendMessageState } from '../chat/[contact]/actions'
 
 function SendButton() {
   const { pending } = useFormStatus()
@@ -18,26 +21,35 @@ function SendButton() {
 }
 
 interface ComposeClientFormProps {
-  userEmailId: string
-  sendMessage: (formData: FormData) => Promise<void>
   initialTo?: string
   initialSubject?: string
   initialBody?: string
 }
 
 export default function ComposeClientForm({
-  userEmailId,
-  sendMessage,
   initialTo = '',
   initialSubject = '',
   initialBody = ''
 }: ComposeClientFormProps) {
+  const router = useRouter()
+  const [state, formAction] = useActionState<SendMessageState, FormData>(sendMessage, { status: 'idle' })
+  const handledSuccess = useRef(false)
   const [htmlContent, setHtmlContent] = useState(initialBody)
   const [textContent, setTextContent] = useState(initialBody)
 
+  useEffect(() => {
+    if (state.status !== 'success' || handledSuccess.current) return
+    handledSuccess.current = true
+    showToast(state.notice || state.message, state.notice ? 'info' : 'success')
+    router.push(state.destination)
+  }, [router, state])
+
   return (
-    <form className={styles.form} action={sendMessage}>
-      <input type="hidden" name="from" value={userEmailId} />
+    <form
+      className={styles.form}
+      action={formAction}
+      onSubmit={() => { handledSuccess.current = false }}
+    >
       {/* Hidden inputs to pass the rich text data to the Server Action */}
       <input type="hidden" name="body" value={textContent} />
       <input type="hidden" name="body_html" value={htmlContent} />
@@ -86,6 +98,9 @@ export default function ComposeClientForm({
         <span className={styles.composeNote}>A clear subject helps people find your message later.</span>
         <SendButton />
       </div>
+      {state.status === 'error' && (
+        <p className={styles.formError} role="alert">{state.message}</p>
+      )}
     </form>
   )
 }

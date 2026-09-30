@@ -13,7 +13,7 @@
 }
 
 /* =========================================================================
-   DESKTOP WEB CLIENT LOGIN (Gmail / Google Workspace Style)
+   Desktop sign-in card
    ========================================================================= */
 .desktopCard {
   background: #ffffff;
@@ -197,7 +197,7 @@
 }
 
 /* =========================================================================
-   MOBILE CLIENT ONBOARDING (WhatsApp Design Language)
+   Mobile onboarding flow
    ========================================================================= */
 .mobileScreen {
   width: 100%;
@@ -407,7 +407,7 @@
   justify-content: center;
 }
 
-/* Phone input (WhatsApp style) */
+/* Phone number entry */
 .phoneBox {
   display: flex;
   flex-direction: column;
@@ -562,7 +562,7 @@
   font-family: var(--font-mono);
 }
 
-/* WhatsApp Buttons */
+/* Primary sign-in actions */
 .waButtonColumn {
   display: flex;
   flex-direction: column;

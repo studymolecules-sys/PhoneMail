@@ -12,7 +12,13 @@ Example address: `919279581387@pmail.vixiya.com` (country code digits, without a
 - Supabase-backed email records and profile metadata, with light and dark themes.
 - Integration code for Cloudflare Email Routing, Twilio notifications/IVR, and optional Brevo outbound email.
 
-PhoneMail is a buildathon prototype, not a production-ready public mail service. The app code does not prove that provider accounts, domain DNS, SMS delivery, email routing, or deliverability are configured. Several webhook paths also need authentication and stronger validation before they are safe to expose publicly; see [Integration status and safety](#integration-status-and-safety).
+PhoneMail is a buildathon prototype, not a production-ready public mail service. The app code does not prove that provider accounts, domain DNS, SMS delivery, email routing, or deliverability are configured. See [Integration status and safety](#integration-status-and-safety) for what is implemented and what still needs live verification.
+
+### Hackathon Context: What is implemented vs. what needs live infrastructure
+
+Built in seven days, PhoneMail is a working application prototype with a responsive inbox-first interface, onboarding, phone OTP flow, authenticated message actions, and Supabase database integration. The repository includes the database schema and row-level security policies. The local production build is checked during submission preparation; that check does not prove the hosted Supabase project or real OTP delivery is available.
+
+The Cloudflare Email Routing Worker and Brevo outbound-email path are implemented in code, but they still need the app domain, provider credentials, sender approval, and routing rules to be configured and verified. They fail safely when required secrets are missing or a provider cannot confirm its request. Until an end-to-end message is received and confirmed, present those paths as integration-ready prototype code rather than a live email service. Twilio notifications/IVR are separate from Supabase Auth's SMS provider.
 
 ## Tech stack
 
@@ -37,16 +43,16 @@ flowchart LR
     Web -->|Optional notifications| Twilio[Twilio]
 ```
 
-The app normalizes an Indian 10-digit number to `+91` E.164 format for Supabase phone authentication. After sign-in, the UI derives the PhoneMail address from the authenticated phone number. The inbox reads message rows from Supabase. The compose Server Action inserts message records and can call Brevo for external recipients when `BREVO_API_KEY` is configured. A present API key alone does not confirm delivery: provider response handling and failed database writes need stronger handling before relying on this path.
+The app normalizes an Indian 10-digit number to `+91` E.164 format for Supabase phone authentication. After sign-in, the UI derives the PhoneMail address from the authenticated phone number. The inbox reads message rows from Supabase. The compose Server Action authenticates the user, inserts message records under RLS, and checks Brevo's response for external recipients when `BREVO_API_KEY` is configured. A provider response still needs to be checked in the provider account before claiming real-world delivery.
 
 ## Integration status and safety
 
 - **Supabase Auth:** the login actions request and verify SMS OTPs through Supabase Auth. The app normalizes local Indian numbers to `+91` before calling Supabase. A configured Supabase test-number mapping can be used for a test login; it does not demonstrate live SMS delivery. Real OTP delivery depends on the Supabase project's Auth/SMS settings and provider limits.
 - **Supabase database:** inbox data is stored in `public.emails`. See [`supabase_setup.sql`](supabase_setup.sql) for the current table and RLS setup. Review existing schema and policies before applying it to an existing project.
-- **Cloudflare Email Routing:** the Worker parses inbound mail and posts to `/api/incoming-email`. That API currently uses the Supabase service-role key and does not authenticate the Worker request or sufficiently validate/rate-limit its payload. Do not expose it as a public mail-ingest endpoint until those protections are implemented.
-- **Twilio:** notification and IVR routes are present. They do not currently verify Twilio request signatures; protect them before exposing them publicly. The app's Supabase Auth SMS provider is configured separately from the Twilio variables used by these routes.
-- **Brevo:** the compose action attempts external delivery when `BREVO_API_KEY` is set. Configure and verify the sender/domain with Brevo, and check delivery at the provider. The current action does not robustly handle provider HTTP failures.
-- **SMTP demo service:** the separate Node SMTP receiver accepts unauthenticated plaintext SMTP and may trigger Twilio notifications. Keep it local or on a controlled network; it is not hardened for public mail-server use.
+- **Cloudflare Email Routing:** [`cloudflare-email-worker.js`](cloudflare-email-worker.js) parses inbound mail and signs the exact request body with a timestamped HMAC. `/api/incoming-email` verifies the signature, limits request size, validates the destination, and uses the service-role key only on the server. Install the root Worker dependencies, set the same 32-character-or-longer `PHONEMAIL_WEBHOOK_SECRET` in Wrangler and the web app, set `PHONEMAIL_API_URL`, then create a Cloudflare Email Routing rule for `*@pmail.vixiya.com`. This path has not been deployed or tested against the live domain.
+- **Twilio:** the IVR route verifies Twilio signatures using `TWILIO_AUTH_TOKEN` and the public webhook URL. The notification route accepts only an internal bearer token and validated addresses before it can send an SMS. Configure `PHONEMAIL_INTERNAL_API_TOKEN` for both the web app and SMTP container. The app's Supabase Auth SMS provider is separate from these Twilio routes.
+- **Brevo:** the compose action saves the message first and checks Brevo's HTTP result. Missing or unconfirmed outbound delivery is reported to the user instead of being shown as success. Configure a verified sender/domain and `BREVO_API_KEY` before claiming that external email works.
+- **SMTP demo service:** the separate Node SMTP receiver accepts plaintext SMTP without authentication inside its container, restricts recipients to PhoneMail addresses, limits message size, and returns an SMTP failure when saving fails. Docker maps it only to `127.0.0.1:2525`; do not expose the receiver publicly.
 
 Domain DNS, routing, provider approval, webhook security, rate limits, abuse prevention, and end-to-end delivery have not been proven by a successful local build or test login.
 
@@ -54,13 +60,13 @@ Domain DNS, routing, provider approval, webhook security, rate limits, abuse pre
 
 ### Requirements
 
-- Node.js 20 or newer and npm.
+- Node.js 20 or newer and npm for the web app and SMTP demo; use Node.js 22 or newer for the pinned Wrangler CLI.
 - A Supabase project with phone authentication enabled and the `public.emails` table configured.
 - For real OTP delivery, a working Supabase Auth SMS provider and any current sender/template approvals it requires.
 
 ### Environment
 
-Put secrets in `frontend/.env` for this setup. The repository contains an empty placeholder at that path; supply real values locally or use the separate environment file provided for evaluation. Never commit secret values.
+Put web-app and SMTP values in `frontend/.env` for Docker or `frontend/.env.local` for local development. The repository contains an empty `frontend/.env` placeholder for evaluation. Configure Cloudflare Worker variables in `wrangler.toml` and Worker secrets with Wrangler. Never commit secret values.
 
 | Variable | Needed for | Notes |
 | --- | --- | --- |
@@ -69,9 +75,31 @@ Put secrets in `frontend/.env` for this setup. The repository contains an empty 
 | `SUPABASE_SERVICE_ROLE_KEY` | Incoming email and SMTP receiver | Privileged secret. Server-side only; never expose it in browser code. |
 | `TWILIO_ACCOUNT_SID` | Twilio notification/IVR routes | Server-side secret/configuration. |
 | `TWILIO_AUTH_TOKEN` | Twilio notification/IVR routes | Server-side secret; rotate if it has been exposed. |
-| `TWILIO_PHONE_NUMBER` | Twilio notification/IVR routes | Sender number enabled in the Twilio account. |
-| `BREVO_API_KEY` | Optional external outbound email | The current compose action only attempts Brevo delivery when this is set. Verify sender/domain approval and provider response. |
-| `PHONEMAIL_API_URL` | Optional Cloudflare Worker | Base URL of the deployed PhoneMail app. |
+| `TWILIO_PHONE_NUMBER` | Twilio notifications | Sender number enabled in the Twilio account. |
+| `TWILIO_PUBLIC_BASE_URL` | Twilio IVR webhook validation | Public HTTPS origin used to verify the webhook URL behind a proxy; it must match the configured Twilio endpoint. |
+| `PHONEMAIL_INTERNAL_API_TOKEN` | Internal SMTP-to-Twilio notification | At least 32 random characters; use the same server-side value in the web app and SMTP service. |
+| `PHONEMAIL_WEBHOOK_SECRET` | Cloudflare Worker-to-app incoming mail | At least 32 random characters; use the same secret in the Worker and web app. |
+| `BREVO_API_KEY` | Optional external outbound email | Configure a verified sender/domain and confirm delivery at Brevo before claiming it works. |
+| `PHONEMAIL_API_URL` | Cloudflare Worker | Public HTTPS base URL of the PhoneMail app. Wrangler config currently points to `https://pmail.vixiya.com`. |
+| `PHONEMAIL_DEMO_MODE` | Optional local preview | Set to `true` to show six built-in sample messages without reading or writing email rows. Read-only; never exposed to the browser. |
+
+### Sample inbox preview
+
+To preview the app with six varied sample emails, use a local production build and set the server-only flag in the same PowerShell session. The sample inbox includes an account alert, a two-message conversation, a booking confirmation, a delivery update, and a newsletter-style email. Addresses use reserved example domains; the fixtures are not stored in Supabase, and sending is disabled while preview mode is on.
+
+```powershell
+cd frontend
+npm run build
+$env:PHONEMAIL_DEMO_MODE = 'true'
+npm run start -- --hostname 127.0.0.1 --port 3000
+```
+
+Open [http://localhost:3000](http://localhost:3000) after signing in. To return to the real inbox, stop the server and clear the flag before starting it again:
+
+```powershell
+$env:PHONEMAIL_DEMO_MODE = $null
+npm run start -- --hostname 127.0.0.1 --port 3000
+```
 
 For local development, Next.js reads the supplied values from `frontend/.env` or `frontend/.env.local`:
 
@@ -95,11 +123,21 @@ For the included Docker setup, fill `frontend/.env` first, then run from the rep
 docker compose --env-file frontend/.env up --build
 ```
 
-The web container builds and serves the optimized Next.js app. The SMTP container listens on port 25 and is configured to reach the web container at `http://web:3000`. The SMTP receiver accepts unauthenticated plaintext SMTP; do not expose it directly to the public internet without authentication, TLS, relay protections, and abuse controls.
+The web container builds and serves the optimized Next.js app on host loopback at `127.0.0.1:3000`. The SMTP service listens on port 25 inside Docker and is available on the host only at `127.0.0.1:2525`; it calls the web container at `http://web:3000`. The SMTP receiver has no client authentication or TLS, so keep this mapping local and do not expose it publicly.
+
+To install and deploy the Cloudflare Email Routing Worker, run from the repository root after configuring the app URL and Worker secret:
+
+```powershell
+npm install
+npx wrangler secret put PHONEMAIL_WEBHOOK_SECRET
+npm run worker:deploy
+```
+
+Then create the Email Routing rule in Cloudflare for `*@pmail.vixiya.com` and select the `phonemail-email-routing` Worker. `PHONEMAIL_WEBHOOK_SECRET` must exactly match the web app's server-side value. Worker deployment and live routing require a Cloudflare account/domain setup and are not validated by the local frontend build.
 
 ## Supabase database setup
 
-Review [`supabase_setup.sql`](supabase_setup.sql) and run it in the Supabase SQL editor for a fresh or compatible project. It creates/extends the `emails` table and applies RLS policies for the current `@pmail.vixiya.com` address format. It does not configure Supabase Auth's SMS provider or create Twilio/Cloudflare/Brevo credentials.
+Review [`supabase_setup.sql`](supabase_setup.sql) and run it in the Supabase SQL editor for a fresh or compatible project. It creates/extends the `emails` table, applies RLS policies for the current `@pmail.vixiya.com` address format, and grants authenticated users updates only to `read_status`. It does not configure Supabase Auth's SMS provider or create Twilio/Cloudflare/Brevo credentials.
 
 If your project already has an `emails` table, back it up and compare the existing schema and policies before applying schema changes. Never give the browser the service-role key. The service-role key is intended only for trusted server-side ingestion and bypasses RLS.
 
@@ -107,15 +145,16 @@ If your project already has an `emails` table, back it up and compare the existi
 
 A low-risk demo can show the onboarding screens, use the Supabase-configured test phone mapping, navigate the inbox, and demonstrate the compose/thread interface. A Supabase test OTP proves the app's test sign-in path; it does **not** prove that a real SMS was delivered.
 
-To claim real email or SMS delivery, verify it with approved test addresses/numbers and confirm the provider reports success. External email requires Brevo credentials and sender verification. Incoming mail requires Cloudflare routing plus a secured Worker-to-app request. `demo_test.py` is an opt-in live integration helper: it requires `PHONEMAIL_RUN_LIVE_DEMO=YES`, `PHONEMAIL_DEMO_RECIPIENT`, `NEXT_PUBLIC_SUPABASE_URL`, and `SUPABASE_SERVICE_ROLE_KEY`. It sends a real email and may trigger an SMS notification, so use only a controlled test recipient.
+To claim real email or SMS delivery, verify it with approved test addresses/numbers and confirm the provider reports success. External email requires Brevo credentials and sender verification. Incoming mail requires Cloudflare routing plus a secured Worker-to-app request. `demo_test.py` is an opt-in local SMTP/database check: it requires `PHONEMAIL_RUN_LIVE_DEMO=YES`, `PHONEMAIL_DEMO_RECIPIENT`, `NEXT_PUBLIC_SUPABASE_URL`, and `SUPABASE_SERVICE_ROLE_KEY`. It does not send public internet email; if SMTP notifications are configured, it may send a real SMS, so use only a controlled test recipient.
 
-Checks completed during submission preparation:
+Checks completed during this submission pass:
 
-- `cd frontend && npm run build` — production compilation and TypeScript checks; passed after the latest UI changes.
-- Targeted ESLint on the inbox, desktop client, login, and toast components.
-- Local `/login` HTTP smoke check returned HTTP 200 after the latest UI changes.
+- `cd frontend && npm run lint` — passed with no warnings.
+- `cd frontend && npm run build` — optimized production build and TypeScript checks passed without downloading fonts.
+- Production-mode HTTP smoke check — `/login` returned 200 with the security headers; unauthenticated requests to the incoming-mail and Twilio-notification endpoints returned 401.
+- `node --check` — Cloudflare Worker, SMTP receiver, and domain migration script syntax passed.
 
-These checks do not validate a real OTP send, inbound routing, external email delivery, or Twilio SMS.
+The Cloudflare Worker was not installed or deployed, Docker Compose was not run, and no real OTP, incoming email, Brevo delivery, or Twilio SMS was sent. Verify those with the configured provider accounts before describing them as live.
 
 ## Submission checklist
 

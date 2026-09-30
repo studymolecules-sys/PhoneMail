@@ -5,6 +5,7 @@ import GmailDesktopClient from '@/components/GmailDesktopClient'
 import Toast from '@/components/Toast'
 import { createClient } from '@/lib/supabase/server'
 import splitStyles from '@/components/ResponsiveSplit.module.css'
+import { getDemoEmails } from '@/lib/demo-emails'
 
 export default async function MainLayout({
   children,
@@ -21,7 +22,8 @@ export default async function MainLayout({
   const userEmailId = cleanDigits ? `${cleanDigits}@pmail.vixiya.com` : 'user@pmail.vixiya.com'
 
   // Fetch emails for Desktop view
-  const { data: emails } = await supabase
+  const demoMode = process.env.PHONEMAIL_DEMO_MODE === 'true'
+  const { data: emails } = demoMode ? { data: null } : await supabase
     .from('emails')
     .select('*')
     .or(`sender_address.eq.${userEmailId},recipient_address.eq.${userEmailId}`)
@@ -31,7 +33,7 @@ export default async function MainLayout({
     <>
       <div className={splitStyles.desktopOnly}>
         <GmailDesktopClient 
-          rawEmails={emails || []} 
+          rawEmails={demoMode ? getDemoEmails(userEmailId) : emails || []}
           userEmailId={userEmailId} 
           userPhone={rawPhone} 
         />

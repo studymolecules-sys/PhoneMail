@@ -135,7 +135,7 @@ export default function InboxClient({
     })
   }, [chats, searchQuery, filterChip, activeFolder, starredContacts])
 
-  // Normal Gmail Mobile chronological list logic
+  // Keep the inbox ordered by message time, newest first.
   const filteredEmails = useMemo(() => {
     return rawEmails.filter(email => {
       if (searchQuery.trim()) {

@@ -21,8 +21,9 @@ alter table public.emails add column if not exists body_html text not null defau
 alter table public.emails add column if not exists created_at timestamptz not null default now();
 alter table public.emails add column if not exists read_status boolean not null default false;
 alter table public.emails enable row level security;
-revoke all on table public.emails from anon;
-grant select, insert, update, delete on table public.emails to authenticated;
+revoke all on table public.emails from anon, authenticated;
+grant select, insert, delete on table public.emails to authenticated;
+grant update (read_status) on table public.emails to authenticated;
 
 -- Remove policies from the earlier example so they cannot leave an unrestricted
 -- incoming-email insert path enabled. Service-role server code bypasses RLS.

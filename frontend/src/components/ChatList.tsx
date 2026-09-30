@@ -6,7 +6,13 @@ import gsap from 'gsap'
 import styles from './chatlist.module.css'
 import Link from 'next/link'
 
-export default function ChatList({ chats }: { chats: any[] }) {
+interface ChatListItem {
+  contact: string
+  latestMessage: { created_at: string; subject: string }
+  unreadCount: number
+}
+
+export default function ChatList({ chats }: { chats: ChatListItem[] }) {
   const containerRef = useRef<HTMLDivElement>(null)
 
   useGSAP(() => {

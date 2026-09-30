@@ -58,6 +58,8 @@ export default function ProfileModal({ isOpen, onClose, userEmailId, userPhone }
 
   useEffect(() => {
     if (!isOpen) return
+    // Restore the persisted draft when the dialog opens; it is intentionally client-only state.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setAliases(readAliases())
     setDisplayName(localStorage.getItem('pm_name') || '')
     const storedLanguage = localStorage.getItem('pm_lang') as Language | null
@@ -99,6 +101,10 @@ export default function ProfileModal({ isOpen, onClose, userEmailId, userPhone }
     event.preventDefault()
     const localPart = newAlias.trim().toLowerCase()
     if (!localPart || aliases.length >= 5) return
+    if (!/^[a-z0-9](?:[a-z0-9._-]{0,62}[a-z0-9])?$/.test(localPart)) {
+      showToast('Use 1–64 letters, numbers, dots, underscores or hyphens.', 'error')
+      return
+    }
     const address = `${localPart}@pmail.vixiya.com`
     if (aliases.includes(address)) {
       showToast('This alias already exists', 'error')

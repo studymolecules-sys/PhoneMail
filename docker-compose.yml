@@ -1,16 +1,15 @@
-version: '3.8'
-
 services:
   smtp:
     build:
       context: ./smtp-server
     container_name: phonemail-smtp
     ports:
-      - "25:25"
+      - "127.0.0.1:2525:25"
     environment:
       - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
       - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
       - WEB_URL=http://web:3000
+      - PHONEMAIL_INTERNAL_API_TOKEN=${PHONEMAIL_INTERNAL_API_TOKEN}
     restart: unless-stopped
     env_file:
       - ./frontend/.env
@@ -24,13 +23,16 @@ services:
         NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
     container_name: phonemail-web
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     environment:
       - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
       - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
       - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
       - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
       - TWILIO_PHONE_NUMBER=${TWILIO_PHONE_NUMBER}
+      - TWILIO_PUBLIC_BASE_URL=${TWILIO_PUBLIC_BASE_URL}
+      - PHONEMAIL_INTERNAL_API_TOKEN=${PHONEMAIL_INTERNAL_API_TOKEN}
+      - PHONEMAIL_WEBHOOK_SECRET=${PHONEMAIL_WEBHOOK_SECRET}
     restart: unless-stopped
     env_file:
       - ./frontend/.env

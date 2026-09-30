@@ -2,7 +2,6 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import styles from './compose.module.css'
-import { sendMessage } from '../chat/[contact]/actions'
 import { ArrowLeft } from 'lucide-react'
 import ComposeClientForm from './ComposeClientForm'
 
@@ -40,8 +39,6 @@ export default async function ComposePage({
       </header>
 
       <ComposeClientForm
-        userEmailId={userEmailId}
-        sendMessage={sendMessage}
         initialTo={searchParams?.to}
         initialSubject={searchParams?.subject}
         initialBody={searchParams?.body}

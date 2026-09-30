@@ -1,5 +1,11 @@
-.agents/
+.agents/*
+!.agents/
+.agents/*
+!.agents/AGENTS.md
 .claude/
 .cursor/
+node_modules/
+.wrangler/
+.dev.vars*
 *.pptx
 *.docx

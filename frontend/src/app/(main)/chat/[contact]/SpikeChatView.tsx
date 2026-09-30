@@ -18,6 +18,8 @@ import {
   Lock,
 } from 'lucide-react'
 import RichTextEditor from '@/components/RichTextEditor'
+import { showToast } from '@/components/Toast'
+import type { SendMessageState } from './actions'
 
 export interface EmailMessage {
   id: string
@@ -34,7 +36,7 @@ interface SpikeChatViewProps {
   contact: string
   currentUser: string
   initialMessages: EmailMessage[]
-  onSendMessage: (formData: FormData) => Promise<void>
+  onSendMessage: (state: SendMessageState, formData: FormData) => Promise<SendMessageState>
 }
 
 export default function SpikeChatView({
@@ -55,6 +57,7 @@ export default function SpikeChatView({
   const endRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
+  const previousMessageCount = useRef(initialMessages.length)
 
   // Scroll to bottom on load
   useEffect(() => {
@@ -64,13 +67,16 @@ export default function SpikeChatView({
   // GSAP animation for chat bubbles
   useGSAP(() => {
     if (!containerRef.current) return
-    const bubbles = containerRef.current.querySelectorAll('.chat-bubble-item')
-    if (bubbles.length === 0) return
+    const previousCount = previousMessageCount.current
+    previousMessageCount.current = messages.length
+    if (messages.length <= previousCount) return
+    const newestBubble = containerRef.current.lastElementChild
+    if (!newestBubble) return
 
     gsap.fromTo(
-      bubbles,
-      { opacity: 0, y: 15 },
-      { opacity: 1, y: 0, duration: 0.25, stagger: 0.03, ease: 'power2.out' }
+      newestBubble,
+      { opacity: 0, y: 8 },
+      { opacity: 1, y: 0, duration: 0.18, ease: 'power2.out' }
     )
   }, [messages.length])
 
@@ -94,6 +100,10 @@ export default function SpikeChatView({
     if (!messageBody.trim() || isSending) return
 
     setIsSending(true)
+    const draftSubject = subjectText
+    const draftBody = messageBody
+    const draftHtml = messageHtml
+    const draftReply = replyingTo
 
     // Optimistic message creation
     const finalSubject = replyingTo
@@ -132,15 +142,34 @@ export default function SpikeChatView({
     formData.append('body_html', messageHtml)
 
     try {
-      if (typeof navigator !== 'undefined' && navigator.vibrate) {
-        navigator.vibrate([20, 50, 20]) // Success pattern
+      const result = await onSendMessage({ status: 'idle' }, formData)
+      if (result.status !== 'success') {
+        setMessages((prev) => prev.filter((message) => message.id !== optimisticMsg.id))
+        setMessageBody(draftBody)
+        setMessageHtml(draftHtml)
+        setSubjectText(draftSubject)
+        setReplyingTo(draftReply)
+        showToast(result.status === 'error' ? result.message : 'Message was not sent.', 'error')
+        return
       }
-      await onSendMessage(formData)
-    } catch (err) {
-      console.error('Failed to dispatch message:', err)
-      if (typeof navigator !== 'undefined' && navigator.vibrate) {
-        navigator.vibrate([50, 100, 50]) // Error pattern
+
+      const savedMessage = result.messages.find(
+        (message) => message.recipient_address.toLowerCase() === contact.toLowerCase()
+      )
+      if (savedMessage) {
+        setMessages((prev) => prev.map((message) => message.id === optimisticMsg.id ? savedMessage : message))
       }
+      showToast(result.notice || 'Message saved', result.notice ? 'info' : 'success')
+      if (typeof navigator !== 'undefined' && navigator.vibrate) {
+        navigator.vibrate([20, 50, 20])
+      }
+    } catch {
+      setMessages((prev) => prev.filter((message) => message.id !== optimisticMsg.id))
+      setMessageBody(draftBody)
+      setMessageHtml(draftHtml)
+      setSubjectText(draftSubject)
+      setReplyingTo(draftReply)
+      showToast('Could not send your message. Check your connection and try again.', 'error')
     } finally {
       setIsSending(false)
     }
@@ -151,7 +180,7 @@ export default function SpikeChatView({
 
   return (
     <div className={styles.chatContainer}>
-      {/* WhatsApp Chat Top Header */}
+      {/* Conversation header */}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
           <Link href="/" className={styles.backButton} aria-label="Back to Inbox">
@@ -178,7 +207,7 @@ export default function SpikeChatView({
         </div>
       </header>
 
-      {/* WhatsApp Doodle Chat Canvas */}
+      {/* Conversation messages */}
       <main className={styles.messageArea}>
 
         <div ref={containerRef} className={styles.threadContainer}>
@@ -199,6 +228,14 @@ export default function SpikeChatView({
                   <div
                     className={styles.bubble}
                     onClick={() => setSelectedEmail(msg)}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault()
+                        setSelectedEmail(msg)
+                      }
+                    }}
+                    role="button"
+                    tabIndex={0}
                     aria-label="Tap to open in Traditional View"
                   >
                     {/* Spike Compact Subject */}
@@ -427,15 +464,32 @@ export default function SpikeChatView({
             <form
               onSubmit={async (e) => {
                 e.preventDefault()
+                if (isSending) return
                 const form = e.currentTarget
                 const formData = new FormData(form)
-                setIsTraditionalComposeOpen(false)
-                await onSendMessage(formData)
+                setIsSending(true)
+                try {
+                  const result = await onSendMessage({ status: 'idle' }, formData)
+                  if (result.status !== 'success') {
+                    showToast(result.status === 'error' ? result.message : 'Message was not sent.', 'error')
+                    return
+                  }
+                  const savedMessage = result.messages.find(
+                    (message) => message.recipient_address.toLowerCase() === contact.toLowerCase()
+                  )
+                  if (savedMessage) setMessages((prev) => [...prev, savedMessage])
+                  setMessageBody('')
+                  setMessageHtml('')
+                  setIsTraditionalComposeOpen(false)
+                  showToast(result.notice || 'Message saved', result.notice ? 'info' : 'success')
+                } catch {
+                  showToast('Could not send your message. Check your connection and try again.', 'error')
+                } finally {
+                  setIsSending(false)
+                }
               }}
               className={styles.traditionalComposeForm}
             >
-              <input type="hidden" name="from" value={currentUser} />
-
               {/* To field is LOCKED per Task.docx requirement */}
               <div className={styles.lockedFieldRow}>
                 <label className={styles.lockedLabel}>To:</label>
@@ -473,8 +527,8 @@ export default function SpikeChatView({
               </div>
 
               <div className={styles.traditionalFooter}>
-                <button type="submit" className={styles.modalSendBtn}>
-                  <Send size={16} /> Send
+                <button type="submit" className={styles.modalSendBtn} disabled={isSending}>
+                  <Send size={16} /> {isSending ? 'Sending…' : 'Send'}
                 </button>
               </div>
             </form>

@@ -1,5 +1,32 @@
-export const getTranslations = (lang: string) => {
-  const translations: Record<string, any> = {
+export interface TranslationSet {
+  inbox: string
+  compose: string
+  search: string
+  searchMobile: string
+  all: string
+  unread: string
+  favorites: string
+  attachments: string
+  online: string
+  starred: string
+  sent: string
+  drafts: string
+  spam: string
+  trash: string
+  emptyInbox: string
+  emptySent: string
+  emptyStarred: string
+  emptyDrafts: string
+  emptySpam: string
+  emptyTrash: string
+  settingsAccount: string
+  new: string
+}
+
+type SupportedLanguage = 'en' | 'es' | 'fr' | 'hi' | 'ta'
+
+export const getTranslations = (lang: string): TranslationSet => {
+  const translations: Record<SupportedLanguage, TranslationSet> = {
     en: { 
       inbox: 'Inbox', compose: 'Compose', search: 'Search mail', searchMobile: 'Search by phone, email...',
       all: 'All', unread: 'Unread', favorites: 'Favorites', attachments: 'Attachments', 
@@ -51,5 +78,5 @@ export const getTranslations = (lang: string) => {
       new: 'புதியது'
     }
   }
-  return translations[lang] || translations.en
+  return translations[lang as SupportedLanguage] || translations.en
 }
