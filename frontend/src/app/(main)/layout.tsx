@@ -4,8 +4,8 @@ import InboxPane from '@/components/InboxPane'
 import GmailDesktopClient from '@/components/GmailDesktopClient'
 import Toast from '@/components/Toast'
 import { createClient } from '@/lib/supabase/server'
-import splitStyles from '@/components/ResponsiveSplit.module.css'
 import { getDemoEmails } from '@/lib/demo-emails'
+import ResponsiveMainLayout from '@/components/ResponsiveMainLayout'
 
 export default async function MainLayout({
   children,
@@ -31,22 +31,25 @@ export default async function MainLayout({
 
   return (
     <>
-      <div className={splitStyles.desktopOnly}>
-        <GmailDesktopClient 
-          rawEmails={demoMode ? getDemoEmails(userEmailId) : emails || []}
-          userEmailId={userEmailId} 
-          userPhone={rawPhone} 
-        />
-      </div>
-      
-      <div className={splitStyles.mobileOnly}>
-        <ClientShell
-          sidebar={<Sidebar userEmailId={userEmailId} userPhone={rawPhone} />}
-          inbox={<InboxPane />}
-        >
-          {children}
-        </ClientShell>
-      </div>
+      <ResponsiveMainLayout
+        desktop={
+          <GmailDesktopClient
+            rawEmails={demoMode ? getDemoEmails(userEmailId) : emails || []}
+            userEmailId={userEmailId}
+            userPhone={rawPhone}
+          />
+        }
+        mobile={
+          <ClientShell
+            sidebar={<Sidebar userEmailId={userEmailId} userPhone={rawPhone} />}
+            inbox={<InboxPane />}
+          >
+            {children}
+          </ClientShell>
+        }
+      >
+        {children}
+      </ResponsiveMainLayout>
 
       <Toast />
     </>
