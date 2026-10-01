@@ -1,5 +1,7 @@
 # PhoneMail
 
+> **🎥 Hackathon Submission Video & Tech Overview:** [Click here to view the video and letter on Google Drive](https://drive.google.com/drive/folders/1G2lVhXU-iLQ7_JVxvIVN99BUZhcm0HyT?usp=drive_link)
+
 PhoneMail is an India-first email prototype that gives each account a mail address derived from its verified phone number. The mobile app centers on the inbox; conversation view is an optional way to read and reply to a thread. Desktop keeps a denser mail layout. The interface has its own visual system rather than copying another mail product.
 
 Example address format: `91XXXXXXXXXX@pmail.vixiya.com` (country code digits, without a leading `+`).
